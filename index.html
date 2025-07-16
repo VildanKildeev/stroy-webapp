@@ -36,24 +36,32 @@
             border: none;
             padding: 20px;
             font-size: 20px;
-            font-weight: bold; /* Жирный текст */
+            font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
             transition: background 0.3s;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
-        button:hover {
-            background: #82d6b9;
+        .wide-button {
+            width: 100%;
+        }
+
+        .about-button {
+            width: 50%;
+            align-self: center;
+            font-size: 18px;
+            padding: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="buttons">
-            <button onclick="sendRequest('order')">Оставить заявку</button>
-            <button onclick="sendRequest('shop')">Онлайн-магазин</button>
-            <button onclick="sendRequest('machinery')">Спецтехника</button>
+            <button class="wide-button" onclick="sendRequest('order')">Оставить заявку</button>
+            <button class="wide-button" onclick="sendRequest('shop')">Онлайн-магазин</button>
+            <button class="wide-button" onclick="sendRequest('machinery')">Спецтехника</button>
+            <button class="about-button" onclick="sendRequest('about')">О нас</button>
         </div>
     </div>
 
