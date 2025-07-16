@@ -13,26 +13,27 @@
             background-size: cover;
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
-            align-items: flex-start; /* Контент прижат к верху */
-            padding-top: 200px; /* Отступ сверху (примерно 20 см) */
-            box-sizing: border-box;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
         }
 
-        .container {
-            text-align: center;
-            width: 100%;
-        }
-
-        .buttons {
+        .top-buttons {
+            flex: 1;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
             gap: 20px;
-            max-width: 350px;
-            margin: auto;
         }
 
-        .wide-button {
+        .bottom-button {
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        button {
             background: #a3e4d7;
             color: #2c3e50;
             border: none;
@@ -43,33 +44,26 @@
             cursor: pointer;
             transition: background 0.3s;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 350px;
         }
 
-        .about-button {
-            background: #a3e4d7;
-            color: #2c3e50;
-            border: none;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background 0.3s;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            width: 50%;
-            align-self: center;
-            margin-top: 30px;
+        button:hover {
+            background: #82d6b9;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="buttons">
-            <button class="wide-button" onclick="sendRequest('order')">Оставить заявку</button>
-            <button class="wide-button" onclick="sendRequest('shop')">Онлайн-магазин</button>
-            <button class="wide-button" onclick="sendRequest('machinery')">Спецтехника</button>
-            <button class="about-button" onclick="sendRequest('about')">О нас</button>
-        </div>
+    <!-- Верхние три кнопки по центру -->
+    <div class="top-buttons">
+        <button onclick="sendRequest('order')">Оставить заявку</button>
+        <button onclick="sendRequest('shop')">Онлайн-магазин</button>
+        <button onclick="sendRequest('machinery')">Спецтехника</button>
+    </div>
+
+    <!-- Четвёртая кнопка внизу -->
+    <div class="bottom-button">
+        <button onclick="sendRequest('about')">О нас</button>
     </div>
 
     <script>
@@ -83,6 +77,7 @@
             window.Telegram.WebApp.close();
         }
 
+        // Раскрытие на весь экран
         window.Telegram.WebApp.expand();
     </script>
 </body>
