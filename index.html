@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>СТРОЙ поКАрману</title>
     <style>
+        /* Обнуление отступов и фона */
         body {
             margin: 0;
             padding: 0;
@@ -15,35 +16,74 @@
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            max-width: 400px;
-        }
-        button {
-            background: #4CAF50;
             color: white;
+        }
+
+        /* Центральный контейнер */
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 350px;
+            margin: auto;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 20px;
+            background-color: #a3e4d7; /* Фисташковый цвет */
+            color: #2c3e50;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 12px;
             cursor: pointer;
-            margin-top: 20px;
+            transition: background 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #82d6b9;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>СТРОЙ поКАрману</h1>
-        <p>Ваш надежный партнер в строительстве</p>
-        <button onclick="window.Telegram.WebApp.sendData('order')">
-            Сделать заказ
-        </button>
+        <p>Выберите нужное действие:</p>
+        <div class="buttons">
+            <button onclick="sendRequest('order')">Оставить заявку</button>
+            <button onclick="sendRequest('shop')">Онлайн-магазин</button>
+            <button onclick="sendRequest('machinery')">Спецтехника</button>
+        </div>
     </div>
+
     <script>
+        function sendRequest(action) {
+            const user = window.Telegram.WebApp.initDataUnsafe.user;
+            const data = {
+                action: action,
+                user: user
+            };
+            window.Telegram.WebApp.sendData(JSON.stringify(data));
+            window.Telegram.WebApp.close();
+        }
+
+        // Раскрытие на весь экран
         window.Telegram.WebApp.expand();
     </script>
 </body>
