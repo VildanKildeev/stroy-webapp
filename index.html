@@ -15,39 +15,32 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            color: white;
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 30px;
-            border-radius: 15px;
             text-align: center;
             max-width: 400px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        p {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 20px;
+            width: 90%;
         }
 
         .buttons {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         button {
-            background: #a3e4d7;
+            background: #a3e4d7; /* Фисташковый цвет */
             color: #2c3e50;
             border: none;
             padding: 20px;
-            font-size: 18px;
+            font-size: 20px;
+            font-weight: bold; /* Жирный текст */
             border-radius: 12px;
             cursor: pointer;
             transition: background 0.3s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
         button:hover {
@@ -57,7 +50,6 @@
 </head>
 <body>
     <div class="container">
-        <p>Выберите нужное действие:</p>
         <div class="buttons">
             <button onclick="sendRequest('order')">Оставить заявку</button>
             <button onclick="sendRequest('shop')">Онлайн-магазин</button>
