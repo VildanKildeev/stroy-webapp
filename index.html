@@ -14,24 +14,26 @@
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
-            color: white;
+            align-items: flex-start; /* Контент прижат к верху */
+            padding-top: 200px; /* Отступ сверху (примерно 20 см) */
+            box-sizing: border-box;
         }
 
         .container {
             text-align: center;
-            max-width: 400px;
-            width: 90%;
+            width: 100%;
         }
 
         .buttons {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            max-width: 350px;
+            margin: auto;
         }
 
-        button {
-            background: #a3e4d7; /* Фисташковый цвет */
+        .wide-button {
+            background: #a3e4d7;
             color: #2c3e50;
             border: none;
             padding: 20px;
@@ -43,15 +45,20 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
 
-        .wide-button {
-            width: 100%;
-        }
-
         .about-button {
+            background: #a3e4d7;
+            color: #2c3e50;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
             width: 50%;
             align-self: center;
-            font-size: 18px;
-            padding: 15px;
+            margin-top: 30px;
         }
     </style>
 </head>
@@ -76,7 +83,6 @@
             window.Telegram.WebApp.close();
         }
 
-        // Раскрытие на весь экран
         window.Telegram.WebApp.expand();
     </script>
 </body>
