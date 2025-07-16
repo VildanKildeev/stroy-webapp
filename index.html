@@ -14,23 +14,16 @@
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-        }
-
-        .top-buttons {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 20px;
         }
 
-        .bottom-button {
-            padding: 20px;
-            margin-bottom: 40px;
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 15vh; /* Кнопки чуть ниже центра */
         }
 
         button {
@@ -51,20 +44,30 @@
         button:hover {
             background: #82d6b9;
         }
+
+        .about-button {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
-    <!-- Верхние три кнопки по центру -->
-    <div class="top-buttons">
+
+    <!-- Основные кнопки -->
+    <div class="button-container">
         <button onclick="sendRequest('order')">Оставить заявку</button>
         <button onclick="sendRequest('shop')">Онлайн-магазин</button>
         <button onclick="sendRequest('machinery')">Спецтехника</button>
     </div>
 
-    <!-- Четвёртая кнопка внизу -->
-    <div class="bottom-button">
-        <button onclick="sendRequest('about')">О нас</button>
-    </div>
+    <!-- Кнопка "О нас" внизу и по центру -->
+    <button class="about-button" onclick="sendRequest('about')">О нас</button>
 
     <script>
         function sendRequest(action) {
