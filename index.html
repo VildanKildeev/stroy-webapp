@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>СТРОЙ поКАрману</title>
+    <title>Telegram Web App</title>
     <style>
-        /* Обнуление отступов и фона */
         body {
             margin: 0;
             padding: 0;
@@ -16,54 +15,48 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white;
         }
 
-        /* Центральный контейнер */
         .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
             text-align: center;
-        }
-
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
 
         p {
-            font-size: 18px;
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
         }
 
         .buttons {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            max-width: 350px;
-            margin: auto;
+            gap: 15px;
         }
 
         button {
-            padding: 20px;
-            font-size: 20px;
-            background-color: #a3e4d7; /* Фисташковый цвет */
+            background: #a3e4d7;
             color: #2c3e50;
             border: none;
+            padding: 20px;
+            font-size: 18px;
             border-radius: 12px;
             cursor: pointer;
             transition: background 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         button:hover {
-            background-color: #82d6b9;
+            background: #82d6b9;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>СТРОЙ поКАрману</h1>
         <p>Выберите нужное действие:</p>
         <div class="buttons">
             <button onclick="sendRequest('order')">Оставить заявку</button>
