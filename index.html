@@ -23,7 +23,7 @@
             flex-direction: column;
             align-items: center;
             gap: 20px;
-            margin-top: 15vh; /* Кнопки чуть ниже центра */
+            margin-top: 15vh;
         }
 
         button {
@@ -45,26 +45,17 @@
             background: #82d6b9;
         }
 
-        .about-button {
-            position: absolute;
-            bottom: 120px; /* Приподнято ближе к центру */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40%;
-            padding: 12px;
+        .about-link {
+            margin-top: 40px;
             font-size: 16px;
-            border-radius: 10px;
-            background: #a3e4d7;
-            color: #2c3e50;
-            border: none;
-            font-weight: bold;
+            color: #ecf0f1;
+            text-decoration: underline;
             cursor: pointer;
-            transition: background 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
 
-        .about-button:hover {
-            background: #82d6b9;
+        .about-link:hover {
+            color: #bdc3c7;
         }
     </style>
 </head>
@@ -72,27 +63,29 @@
 
     <!-- Основные кнопки -->
     <div class="button-container">
-        <button onclick="sendRequest('order')">Оставить заявку</button>
-        <button onclick="sendRequest('shop')">Онлайн-магазин</button>
-        <button onclick="sendRequest('machinery')">Спецтехника</button>
+        <button onclick="sendRequest('order')">ВЫЗЫВАТЬ МАСТЕРА</button>
+        <button onclick="sendRequest('shop')">МАГАЗИН СТРОЙМАТЕРИАЛОВ ОНЛАЙН</button>
+        <button onclick="sendRequest('machinery')">СПЕЦТЕХНИКА В АРЕНДУ</button>
     </div>
 
-    <!-- Кнопка "О нас" чуть выше -->
-    <button class="about-button" onclick="sendRequest('about')">О нас</button>
+    <!-- Ссылка "О нас" ниже кнопок -->
+    <div class="about-link" onclick="sendRequest('about')">О нас</div>
 
     <script>
         function sendRequest(action) {
-            const user = window.Telegram.WebApp.initDataUnsafe.user;
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
             const data = {
                 action: action,
                 user: user
             };
-            window.Telegram.WebApp.sendData(JSON.stringify(data));
-            window.Telegram.WebApp.close();
+            window.Telegram?.WebApp?.sendData?.(JSON.stringify(data));
+            window.Telegram?.WebApp?.close?.();
         }
 
         // Раскрытие на весь экран
-        window.Telegram.WebApp.expand();
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.expand();
+        }
     </script>
 </body>
 </html>
