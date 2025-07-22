@@ -1,100 +1,4 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Web App</title>
-
-    <!-- Подключение анимаций (animate.css) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css ">
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            color: white;
-            overflow: hidden;
-            background: black;
-        }
-
-        /* Фоновое видео */
-        .background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-        }
-
-        /* Контейнер кнопок — чуть выше центра */
-        .button-container {
-            margin-top: 25vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        /* Общий стиль кнопок */
-        button {
-            color: white;
-            border: none;
-            padding: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            width: 80%;
-            max-width: 350px;
-            text-align: center;
-
-            /* Отключаем цветной фон */
-            background-color: transparent;
-            background-position: center;
-            background-size: cover;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Темный слой поверх картинки для читаемости текста */
-        button::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5); /* Можно менять прозрачность: 0.4 = светлее, 0.7 = темнее */
-            border-radius: 12px;
-            z-index: 1;
-        }
-
-        /* Текст поверх фона */
-        button span {
-            position: relative;
-            z-index: 2;
-            pointer-events: none; /* Чтобы клик работал по кнопке, а не по тексту */
-        }
-
-        /* Эффект при наведении */
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        /* Ссылка "О нас" */
-        .about-link {
-            margin-top: 60px;
             font-size: 16px;
             color: #ecf0f1;
             text-decoration: underline;
@@ -130,7 +34,7 @@
         Ваш браузер не поддерживает видео.
     </video>
 
-    <!-- Основные кнопки с фоновыми изображениями -->
+    <!-- Основные кнопки с фоновыми изображениями и белой рамкой -->
     <div class="button-container animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
         <button style="background-image: url('btn-master.jpg');" onclick="sendRequest('order')">
             <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
@@ -146,7 +50,7 @@
     <!-- Ссылка "О нас" -->
     <div class="about-link animate__animated" onclick="sendRequest('about')">О нас</div>
 
-    <!-- Основная логика Telegram WebApp -->
+    <!-- JavaScript для Telegram WebApp -->
     <script>
         function sendRequest(action) {
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
@@ -154,9 +58,7 @@
                 action: action,
                 user: user
             };
-            // Отправка данных в Telegram
             window.Telegram?.WebApp?.sendData?.(JSON.stringify(data));
-            // Закрытие Web App (можно убрать, если нужно остаться)
             window.Telegram?.WebApp?.close?.();
         }
 
