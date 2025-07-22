@@ -1,4 +1,116 @@
 <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App</title>
+
+    <style>
+        /* Обнуление отступов */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: black;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Фоновое видео */
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2; /* Убедимся, что видео позади всего */
+        }
+
+        /* Контейнер кнопок */
+        .button-container {
+            margin-top: 25vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            z-index: 10; /* Выше видео */
+        }
+
+        /* Анимация появления */
+        .show {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            transition: opacity 1s ease, transform 1s ease !important;
+        }
+
+        /* Стиль кнопок */
+        button {
+            color: white;
+            border: 2px solid white;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
+            background-color: transparent;
+            background-position: center;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Фон через псевдоэлемент */
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: inherit;
+            background-position: center;
+            background-size: cover;
+            filter: brightness(0.9);
+            border-radius: 10px;
+            z-index: -1;
+        }
+
+        button::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            z-index: -1;
+        }
+
+        button:hover::before {
+            filter: brightness(1);
+        }
+
+        button span {
+            position: relative;
+            z-index: 2;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Ссылка "О нас" */
         .about-link {
             margin-top: 60px;
             font-size: 16px;
@@ -8,12 +120,13 @@
             text-align: center;
             opacity: 0;
             transform: translateY(10px);
-            transition: opacity 0.8s ease 3.8s, transform 0.8s ease 3.8s; /* Появится после кнопок */
+            z-index: 10;
         }
 
         .about-link.show {
             opacity: 1;
             transform: translateY(0);
+            transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
         }
     </style>
 </head>
@@ -25,49 +138,73 @@
         Ваш браузер не поддерживает видео.
     </video>
 
-    <!-- Кнопки (изначально скрыты) -->
-    <div class="button-container">
+    <!-- Кнопки (скрыты до таймера) -->
+    <div class="button-container" id="buttonContainer">
         <button style="background-image: url('btn-master.jpg');" onclick="sendRequest('order')">
             <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
         </button>
         <button style="background-image: url('btn-shop.jpg');" onclick="sendRequest('shop')">
             <span>ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ (онлайн заказ)</span>
         </button>
-        <button style="background-image: url('btn-machinery.jpg');" onclick="sendRequest('machinery')">
+        <button style="background-image: url('btn-machinery.jpg');" onclick="send grinding('machinery')">
             <span>СПЕЦТЕХНИКА В АРЕНДУ</span>
         </button>
     </div>
 
     <!-- Ссылка "О нас" -->
-    <div class="about-link" onclick="sendRequest('about')">О нас</div>
+    <div class="about-link" id="aboutLink">О нас</div>
 
     <script>
-        // Показать кнопки через 3 секунды
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                document.querySelector('.button-container').classList.add('show');
-                
-                // Показать "О нас" через 3.8 секунды (чуть позже)
-                setTimeout(function() {
-                    document.querySelector('.about-link').classList.add('show');
-                }, 800);
+        // ✅ Проверяем, загрузилась ли страница полностью
+        window.addEventListener('load', function () {
+            console.log("Страница загружена");
+
+            // ✅ Находим элементы
+            const buttonContainer = document.getElementById('buttonContainer');
+            const aboutLink = document.getElementById('aboutLink');
+
+            // ❗ Проверяем, найдены ли элементы
+            if (!buttonContainer || !aboutLink) {
+                console.error("Ошибка: Элементы не найдены");
+                return;
+            }
+
+            // ✅ Показать кнопки через 3 секунды
+            setTimeout(function () {
+                console.log("Показываем кнопки");
+                buttonContainer.classList.add('show'); // Добавляем класс анимации
+
+                // Показать "О нас" через 0.5 сек после кнопок
+                setTimeout(function () {
+                    aboutLink.classList.add('show');
+                }, 500);
+
             }, 3000); // 3000 мс = 3 секунды
         });
 
-        // Отправка данных в Telegram
+        // ✅ Функция для отправки данных в Telegram
         function sendRequest(action) {
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-            const data = {
-                action: action,
-                user: user
-            };
-            window.Telegram?.WebApp?.sendData?.(JSON.stringify(data));
-            window.Telegram?.WebApp?.close?.();
+            const data = { action: action, user: user };
+            
+            // Отправка данных
+            if (window.Telegram?.WebApp?.sendData) {
+                window.Telegram.WebApp.sendData(JSON.stringify(data));
+                console.log("Данные отправлены:", data);
+            } else {
+                console.warn("Telegram WebApp недоступен");
+            }
+
+            // Закрыть Web App
+            if (window.Telegram?.WebApp?.close) {
+                window.Telegram.WebApp.close();
+            }
         }
 
-        // Раскрыть приложение на весь экран
+        // ✅ Раскрыть на весь экран
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.expand();
+            console.log("WebApp расширен");
         }
     </script>
 
