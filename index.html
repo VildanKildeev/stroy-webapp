@@ -1,4 +1,124 @@
 <!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App</title>
+
+    <!-- Подключение анимаций -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css ">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+            background: black;
+        }
+
+        /* Фоновое видео */
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Контейнер кнопок — выше по экрану */
+        .button-container {
+            margin-top: 25vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Стиль кнопок */
+        button {
+            color: white;
+            border: 2px solid white; /* Белая рамка */
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
+
+            /* Только фоновое изображение будет задано через HTML */
+            background-color: transparent;
+            background-position: center;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Фоновое изображение кнопки */
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: inherit; /* Получает изображение от style="background-image: url(...)" */
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            filter: brightness(0.9); /* Лёгкое затемнение для лучшей читаемости */
+            border-radius: 10px;
+            z-index: -1;
+            transition: filter 0.3s;
+        }
+
+        /* Дополнительный полупрозрачный слой для контраста текста */
+        button::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2); /* Тонкий затемняющий слой */
+            border-radius: 10px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Эффект при наведении на фон */
+        button:hover::before {
+            filter: brightness(1);
+        }
+
+        /* Текст поверх фона */
+        button span {
+            position: relative;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Анимация при наведении */
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Ссылка "О нас" */
+        .about-link {
+            margin-top: 60px;
             font-size: 16px;
             color: #ecf0f1;
             text-decoration: underline;
@@ -34,7 +154,7 @@
         Ваш браузер не поддерживает видео.
     </video>
 
-    <!-- Основные кнопки с фоновыми изображениями и белой рамкой -->
+    <!-- Основные кнопки с фоновыми изображениями -->
     <div class="button-container animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
         <button style="background-image: url('btn-master.jpg');" onclick="sendRequest('order')">
             <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
@@ -50,7 +170,7 @@
     <!-- Ссылка "О нас" -->
     <div class="about-link animate__animated" onclick="sendRequest('about')">О нас</div>
 
-    <!-- JavaScript для Telegram WebApp -->
+    <!-- Логика Telegram Web App -->
     <script>
         function sendRequest(action) {
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
@@ -58,7 +178,9 @@
                 action: action,
                 user: user
             };
+            // Отправка данных в бота
             window.Telegram?.WebApp?.sendData?.(JSON.stringify(data));
+            // Закрыть Web App после отправки
             window.Telegram?.WebApp?.close?.();
         }
 
