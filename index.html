@@ -147,6 +147,23 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Фон для модального окна */
+        .modal-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('modal-background.jpg'); /* Замените на путь к вашему фоновому изображению */
+            background-position: center;
+            background-size: cover;
+            opacity: 0.3; /* Прозрачность фона */
+            z-index: -1;
         }
 
         .modal-title {
@@ -154,6 +171,7 @@
             margin-bottom: 30px;
             color: white;
             text-align: center;
+            position: relative;
         }
 
         .modal-buttons {
@@ -162,6 +180,7 @@
             gap: 15px;
             width: 100%;
             align-items: center;
+            position: relative;
         }
 
         .modal-button {
@@ -177,6 +196,8 @@
             width: 100%;
             max-width: 300px;
             text-align: center;
+            position: relative;
+            backdrop-filter: blur(5px); /* Эффект размытия для лучшей читаемости текста */
         }
 
         .modal-button:hover {
@@ -199,6 +220,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 10;
         }
 
         .close-modal:hover {
