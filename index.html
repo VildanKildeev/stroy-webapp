@@ -111,7 +111,189 @@
             opacity: 0;
             z-index: 10;
         }
+    </style>
+</head>
+<body>
 
+    <!-- Фоновое видео -->
+    <video autoplay muted loop playsinline class="background-video" id="bgVideo">
+        <source src="background.mp4" type="video/mp4">
+        Ваш браузер не поддерживает видео.
+    </video>
+
+    <!-- Скрытый аудио для звука клика -->
+    <audio id="clickSound" src="click.mp3"></audio>
+
+    <!-- Основные кнопки -->
+    <div class="button-container" id="buttonContainer">
+        <button style="background-image: url('btn-master.jpg');" onclick="playSound(); openMasterModal()">
+            <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
+        </button>
+        <button style="background-image: url('btn-shop.jpg');" onclick="playSound(); sendRequest('shop')">
+            <span>ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ (онлайн заказ)</span>
+        </button>
+        <button style="background-image: url('btn-machinery.jpg');" onclick="playSound(); sendRequest('machinery')">
+            <span>СПЕЦТЕХНИКА В АРЕНДУ</span>
+        </button>
+    </div>
+
+    <!-- Ссылка "О нас" -->
+    <div class="about-link" id="aboutLink">О нас</div>
+
+    <!-- Модальное окно для мастера -->
+    <div class="modal" id="masterModal">
+        <button class="close-modal" onclick="closeMasterModal()">×</button>
+        <div class="modal-content">
+            <div class="modal-overlay"></div>
+            <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
+            <div class="modal-buttons">
+                <button class="modal-button" onclick="playSound(); openWhatsApp()">
+                    ОНЛАЙН ЗАЯВКА
+                </button>
+                <button class="modal-button" onclick="playSound(); openWhatsAppCall()">
+                    ПОЗВОНИТЬ ПО ТЕЛЕФОНУ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Получаем элемент звука
+        const clickSound = document.getElementById('clickSound');
+
+        // Функция проигрывания звука
+        function playSound() {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => {
+                console.warn("🔇 Звук не проигрался (пользователь ещё не взаимодействовал)", e);
+            });
+        }
+
+        // Функция открытия модального окна мастера
+        function openMasterModal() {
+            document.getElementById('masterModal').classList.add('active');
+        }
+
+        // Функция закрытия модального окна мастера
+        function closeMasterModal() {
+            document.getElementById('masterModal').classList.remove('active');
+        }
+
+        // Функция открытия WhatsApp для онлайн заявки
+        function openWhatsApp() {
+            const phoneNumber = "79046660999";
+            const message = "Здравствуйте! Хочу оставить онлайн заявку.";
+            const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
+            
+            // Попытка открыть в новом окне
+            const newWindow = window.open(url, '_blank');
+            
+            // Если не удалось (блокировщик всплывающих окон), используем переход по ссылке
+            if (!newWindow) {
+                // Создаем временную ссылку
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.style.display = 'none';
+                
+                document.body.appendChild(link);
+                
+                if (typeof link.click === 'function') {
+                    link.click();
+                } else {
+                    const event = document.createEvent('MouseEvents');
+                    event.initEvent('click', true, true);
+                    link.dispatchEvent(event);
+                }
+                
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                }, 1000);
+            }
+            
+            // Закрываем модальное окно
+            closeMasterModal();
+        }
+
+        // Новая функция: открытие WhatsApp для звонка
+        function openWhatsAppCall() {
+            const phoneNumber = "79046660999";
+            const message = "Здравствуйте! Позвоните мне, пожалуйста.";
+            const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
+            
+            // Попытка открыть в новом окне
+            const newWindow = window.open(url, '_blank');
+            
+            // Если не удалось (блокировщик всплывающих окон), используем переход по ссылке
+            if (!newWindow) {
+                // Создаем временную ссылку
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.style.display = 'none';
+                
+                document.body.appendChild(link);
+                
+                if (typeof link.click === 'function') {
+                    link.click();
+                } else {
+                    const event = document.createEvent('MouseEvents');
+                    event.initEvent('click', true, true);
+                    link.dispatchEvent(event);
+                }
+                
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                }, 1000);
+            }
+            
+            // Закрываем модальное окно
+            closeMasterModal();
+        }
+
+        // Показать кнопки быстрее (в 1.5 раза быстрее = 1500ms вместо 3000ms)
+        window.addEventListener('load', function () {
+            const buttonContainer = document.getElementById('buttonContainer');
+            const aboutLink = document.getElementById('aboutLink');
+
+            // Уменьшено с 3000ms до 1500ms (на 50% быстрее)
+            setTimeout(() => {
+                buttonContainer.classList.add('animate__animated', 'animate__fadeInUp');
+                buttonContainer.style.animationDelay = '0.15s'; // Уменьшено с 0.3s до 0.15s
+
+                setTimeout(() => {
+                    aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
+                    aboutLink.style.opacity = 1;
+                }, 250); // Уменьшено с 500ms до 250ms
+            }, 1500); // Уменьшено с 3000ms до 1500ms
+        });
+
+        // Telegram WebApp
+        function sendRequest(action) {
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+            const data = { action, user };
+
+            if (window.Telegram?.WebApp?.sendData) {
+                window.Telegram.WebApp.sendData(JSON.stringify(data));
+            }
+
+            if (window.Telegram?.WebApp?.close) {
+                window.Telegram.WebApp.close();
+            }
+        }
+
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.expand();
+        }
+
+        // Обработчик клика по ссылке "О нас"
+        document.getElementById('aboutLink').addEventListener('click', () => {
+            playSound();
+            sendRequest('about');
+        });
+    </script>
+
+    <style>
         /* Новое окно */
         .modal {
             position: fixed;
@@ -239,178 +421,5 @@
     </style>
 </head>
 <body>
-
-    <!-- Фоновое видео -->
-    <video autoplay muted loop playsinline class="background-video" id="bgVideo">
-        <source src="background.mp4" type="video/mp4">
-        Ваш браузер не поддерживает видео.
-    </video>
-
-    <!-- Скрытый аудио для звука клика -->
-    <audio id="clickSound" src="click.mp3"></audio>
-
-    <!-- Основные кнопки -->
-    <div class="button-container" id="buttonContainer">
-        <button style="background-image: url('btn-master.jpg');" onclick="playSound(); openMasterModal()">
-            <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
-        </button>
-        <button style="background-image: url('btn-shop.jpg');" onclick="playSound(); sendRequest('shop')">
-            <span>ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ (онлайн заказ)</span>
-        </button>
-        <button style="background-image: url('btn-machinery.jpg');" onclick="playSound(); sendRequest('machinery')">
-            <span>СПЕЦТЕХНИКА В АРЕНДУ</span>
-        </button>
-    </div>
-
-    <!-- Ссылка "О нас" -->
-    <div class="about-link" id="aboutLink">О нас</div>
-
-    <!-- Модальное окно для мастера -->
-    <div class="modal" id="masterModal">
-        <button class="close-modal" onclick="closeMasterModal()">×</button>
-        <div class="modal-content">
-            <div class="modal-overlay"></div>
-            <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
-            <div class="modal-buttons">
-                <button class="modal-button" onclick="playSound(); openWhatsApp()">
-                    ОНЛАЙН ЗАЯВКА
-                </button>
-                <button class="modal-button" onclick="playSound(); callPhone()">
-                    ПОЗВОНИТЬ ПО ТЕЛЕФОНУ
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Получаем элемент звука
-        const clickSound = document.getElementById('clickSound');
-
-        // Функция проигрывания звука
-        function playSound() {
-            clickSound.currentTime = 0;
-            clickSound.play().catch(e => {
-                console.warn("🔇 Звук не проигрался (пользователь ещё не взаимодействовал)", e);
-            });
-        }
-
-        // Функция открытия модального окна мастера
-        function openMasterModal() {
-            document.getElementById('masterModal').classList.add('active');
-        }
-
-        // Функция закрытия модального окна мастера
-        function closeMasterModal() {
-            document.getElementById('masterModal').classList.remove('active');
-        }
-
-        // Функция звонка по телефону (универсальная)
-        function callPhone() {
-            const phoneNumber = "+79046660999";
-            
-            // Создаем временную ссылку
-            const link = document.createElement('a');
-            link.href = "tel:" + phoneNumber;
-            link.style.display = 'none';
-            
-            // Добавляем в документ
-            document.body.appendChild(link);
-            
-            // Имитируем клик
-            if (typeof link.click === 'function') {
-                link.click();
-            } else {
-                // Альтернативный метод для старых браузеров
-                const event = document.createEvent('MouseEvents');
-                event.initEvent('click', true, true);
-                link.dispatchEvent(event);
-            }
-            
-            // Удаляем ссылку
-            setTimeout(() => {
-                document.body.removeChild(link);
-            }, 1000);
-            
-            // Закрываем модальное окно
-            closeMasterModal();
-        }
-
-        // Функция открытия WhatsApp (универсальная)
-        function openWhatsApp() {
-            const phoneNumber = "79046660999";
-            const message = "Здравствуйте! Хочу оставить онлайн заявку.";
-            const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
-            
-            // Попытка открыть в новом окне
-            const newWindow = window.open(url, '_blank');
-            
-            // Если не удалось (блокировщик всплывающих окон), используем переход по ссылке
-            if (!newWindow) {
-                // Создаем временную ссылку
-                const link = document.createElement('a');
-                link.href = url;
-                link.target = '_blank';
-                link.style.display = 'none';
-                
-                document.body.appendChild(link);
-                
-                if (typeof link.click === 'function') {
-                    link.click();
-                } else {
-                    const event = document.createEvent('MouseEvents');
-                    event.initEvent('click', true, true);
-                    link.dispatchEvent(event);
-                }
-                
-                setTimeout(() => {
-                    document.body.removeChild(link);
-                }, 1000);
-            }
-            
-            // Закрываем модальное окно
-            closeMasterModal();
-        }
-
-        // Показать кнопки через 3 секунды
-        window.addEventListener('load', function () {
-            const buttonContainer = document.getElementById('buttonContainer');
-            const aboutLink = document.getElementById('aboutLink');
-
-            setTimeout(() => {
-                buttonContainer.classList.add('animate__animated', 'animate__fadeInUp');
-                buttonContainer.style.animationDelay = '0.3s';
-
-                setTimeout(() => {
-                    aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
-                    aboutLink.style.opacity = 1;
-                }, 500);
-            }, 3000);
-        });
-
-        // Telegram WebApp
-        function sendRequest(action) {
-            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-            const data = { action, user };
-
-            if (window.Telegram?.WebApp?.sendData) {
-                window.Telegram.WebApp.sendData(JSON.stringify(data));
-            }
-
-            if (window.Telegram?.WebApp?.close) {
-                window.Telegram.WebApp.close();
-            }
-        }
-
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.expand();
-        }
-
-        // Обработчик клика по ссылке "О нас"
-        document.getElementById('aboutLink').addEventListener('click', () => {
-            playSound();
-            sendRequest('about');
-        });
-    </script>
-
 </body>
 </html>
