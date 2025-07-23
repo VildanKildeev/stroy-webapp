@@ -1,190 +1,62 @@
 <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Web App</title>
-
-    <!-- Подключение анимаций -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css ">
-
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            color: white;
-            overflow: hidden;
-            background: black;
-        }
-
-        /* Фоновое видео */
-        .background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-        }
-
-        /* Контейнер кнопок — выше по экрану */
-        .button-container {
-            margin-top: 25vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        /* Стиль кнопок */
-        button {
-            color: white;
-            border: 2px solid white; /* Белая рамка */
-            padding: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            width: 80%;
-            max-width: 350px;
-            text-align: center;
-
-            /* Только фоновое изображение будет задано через HTML */
-            background-color: transparent;
-            background-position: center;
-            background-size: cover;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Фоновое изображение кнопки */
-        button::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: inherit; /* Получает изображение от style="background-image: url(...)" */
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            filter: brightness(0.9); /* Лёгкое затемнение для лучшей читаемости */
-            border-radius: 10px;
-            z-index: -1;
-            transition: filter 0.3s;
-        }
-
-        /* Дополнительный полупрозрачный слой для контраста текста */
-        button::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.2); /* Тонкий затемняющий слой */
-            border-radius: 10px;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Эффект при наведении на фон */
-        button:hover::before {
-            filter: brightness(1);
-        }
-
-        /* Текст поверх фона */
-        button span {
-            position: relative;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        /* Анимация при наведении */
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        /* Ссылка "О нас" */
-        .about-link {
-            margin-top: 60px;
-            font-size: 16px;
-            color: #ecf0f1;
-            text-decoration: underline;
-            cursor: pointer;
-            text-align: center;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards;
-            animation-delay: 1s;
-        }
-
-        .about-link:hover {
-            color: #bdc3c7;
-        }
-
-        /* Анимация появления */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Фоновое видео -->
-    <video autoplay muted loop playsinline class="background-video">
-        <source src="background.mp4" type="video/mp4">
-        Ваш браузер не поддерживает видео.
-    </video>
-
-    <!-- Основные кнопки с фоновыми изображениями -->
-    <div class="button-container animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
-        <button style="background-image: url('btn-master.jpg');" onclick="sendRequest('order')">
+    <div class="button-container" id="buttonContainer">
+        <button style="background-image: url('btn-master.jpg');" onclick="playSound(); sendRequest('order')">
             <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
         </button>
-        <button style="background-image: url('btn-shop.jpg');" onclick="sendRequest('shop')">
+        <button style="background-image: url('btn-shop.jpg');" onclick="playSound(); sendRequest('shop')">
             <span>ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ (онлайн заказ)</span>
         </button>
-        <button style="background-image: url('btn-machinery.jpg');" onclick="sendRequest('machinery')">
+        <button style="background-image: url('btn-machinery.jpg');" onclick="playSound(); sendRequest('machinery')">
             <span>СПЕЦТЕХНИКА В АРЕНДУ</span>
         </button>
     </div>
 
     <!-- Ссылка "О нас" -->
-    <div class="about-link animate__animated" onclick="sendRequest('about')">О нас</div>
+    <div class="about-link" id="aboutLink">О нас</div>
 
-    <!-- Логика Telegram Web App -->
     <script>
-        function sendRequest(action) {
-            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
-            const data = {
-                action: action,
-                user: user
-            };
-            // Отправка данных в бота
-            window.Telegram?.WebApp?.sendData?.(JSON.stringify(data));
-            // Закрыть Web App после отправки
-            window.Telegram?.WebApp?.close?.();
+        // Получаем элемент звука
+        const clickSound = document.getElementById('clickSound');
+
+        // Функция проигрывания звука
+        function playSound() {
+            // Сбрасываем воспроизведение, чтобы звук мог играть при повторном нажатии
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => {
+                console.warn("🔇 Звук не проигрался (пользователь ещё не взаимодействовал)", e);
+            });
         }
 
-        // Раскрыть на весь экран
+        // Показать кнопки через 3 секунды
+        window.addEventListener('load', function () {
+            const buttonContainer = document.getElementById('buttonContainer');
+            const aboutLink = document.getElementById('aboutLink');
+
+            setTimeout(() => {
+                buttonContainer.classList.add('animate__animated', 'animate__fadeInUp');
+                buttonContainer.style.animationDelay = '0.3s';
+
+                setTimeout(() => {
+                    aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
+                    aboutLink.style.opacity = 1;
+                }, 500);
+            }, 3000);
+        });
+
+        // Telegram WebApp
+        function sendRequest(action) {
+            const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
+            const data = { action, user };
+
+            if (window.Telegram?.WebApp?.sendData) {
+                window.Telegram.WebApp.sendData(JSON.stringify(data));
+            }
+
+            if (window.Telegram?.WebApp?.close) {
+                window.Telegram.WebApp.close();
+            }
+        }
+
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.expand();
         }
