@@ -159,10 +159,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('modal-background.jpg'); /* Замените на путь к вашему фоновому изображению */
+            background-image: url('modal-bg.jpg');
             background-position: center;
             background-size: cover;
-            opacity: 0.3; /* Прозрачность фона */
+            opacity: 0.3;
             z-index: -1;
         }
 
@@ -197,7 +197,7 @@
             max-width: 300px;
             text-align: center;
             position: relative;
-            backdrop-filter: blur(5px); /* Эффект размытия для лучшей читаемости текста */
+            backdrop-filter: blur(5px);
         }
 
         .modal-button:hover {
@@ -261,7 +261,7 @@
         <div class="modal-content">
             <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
             <div class="modal-buttons">
-                <button class="modal-button" onclick="playSound(); sendRequest('online_order')">
+                <button class="modal-button" onclick="playSound(); openWhatsApp()">
                     ОНЛАЙН ЗАЯВКА
                 </button>
                 <button class="modal-button" onclick="playSound(); callPhone()">
@@ -293,10 +293,30 @@
             document.getElementById('masterModal').classList.remove('active');
         }
 
-        // Функция звонка по телефону с обновленным номером
+        // Функция звонка по телефону
         function callPhone() {
             const phoneNumber = "+79046660999";
             window.location.href = "tel:" + phoneNumber;
+        }
+
+        // Функция открытия WhatsApp чата (исправленная)
+        function openWhatsApp() {
+            const phoneNumber = "79046660999"; // Номер без +
+            const message = "Здравствуйте! Хочу оставить онлайн заявку.";
+            const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
+            
+            // Попытка открыть в новом окне/вкладке
+            const newWindow = window.open(url, '_blank');
+            
+            // Если блокировщик всплывающих окон помешал, показываем сообщение
+            if (!newWindow) {
+                alert("Пожалуйста, разрешите всплывающие окна для открытия WhatsApp");
+                // Альтернативно, можно открыть в текущем окне
+                // window.location.href = url;
+            }
+            
+            // Закрываем модальное окно
+            closeMasterModal();
         }
 
         // Показать кнопки через 3 секунды
@@ -322,11 +342,6 @@
 
             if (window.Telegram?.WebApp?.sendData) {
                 window.Telegram.WebApp.sendData(JSON.stringify(data));
-            }
-
-            // Закрываем модальное окно если оно открыто
-            if (action === 'online_order') {
-                closeMasterModal();
             }
 
             if (window.Telegram?.WebApp?.close) {
