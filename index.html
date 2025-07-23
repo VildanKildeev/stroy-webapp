@@ -272,6 +272,15 @@
             color: #3498db;
             margin: 15px 0;
             word-break: break-all;
+            padding: 15px;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ios-modal-phone:hover {
+            background: rgba(52, 152, 219, 0.1);
         }
 
         .ios-modal-button {
@@ -414,48 +423,63 @@
             const message = "Здравствуйте! Хочу оставить онлайн заявку.";
             const url = "https://wa.me/" + WHATSAPP_PHONE + "?text=" + encodeURIComponent(message);
             
-            if (window.Telegram?.WebApp?.openLink) {
+            // Для iOS используем специальный метод
+            if (isIOS()) {
+                openUrlForIOS(url);
+            } else if (window.Telegram?.WebApp?.openLink) {
                 window.Telegram.WebApp.openLink(url);
             } else {
-                const link = document.createElement('a');
-                link.href = url;
-                link.target = '_blank';
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                setTimeout(() => document.body.removeChild(link), 100);
+                window.open(url, '_blank');
             }
             closeMasterModal();
         }
 
-        // ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ЗВОНКА (РАБОТА НА iOS)
+        // Функция для определения iOS
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent);
+        }
+
+        // Универсальный метод открытия URL на iOS
+        function openUrlForIOS(url) {
+            // Создаем временное окно для обхода ограничений iOS
+            const newWindow = window.open('', '_blank');
+            if (newWindow) {
+                newWindow.location.href = url;
+            } else {
+                // Если не удалось открыть окно, показываем инструкцию
+                showIOSUrlModal(url);
+            }
+        }
+
+        // Функция для вызова телефона
         function callPhone() {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isTelegram = window.Telegram && window.Telegram.WebApp;
-            
-            // Для iOS в Telegram используем кастомное модальное окно
-            if (isIOS && isTelegram) {
+            // Для iOS всегда показываем модальное окно
+            if (isIOS()) {
                 showIOSPhoneModal();
             } else {
-                // Для остальных случаев используем стандартный метод
-                const link = document.createElement('a');
-                link.href = 'tel:' + encodeURIComponent(CALL_PHONE);
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                setTimeout(() => document.body.removeChild(link), 100);
+                // Для Android и других платформ
+                try {
+                    const link = document.createElement('a');
+                    link.href = 'tel:' + encodeURIComponent(CALL_PHONE);
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => document.body.removeChild(link), 100);
+                } catch (e) {
+                    alert("Пожалуйста, позвоните по номеру: " + CALL_PHONE);
+                }
             }
             closeMasterModal();
         }
 
-        // ПОКАЗАТЬ МОДАЛЬНОЕ ОКНО ДЛЯ iOS
+        // Модальное окно для телефона (iOS)
         function showIOSPhoneModal() {
             const modal = document.createElement('div');
             modal.className = 'ios-modal';
             modal.innerHTML = `
                 <div class="ios-modal-content">
                     <h2>Позвоните нам</h2>
-                    <p>Для совершения звонка нажмите на номер телефона ниже:</p>
+                    <p>Нажмите на номер телефона ниже, чтобы позвонить:</p>
                     <div class="ios-modal-phone" id="iosPhoneNumber">${CALL_PHONE}</div>
                     <p>Или скопируйте номер для использования вручную</p>
                     <button class="ios-modal-button copy" id="iosCopyButton">Скопировать номер</button>
@@ -467,10 +491,7 @@
             
             // Обработчик для копирования номера
             document.getElementById('iosCopyButton').addEventListener('click', () => {
-                const phoneNumber = CALL_PHONE;
-                navigator.clipboard.writeText(phoneNumber).then(() => {
-                    alert('Номер скопирован: ' + phoneNumber);
-                });
+                copyToClipboard(CALL_PHONE, "Номер скопирован!");
             });
             
             // Обработчик для закрытия модалки
@@ -480,13 +501,35 @@
             
             // Обработчик клика по номеру телефона
             document.getElementById('iosPhoneNumber').addEventListener('click', () => {
-                const link = document.createElement('a');
-                link.href = 'tel:' + encodeURIComponent(CALL_PHONE);
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                setTimeout(() => document.body.removeChild(link), 100);
+                // Попытка позвонить через стандартный метод
+                try {
+                    const link = document.createElement('a');
+                    link.href = 'tel:' + encodeURIComponent(CALL_PHONE);
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => document.body.removeChild(link), 100);
+                } catch (e) {
+                    console.error('Call failed', e);
+                }
                 document.body.removeChild(modal);
+            });
+        }
+
+        // Функция копирования в буфер обмена
+        function copyToClipboard(text, message) {
+            navigator.clipboard.writeText(text).then(() => {
+                if (message) alert(message);
+            }).catch(err => {
+                console.error('Ошибка копирования: ', err);
+                // Fallback для старых браузеров
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                if (message) alert(message);
             });
         }
 
@@ -520,7 +563,9 @@
             }
         }
 
+        // Инициализация Telegram WebApp
         if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
         }
     </script>
