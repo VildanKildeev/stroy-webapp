@@ -304,10 +304,34 @@
             document.getElementById('masterModal').classList.remove('active');
         }
 
-        // Функция звонка по телефону
+        // Улучшенная функция звонка по телефону для iPhone
         function callPhone() {
             const phoneNumber = "+79046660999";
-            window.location.href = "tel:" + phoneNumber;
+            
+            // Создаем элемент ссылки
+            const link = document.createElement('a');
+            link.href = "tel:" + phoneNumber;
+            link.style.display = 'none';
+            
+            // Добавляем ссылку в документ
+            document.body.appendChild(link);
+            
+            // Имитируем клик по ссылке
+            if (document.createEvent) {
+                const event = document.createEvent('MouseEvents');
+                event.initEvent('click', true, true);
+                link.dispatchEvent(event);
+            } else {
+                link.click();
+            }
+            
+            // Удаляем ссылку через небольшую задержку
+            setTimeout(() => {
+                document.body.removeChild(link);
+            }, 1000);
+            
+            // Закрываем модальное окно
+            closeMasterModal();
         }
 
         // Функция открытия WhatsApp чата
@@ -319,7 +343,14 @@
             const newWindow = window.open(url, '_blank');
             
             if (!newWindow) {
-                alert("Пожалуйста, разрешите всплывающие окна для открытия WhatsApp");
+                // Альтернативный метод для мобильных устройств
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
             
             closeMasterModal();
