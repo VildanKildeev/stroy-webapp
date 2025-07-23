@@ -225,6 +225,88 @@
         .close-modal:hover {
             background: rgba(255, 255, 255, 0.1);
         }
+
+        /* Стили для iOS modal */
+        .ios-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .ios-modal-content {
+            background: #1a1a1a;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 90%;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .ios-modal h2 {
+            color: white;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .ios-modal p {
+            color: #ddd;
+            font-size: 18px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .ios-modal-phone {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+            margin: 15px 0;
+            word-break: break-all;
+        }
+
+        .ios-modal-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px 5px;
+            width: 100%;
+            max-width: 300px;
+            transition: background 0.3s;
+        }
+
+        .ios-modal-button:hover {
+            background: #2980b9;
+        }
+
+        .ios-modal-button.copy {
+            background: #2ecc71;
+        }
+
+        .ios-modal-button.copy:hover {
+            background: #27ae60;
+        }
+
+        .ios-modal-button.close {
+            background: #e74c3c;
+        }
+
+        .ios-modal-button.close:hover {
+            background: #c0392b;
+        }
     </style>
 </head>
 <body>
@@ -346,13 +428,16 @@
             closeMasterModal();
         }
 
+        // ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ЗВОНКА (РАБОТА НА iOS)
         function callPhone() {
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isTelegram = window.Telegram && window.Telegram.WebApp;
             
+            // Для iOS в Telegram используем кастомное модальное окно
             if (isIOS && isTelegram) {
-                alert("Пожалуйста, позвоните по номеру:\n" + CALL_PHONE);
+                showIOSPhoneModal();
             } else {
+                // Для остальных случаев используем стандартный метод
                 const link = document.createElement('a');
                 link.href = 'tel:' + encodeURIComponent(CALL_PHONE);
                 link.style.display = 'none';
@@ -361,6 +446,48 @@
                 setTimeout(() => document.body.removeChild(link), 100);
             }
             closeMasterModal();
+        }
+
+        // ПОКАЗАТЬ МОДАЛЬНОЕ ОКНО ДЛЯ iOS
+        function showIOSPhoneModal() {
+            const modal = document.createElement('div');
+            modal.className = 'ios-modal';
+            modal.innerHTML = `
+                <div class="ios-modal-content">
+                    <h2>Позвоните нам</h2>
+                    <p>Для совершения звонка нажмите на номер телефона ниже:</p>
+                    <div class="ios-modal-phone" id="iosPhoneNumber">${CALL_PHONE}</div>
+                    <p>Или скопируйте номер для использования вручную</p>
+                    <button class="ios-modal-button copy" id="iosCopyButton">Скопировать номер</button>
+                    <button class="ios-modal-button close">Закрыть</button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Обработчик для копирования номера
+            document.getElementById('iosCopyButton').addEventListener('click', () => {
+                const phoneNumber = CALL_PHONE;
+                navigator.clipboard.writeText(phoneNumber).then(() => {
+                    alert('Номер скопирован: ' + phoneNumber);
+                });
+            });
+            
+            // Обработчик для закрытия модалки
+            modal.querySelector('.close').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+            
+            // Обработчик клика по номеру телефона
+            document.getElementById('iosPhoneNumber').addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.href = 'tel:' + encodeURIComponent(CALL_PHONE);
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => document.body.removeChild(link), 100);
+                document.body.removeChild(modal);
+            });
         }
 
         // Анимация появления элементов
