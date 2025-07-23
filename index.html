@@ -6,7 +6,7 @@
     <title>Telegram Web App</title>
 
     <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css ">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <style>
         body {
@@ -111,6 +111,90 @@
             opacity: 0;
             z-index: 10;
         }
+
+        /* Новое окно */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: rgba(30, 30, 30, 0.95);
+            border: 2px solid white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-button {
+            color: white;
+            border: 2px solid white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .modal-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -124,9 +208,9 @@
     <!-- Скрытый аудио для звука клика -->
     <audio id="clickSound" src="click.mp3"></audio>
 
-    <!-- Кнопки -->
+    <!-- Основные кнопки -->
     <div class="button-container" id="buttonContainer">
-        <button style="background-image: url('btn-master.jpg');" onclick="playSound(); sendRequest('order')">
+        <button style="background-image: url('btn-master.jpg');" onclick="playSound(); openMasterModal()">
             <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
         </button>
         <button style="background-image: url('btn-shop.jpg');" onclick="playSound(); sendRequest('shop')">
@@ -140,17 +224,48 @@
     <!-- Ссылка "О нас" -->
     <div class="about-link" id="aboutLink">О нас</div>
 
+    <!-- Модальное окно для мастера -->
+    <div class="modal" id="masterModal">
+        <button class="close-modal" onclick="closeMasterModal()">×</button>
+        <div class="modal-content">
+            <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
+            <div class="modal-buttons">
+                <button class="modal-button" onclick="playSound(); sendRequest('online_order')">
+                    ОНЛАЙН ЗАЯВКА
+                </button>
+                <button class="modal-button" onclick="playSound(); callPhone()">
+                    ПОЗВОНИТЬ ПО ТЕЛЕФОНУ
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Получаем элемент звука
         const clickSound = document.getElementById('clickSound');
 
         // Функция проигрывания звука
         function playSound() {
-            // Сбрасываем воспроизведение, чтобы звук мог играть при повторном нажатии
             clickSound.currentTime = 0;
             clickSound.play().catch(e => {
                 console.warn("🔇 Звук не проигрался (пользователь ещё не взаимодействовал)", e);
             });
+        }
+
+        // Функция открытия модального окна мастера
+        function openMasterModal() {
+            document.getElementById('masterModal').classList.add('active');
+        }
+
+        // Функция закрытия модального окна мастера
+        function closeMasterModal() {
+            document.getElementById('masterModal').classList.remove('active');
+        }
+
+        // Функция звонка по телефону с обновленным номером
+        function callPhone() {
+            const phoneNumber = "+79046660999";
+            window.location.href = "tel:" + phoneNumber;
         }
 
         // Показать кнопки через 3 секунды
@@ -178,6 +293,11 @@
                 window.Telegram.WebApp.sendData(JSON.stringify(data));
             }
 
+            // Закрываем модальное окно если оно открыто
+            if (action === 'online_order') {
+                closeMasterModal();
+            }
+
             if (window.Telegram?.WebApp?.close) {
                 window.Telegram.WebApp.close();
             }
@@ -186,6 +306,12 @@
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.expand();
         }
+
+        // Обработчик клика по ссылке "О нас"
+        document.getElementById('aboutLink').addEventListener('click', () => {
+            playSound();
+            sendRequest('about');
+        });
     </script>
 
 </body>
