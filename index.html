@@ -304,27 +304,71 @@
             document.getElementById('masterModal').classList.remove('active');
         }
 
-        // Альтернативная функция звонка по телефону для iPhone
+        // Функция звонка по телефону (универсальная)
         function callPhone() {
             const phoneNumber = "+79046660999";
             
-            // Простой и надежный метод для iPhone
-            window.location.href = "tel:" + phoneNumber;
+            // Создаем временную ссылку
+            const link = document.createElement('a');
+            link.href = "tel:" + phoneNumber;
+            link.style.display = 'none';
             
-            // Закрываем модальное окно через небольшую задержку
+            // Добавляем в документ
+            document.body.appendChild(link);
+            
+            // Имитируем клик
+            if (typeof link.click === 'function') {
+                link.click();
+            } else {
+                // Альтернативный метод для старых браузеров
+                const event = document.createEvent('MouseEvents');
+                event.initEvent('click', true, true);
+                link.dispatchEvent(event);
+            }
+            
+            // Удаляем ссылку
             setTimeout(() => {
-                closeMasterModal();
-            }, 500);
+                document.body.removeChild(link);
+            }, 1000);
+            
+            // Закрываем модальное окно
+            closeMasterModal();
         }
 
-        // Функция открытия WhatsApp чата
+        // Функция открытия WhatsApp (универсальная)
         function openWhatsApp() {
             const phoneNumber = "79046660999";
             const message = "Здравствуйте! Хочу оставить онлайн заявку.";
             const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
             
-            // Простой метод, который работает на iPhone
-            window.location.href = url;
+            // Попытка открыть в новом окне
+            const newWindow = window.open(url, '_blank');
+            
+            // Если не удалось (блокировщик всплывающих окон), используем переход по ссылке
+            if (!newWindow) {
+                // Создаем временную ссылку
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.style.display = 'none';
+                
+                document.body.appendChild(link);
+                
+                if (typeof link.click === 'function') {
+                    link.click();
+                } else {
+                    const event = document.createEvent('MouseEvents');
+                    event.initEvent('click', true, true);
+                    link.dispatchEvent(event);
+                }
+                
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                }, 1000);
+            }
+            
+            // Закрываем модальное окно
+            closeMasterModal();
         }
 
         // Показать кнопки через 3 секунды
