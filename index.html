@@ -6,7 +6,6 @@
     <title>Telegram Web App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        /* Ваши существующие стили остаются без изменений */
         body {
             margin: 0;
             padding: 0;
@@ -20,7 +19,212 @@
             overflow: hidden;
             background: black;
         }
-        /* ... остальные стили ... */
+
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .button-container {
+            margin-top: 25vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        button {
+            color: white;
+            border: 2px solid white;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
+            background-color: transparent;
+            background-position: center;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: inherit;
+            background-position: center;
+            background-size: cover;
+            filter: brightness(0.9);
+            border-radius: 10px;
+            z-index: -1;
+        }
+
+        button::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        button span {
+            position: relative;
+            z-index: 2;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .about-link {
+            margin-top: 60px;
+            font-size: 16px;
+            color: #ecf0f1;
+            text-decoration: underline;
+            cursor: pointer;
+            text-align: center;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        /* Стили модального окна */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: transparent;
+            border: 2px solid white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('modal-background.jpg');
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+            position: relative;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            align-items: center;
+            position: relative;
+        }
+
+        .modal-button {
+            color: white;
+            border: 2px solid white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            background: transparent;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+            position: relative;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .modal-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -32,13 +236,13 @@
     <audio id="clickSound" src="click.mp3"></audio>
     
     <div class="button-container" id="buttonContainer">
-        <button style="background-image: url('btn-master.jpg');" onclick="playSound(); openMasterModal()">
+        <button style="background-image: url('btn-master.jpg');">
             <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
         </button>
-        <button style="background-image: url('btn-shop.jpg');" onclick="playSound(); sendRequest('shop')">
+        <button style="background-image: url('btn-shop.jpg');">
             <span>ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ (онлайн заказ)</span>
         </button>
-        <button style="background-image: url('btn-machinery.jpg');" onclick="playSound(); sendRequest('machinery')">
+        <button style="background-image: url('btn-machinery.jpg');">
             <span>СПЕЦТЕХНИКА В АРЕНДУ</span>
         </button>
     </div>
@@ -46,7 +250,7 @@
     <div class="about-link" id="aboutLink">О нас</div>
     
     <div class="modal" id="masterModal">
-        <button class="close-modal" onclick="closeMasterModal()">×</button>
+        <button class="close-modal">×</button>
         <div class="modal-content">
             <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
             <div class="modal-buttons">
@@ -67,20 +271,53 @@
         
         const clickSound = document.getElementById('clickSound');
         
-        // Вешаем обработчики на кнопки в модальном окне
-        document.getElementById('whatsappButton').addEventListener('click', function() {
-            playSound();
-            openWhatsApp();
-        });
+        // Инициализация обработчиков событий
+        function init() {
+            // Основные кнопки
+            document.querySelector('.button-container button:nth-child(1)').addEventListener('click', () => {
+                playSound();
+                openMasterModal();
+            });
+            
+            document.querySelector('.button-container button:nth-child(2)').addEventListener('click', () => {
+                playSound();
+                sendRequest('shop');
+            });
+            
+            document.querySelector('.button-container button:nth-child(3)').addEventListener('click', () => {
+                playSound();
+                sendRequest('machinery');
+            });
+            
+            // Кнопки модального окна
+            document.getElementById('whatsappButton').addEventListener('click', () => {
+                playSound();
+                openWhatsApp();
+            });
+            
+            document.getElementById('callButton').addEventListener('click', () => {
+                playSound();
+                callPhone();
+            });
+            
+            // Закрытие модального окна
+            document.querySelector('.close-modal').addEventListener('click', () => {
+                playSound();
+                closeMasterModal();
+            });
+            
+            // Ссылка "О нас"
+            document.getElementById('aboutLink').addEventListener('click', () => {
+                playSound();
+                sendRequest('about');
+            });
+        }
         
-        document.getElementById('callButton').addEventListener('click', function() {
-            playSound();
-            callPhone();
-        });
-
         function playSound() {
-            clickSound.currentTime = 0;
-            clickSound.play().catch(e => console.log("Звук не воспроизведён"));
+            if (clickSound) {
+                clickSound.currentTime = 0;
+                clickSound.play().catch(e => console.log("Звук не воспроизведён"));
+            }
         }
 
         function openMasterModal() {
@@ -91,89 +328,59 @@
             document.getElementById('masterModal').classList.remove('active');
         }
 
-        // ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ WHATSAPP
         function openWhatsApp() {
             const message = "Здравствуйте! Хочу оставить онлайн заявку.";
             const url = "https://wa.me/" + WHATSAPP_PHONE + "?text=" + encodeURIComponent(message);
             
-            // Используем метод Telegram для открытия ссылок если доступен
             if (window.Telegram?.WebApp?.openLink) {
                 window.Telegram.WebApp.openLink(url);
             } else {
-                // Создаем видимую кнопку для iOS
-                const visibleLink = document.createElement('a');
-                visibleLink.href = url;
-                visibleLink.target = '_blank';
-                visibleLink.style.display = 'block';
-                visibleLink.style.position = 'fixed';
-                visibleLink.style.top = '0';
-                visibleLink.style.left = '0';
-                visibleLink.style.width = '100%';
-                visibleLink.style.height = '100%';
-                visibleLink.style.opacity = '0';
-                visibleLink.style.zIndex = '10000';
-                
-                document.body.appendChild(visibleLink);
-                
-                // Имитируем клик
-                const event = new MouseEvent('click', {
-                    view: window,
-                    bubbles: true,
-                    cancelable: true
-                });
-                visibleLink.dispatchEvent(event);
-                
-                // Удаляем через секунду
-                setTimeout(() => {
-                    document.body.removeChild(visibleLink);
-                }, 1000);
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => document.body.removeChild(link), 100);
             }
-            
             closeMasterModal();
         }
 
-        // ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ЗВОНКА
         function callPhone() {
-            // Специальная обработка для iOS в Telegram
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isTelegram = window.Telegram && window.Telegram.WebApp;
             
             if (isIOS && isTelegram) {
-                // Для iOS в Telegram показываем номер
                 alert("Пожалуйста, позвоните по номеру:\n" + CALL_PHONE);
             } else {
-                // Для остальных случаев используем стандартный метод
                 const link = document.createElement('a');
                 link.href = 'tel:' + encodeURIComponent(CALL_PHONE);
                 link.style.display = 'none';
                 document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
+                setTimeout(() => document.body.removeChild(link), 100);
             }
-            
             closeMasterModal();
         }
 
-        // Инициализация анимации
+        // Анимация появления элементов
         window.addEventListener('load', function() {
             const buttonContainer = document.getElementById('buttonContainer');
             const aboutLink = document.getElementById('aboutLink');
 
             setTimeout(() => {
+                buttonContainer.style.opacity = 1;
                 buttonContainer.classList.add('animate__animated', 'animate__fadeInUp');
                 buttonContainer.style.animationDelay = '0.15s';
 
                 setTimeout(() => {
-                    aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
                     aboutLink.style.opacity = 1;
+                    aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
                 }, 250);
             }, 1500);
-        });
-
-        // Обработчики для Telegram WebApp
-        document.getElementById('aboutLink').addEventListener('click', () => {
-            playSound();
-            sendRequest('about');
+            
+            // Инициализация обработчиков
+            init();
         });
 
         function sendRequest(action) {
@@ -190,26 +397,5 @@
             window.Telegram.WebApp.expand();
         }
     </script>
-    
-    <style>
-        /* Стили модального окна остаются без изменений */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        /* ... остальные стили модалки ... */
-    </style>
 </body>
 </html>
