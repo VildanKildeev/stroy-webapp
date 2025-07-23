@@ -136,7 +136,7 @@
         }
 
         .modal-content {
-            background: rgba(30, 30, 30, 0.95);
+            background: transparent;
             border: 2px solid white;
             border-radius: 15px;
             padding: 30px;
@@ -151,7 +151,7 @@
             overflow: hidden;
         }
 
-        /* Фон для модального окна */
+        /* Фон для модального окна - ваше изображение */
         .modal-content::before {
             content: "";
             position: absolute;
@@ -159,10 +159,20 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('modal-bg.jpg');
+            background-image: url('modal-background.jpg');
             background-position: center;
             background-size: cover;
-            opacity: 0.3;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
             z-index: -1;
         }
 
@@ -197,7 +207,7 @@
             max-width: 300px;
             text-align: center;
             position: relative;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(0px);
         }
 
         .modal-button:hover {
@@ -259,6 +269,7 @@
     <div class="modal" id="masterModal">
         <button class="close-modal" onclick="closeMasterModal()">×</button>
         <div class="modal-content">
+            <div class="modal-overlay"></div>
             <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
             <div class="modal-buttons">
                 <button class="modal-button" onclick="playSound(); openWhatsApp()">
@@ -299,23 +310,18 @@
             window.location.href = "tel:" + phoneNumber;
         }
 
-        // Функция открытия WhatsApp чата (исправленная)
+        // Функция открытия WhatsApp чата
         function openWhatsApp() {
-            const phoneNumber = "79046660999"; // Номер без +
+            const phoneNumber = "79046660999";
             const message = "Здравствуйте! Хочу оставить онлайн заявку.";
             const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
             
-            // Попытка открыть в новом окне/вкладке
             const newWindow = window.open(url, '_blank');
             
-            // Если блокировщик всплывающих окон помешал, показываем сообщение
             if (!newWindow) {
                 alert("Пожалуйста, разрешите всплывающие окна для открытия WhatsApp");
-                // Альтернативно, можно открыть в текущем окне
-                // window.location.href = url;
             }
             
-            // Закрываем модальное окно
             closeMasterModal();
         }
 
