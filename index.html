@@ -144,7 +144,6 @@
     <div class="modal" id="masterModal">
         <button class="close-modal" onclick="closeMasterModal()">×</button>
         <div class="modal-content">
-            <div class="modal-overlay"></div>
             <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
             <div class="modal-buttons">
                 <button class="modal-button" onclick="playSound(); openWhatsApp()">
@@ -333,7 +332,7 @@
             overflow: hidden;
         }
 
-        /* Фон для модального окна - ваше изображение */
+        /* Фон для модального окна - ваше изображение БЕЗ ЗАТЕМНЕНИЯ */
         .modal-content::before {
             content: "";
             position: absolute;
@@ -348,22 +347,13 @@
             z-index: -1;
         }
 
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: -1;
-        }
-
         .modal-title {
             font-size: 24px;
             margin-bottom: 30px;
             color: white;
             text-align: center;
             position: relative;
+            text-shadow: 1px 1px 2px black, -1px -1px 2px black;
         }
 
         .modal-buttons {
@@ -390,6 +380,7 @@
             text-align: center;
             position: relative;
             backdrop-filter: blur(0px);
+            text-shadow: 1px 1px 2px black, -1px -1px 2px black;
         }
 
         .modal-button:hover {
@@ -413,6 +404,7 @@
             align-items: center;
             justify-content: center;
             z-index: 10;
+            text-shadow: 1px 1px 2px black, -1px -1px 2px black;
         }
 
         .close-modal:hover {
