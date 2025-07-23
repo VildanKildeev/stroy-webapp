@@ -149,7 +149,7 @@
                 <button class="modal-button" onclick="playSound(); openWhatsApp()">
                     ОНЛАЙН ЗАЯВКА
                 </button>
-                <button class="modal-button" onclick="playSound(); openWhatsAppCall()">
+                <button class="modal-button" onclick="playSound(); callPhone()">
                     ПОЗВОНИТЬ ПО ТЕЛЕФОНУ
                 </button>
             </div>
@@ -214,23 +214,24 @@
             closeMasterModal();
         }
 
-        // Новая функция: открытие WhatsApp для звонка
-        function openWhatsAppCall() {
-            const phoneNumber = "79046660999";
-            const message = "Здравствуйте! Позвоните мне, пожалуйста.";
-            const url = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(message);
+        // Универсальная функция набора номера телефона
+        function callPhone() {
+            const phoneNumber = "+79046660999";
             
-            // Попытка открыть в новом окне
-            const newWindow = window.open(url, '_blank');
+            // Метод 1: Попытка использовать window.location.href (работает на большинстве устройств)
+            try {
+                window.location.href = "tel:" + phoneNumber;
+                closeMasterModal();
+                return;
+            } catch (e) {
+                console.log("Метод 1 не сработал:", e);
+            }
             
-            // Если не удалось (блокировщик всплывающих окон), используем переход по ссылке
-            if (!newWindow) {
-                // Создаем временную ссылку
+            // Метод 2: Создание и клик по временной ссылке
+            try {
                 const link = document.createElement('a');
-                link.href = url;
-                link.target = '_blank';
+                link.href = "tel:" + phoneNumber;
                 link.style.display = 'none';
-                
                 document.body.appendChild(link);
                 
                 if (typeof link.click === 'function') {
@@ -244,9 +245,32 @@
                 setTimeout(() => {
                     document.body.removeChild(link);
                 }, 1000);
+                
+                closeMasterModal();
+                return;
+            } catch (e) {
+                console.log("Метод 2 не сработал:", e);
             }
             
-            // Закрываем модальное окно
+            // Метод 3: Альтернативный подход для мобильных устройств
+            try {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = "tel:" + phoneNumber;
+                document.body.appendChild(iframe);
+                
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
+                }, 1000);
+                
+                closeMasterModal();
+                return;
+            } catch (e) {
+                console.log("Метод 3 не сработал:", e);
+            }
+            
+            // Метод 4: Показ сообщения с номером телефона если ничего не сработало
+            alert("Пожалуйста, позвоните по номеру: " + phoneNumber);
             closeMasterModal();
         }
 
