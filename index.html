@@ -377,10 +377,9 @@
             // Текст изменен по вашему запросу
             const message = "Здравствуйте! Хочу оформить заявку!";
             const url = "https://wa.me/" + WHATSAPP_PHONE + "?text=" + encodeURIComponent(message);
-            
-            // Для iOS показываем модальное окно с инструкцией
+            // Для iOS используем специальный метод
             if (isIOS()) {
-                showIOSWhatsAppModal(url);
+                openUrlForIOS(url);
             } else if (window.Telegram?.WebApp?.openLink) {
                 window.Telegram.WebApp.openLink(url);
             } else {
@@ -388,50 +387,21 @@
             }
             closeMasterModal();
         }
-        
-        // Модальное окно для WhatsApp (iOS)
-        function showIOSWhatsAppModal(url) {
-            const modal = document.createElement('div');
-            modal.className = 'ios-modal';
-            modal.innerHTML = `
-                <div class="ios-modal-content">
-                    <h2>Открыть WhatsApp</h2>
-                    <p>Нажмите кнопку ниже, чтобы открыть чат в WhatsApp:</p>
-                    <button class="ios-modal-button" id="iosWhatsAppOpen">Открыть WhatsApp</button>
-                    <p>Если кнопка не работает, вручную откройте WhatsApp и введите номер: <strong>${WHATSAPP_PHONE}</strong></p>
-                    <button class="ios-modal-button close">Закрыть</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            // Обработчик для открытия WhatsApp
-            document.getElementById('iosWhatsAppOpen').addEventListener('click', () => {
-                // Попытка открыть через window.open
-                const newWindow = window.open(url, '_blank');
-                if (!newWindow) {
-                    // Если не удалось, создаем временную ссылку
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.target = '_blank';
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
-                document.body.removeChild(modal);
-            });
-            
-            // Обработчик для закрытия модалки
-            modal.querySelector('.close').addEventListener('click', () => {
-                document.body.removeChild(modal);
-            });
-        }
-        
         // Функция для определения iOS
         function isIOS() {
-            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            return /iPad|iPhone|iPod/.test(navigator.userAgent);
         }
-        
+        // Универсальный метод открытия URL на iOS
+        function openUrlForIOS(url) {
+            // Создаем временное окно для обхода ограничений iOS
+            const newWindow = window.open('', '_blank');
+            if (newWindow) {
+                newWindow.location.href = url;
+            } else {
+                // Если не удалось открыть окно, показываем инструкцию
+                showIOSUrlModal(url);
+            }
+        }
         // Функция для вызова телефона
         function callPhone() {
             // Для iOS всегда показываем модальное окно
@@ -452,7 +422,6 @@
             }
             closeMasterModal();
         }
-        
         // Модальное окно для телефона (iOS)
         function showIOSPhoneModal() {
             const modal = document.createElement('div');
@@ -508,19 +477,22 @@
                 if (message) alert(message);
             });
         }
-        // Анимация появления элементов
+        // Анимация появления элементов (ускорена на 50%)
         window.addEventListener('load', function() {
             const buttonContainer = document.getElementById('buttonContainer');
             const aboutLink = document.getElementById('aboutLink');
+            // Уменьшено с 1500ms до 750ms (на 50% быстрее)
             setTimeout(() => {
                 buttonContainer.style.opacity = 1;
                 buttonContainer.classList.add('animate__animated', 'animate__fadeInUp');
-                buttonContainer.style.animationDelay = '0.15s';
+                // Уменьшено с 0.15s до 0.075s (на 50% быстрее)
+                buttonContainer.style.animationDelay = '0.075s';
+                // Уменьшено с 250ms до 125ms (на 50% быстрее)
                 setTimeout(() => {
                     aboutLink.style.opacity = 1;
                     aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
-                }, 250);
-            }, 1500);
+                }, 125);
+            }, 750); // Уменьшено с 1500ms до 750ms (на 50% быстрее)
             // Инициализация обработчиков
             init();
         });
