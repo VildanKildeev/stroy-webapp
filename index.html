@@ -19,7 +19,6 @@
             overflow: hidden;
             background: black;
         }
-
         .background-video {
             position: fixed;
             top: 0;
@@ -29,7 +28,6 @@
             object-fit: cover;
             z-index: -2;
         }
-
         .button-container {
             margin-top: 25vh;
             display: flex;
@@ -39,7 +37,6 @@
             opacity: 0;
             z-index: 10;
         }
-
         button {
             color: white;
             border: 2px solid white;
@@ -59,7 +56,6 @@
             position: relative;
             overflow: hidden;
         }
-
         button::before {
             content: "";
             position: absolute;
@@ -74,7 +70,6 @@
             border-radius: 10px;
             z-index: -1;
         }
-
         button::after {
             content: "";
             position: absolute;
@@ -87,18 +82,15 @@
             z-index: -1;
             pointer-events: none;
         }
-
         button span {
             position: relative;
             z-index: 2;
             text-shadow: 1px 1px 2px black;
         }
-
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
-
         .about-link {
             margin-top: 60px;
             font-size: 16px;
@@ -109,7 +101,6 @@
             opacity: 0;
             z-index: 10;
         }
-
         /* Стили модального окна */
         .modal {
             position: fixed;
@@ -127,12 +118,10 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
-
         .modal.active {
             opacity: 1;
             pointer-events: all;
         }
-
         .modal-content {
             background: transparent;
             border: 2px solid white;
@@ -148,7 +137,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .modal-content::before {
             content: "";
             position: absolute;
@@ -162,7 +150,6 @@
             background-repeat: no-repeat;
             z-index: -1;
         }
-
         .modal-title {
             font-size: 24px;
             margin-bottom: 30px;
@@ -171,7 +158,6 @@
             position: relative;
             text-shadow: 1px 1px 2px black;
         }
-
         .modal-buttons {
             display: flex;
             flex-direction: column;
@@ -180,7 +166,6 @@
             align-items: center;
             position: relative;
         }
-
         .modal-button {
             color: white;
             border: 2px solid white;
@@ -197,12 +182,10 @@
             position: relative;
             text-shadow: 1px 1px 2px black;
         }
-
         .modal-button:hover {
             background: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
         }
-
         .close-modal {
             position: absolute;
             top: 20px;
@@ -221,11 +204,9 @@
             z-index: 10;
             text-shadow: 1px 1px 2px black;
         }
-
         .close-modal:hover {
             background: rgba(255, 255, 255, 0.1);
         }
-
         /* Стили для iOS modal */
         .ios-modal {
             position: fixed;
@@ -243,7 +224,6 @@
             box-sizing: border-box;
             text-align: center;
         }
-
         .ios-modal-content {
             background: #1a1a1a;
             border-radius: 15px;
@@ -252,20 +232,17 @@
             width: 100%;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-
         .ios-modal h2 {
             color: white;
             font-size: 22px;
             margin-bottom: 20px;
         }
-
         .ios-modal p {
             color: #ddd;
             font-size: 18px;
             margin-bottom: 25px;
             line-height: 1.5;
         }
-
         .ios-modal-phone {
             font-size: 24px;
             font-weight: bold;
@@ -278,11 +255,9 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .ios-modal-phone:hover {
             background: rgba(52, 152, 219, 0.1);
         }
-
         .ios-modal-button {
             background: #3498db;
             color: white;
@@ -296,23 +271,18 @@
             max-width: 300px;
             transition: background 0.3s;
         }
-
         .ios-modal-button:hover {
             background: #2980b9;
         }
-
         .ios-modal-button.copy {
             background: #2ecc71;
         }
-
         .ios-modal-button.copy:hover {
             background: #27ae60;
         }
-
         .ios-modal-button.close {
             background: #e74c3c;
         }
-
         .ios-modal-button.close:hover {
             background: #c0392b;
         }
@@ -323,9 +293,7 @@
         <source src="background.mp4" type="video/mp4">
         Ваш браузер не поддерживает видео.
     </video>
-    
     <audio id="clickSound" src="click.mp3"></audio>
-    
     <div class="button-container" id="buttonContainer">
         <button style="background-image: url('btn-master.jpg');">
             <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
@@ -337,9 +305,7 @@
             <span>СПЕЦТЕХНИКА В АРЕНДУ</span>
         </button>
     </div>
-    
     <div class="about-link" id="aboutLink">О нас</div>
-    
     <div class="modal" id="masterModal">
         <button class="close-modal">×</button>
         <div class="modal-content">
@@ -354,14 +320,11 @@
             </div>
         </div>
     </div>
-
     <script>
         // Константы для номеров телефонов
         const WHATSAPP_PHONE = "79046660999";
         const CALL_PHONE = "+79046660999";
-        
         const clickSound = document.getElementById('clickSound');
-        
         // Инициализация обработчиков событий
         function init() {
             // Основные кнопки
@@ -369,65 +332,55 @@
                 playSound();
                 openMasterModal();
             });
-            
             document.querySelector('.button-container button:nth-child(2)').addEventListener('click', () => {
                 playSound();
                 sendRequest('shop');
             });
-            
             document.querySelector('.button-container button:nth-child(3)').addEventListener('click', () => {
                 playSound();
                 sendRequest('machinery');
             });
-            
             // Кнопки модального окна
             document.getElementById('whatsappButton').addEventListener('click', () => {
                 playSound();
                 openWhatsApp();
             });
-            
             document.getElementById('callButton').addEventListener('click', () => {
                 playSound();
                 callPhone();
             });
-            
             // Закрытие модального окна
             document.querySelector('.close-modal').addEventListener('click', () => {
                 playSound();
                 closeMasterModal();
             });
-            
             // Ссылка "О нас"
             document.getElementById('aboutLink').addEventListener('click', () => {
                 playSound();
                 sendRequest('about');
             });
         }
-        
         function playSound() {
             if (clickSound) {
                 clickSound.currentTime = 0;
                 clickSound.play().catch(e => console.log("Звук не воспроизведён"));
             }
         }
-
         function openMasterModal() {
             document.getElementById('masterModal').classList.add('active');
         }
-
         function closeMasterModal() {
             document.getElementById('masterModal').classList.remove('active');
         }
-
         // ОБНОВЛЕННЫЙ ТЕКСТ ДЛЯ WHATSAPP
         function openWhatsApp() {
             // Текст изменен по вашему запросу
             const message = "Здравствуйте! Хочу оформить заявку!";
             const url = "https://wa.me/" + WHATSAPP_PHONE + "?text=" + encodeURIComponent(message);
             
-            // Для iOS используем специальный метод
+            // Для iOS показываем модальное окно с инструкцией
             if (isIOS()) {
-                openUrlForIOS(url);
+                showIOSWhatsAppModal(url);
             } else if (window.Telegram?.WebApp?.openLink) {
                 window.Telegram.WebApp.openLink(url);
             } else {
@@ -435,24 +388,50 @@
             }
             closeMasterModal();
         }
-
+        
+        // Модальное окно для WhatsApp (iOS)
+        function showIOSWhatsAppModal(url) {
+            const modal = document.createElement('div');
+            modal.className = 'ios-modal';
+            modal.innerHTML = `
+                <div class="ios-modal-content">
+                    <h2>Открыть WhatsApp</h2>
+                    <p>Нажмите кнопку ниже, чтобы открыть чат в WhatsApp:</p>
+                    <button class="ios-modal-button" id="iosWhatsAppOpen">Открыть WhatsApp</button>
+                    <p>Если кнопка не работает, вручную откройте WhatsApp и введите номер: <strong>${WHATSAPP_PHONE}</strong></p>
+                    <button class="ios-modal-button close">Закрыть</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Обработчик для открытия WhatsApp
+            document.getElementById('iosWhatsAppOpen').addEventListener('click', () => {
+                // Попытка открыть через window.open
+                const newWindow = window.open(url, '_blank');
+                if (!newWindow) {
+                    // Если не удалось, создаем временную ссылку
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.target = '_blank';
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+                document.body.removeChild(modal);
+            });
+            
+            // Обработчик для закрытия модалки
+            modal.querySelector('.close').addEventListener('click', () => {
+                document.body.removeChild(modal);
+            });
+        }
+        
         // Функция для определения iOS
         function isIOS() {
-            return /iPad|iPhone|iPod/.test(navigator.userAgent);
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         }
-
-        // Универсальный метод открытия URL на iOS
-        function openUrlForIOS(url) {
-            // Создаем временное окно для обхода ограничений iOS
-            const newWindow = window.open('', '_blank');
-            if (newWindow) {
-                newWindow.location.href = url;
-            } else {
-                // Если не удалось открыть окно, показываем инструкцию
-                showIOSUrlModal(url);
-            }
-        }
-
+        
         // Функция для вызова телефона
         function callPhone() {
             // Для iOS всегда показываем модальное окно
@@ -473,7 +452,7 @@
             }
             closeMasterModal();
         }
-
+        
         // Модальное окно для телефона (iOS)
         function showIOSPhoneModal() {
             const modal = document.createElement('div');
@@ -488,19 +467,15 @@
                     <button class="ios-modal-button close">Закрыть</button>
                 </div>
             `;
-            
             document.body.appendChild(modal);
-            
             // Обработчик для копирования номера
             document.getElementById('iosCopyButton').addEventListener('click', () => {
                 copyToClipboard(CALL_PHONE, "Номер скопирован!");
             });
-            
             // Обработчик для закрытия модалки
             modal.querySelector('.close').addEventListener('click', () => {
                 document.body.removeChild(modal);
             });
-            
             // Обработчик клика по номеру телефона
             document.getElementById('iosPhoneNumber').addEventListener('click', () => {
                 // Попытка позвонить через стандартный метод
@@ -517,7 +492,6 @@
                 document.body.removeChild(modal);
             });
         }
-
         // Функция копирования в буфер обмена
         function copyToClipboard(text, message) {
             navigator.clipboard.writeText(text).then(() => {
@@ -534,37 +508,30 @@
                 if (message) alert(message);
             });
         }
-
         // Анимация появления элементов
         window.addEventListener('load', function() {
             const buttonContainer = document.getElementById('buttonContainer');
             const aboutLink = document.getElementById('aboutLink');
-
             setTimeout(() => {
                 buttonContainer.style.opacity = 1;
                 buttonContainer.classList.add('animate__animated', 'animate__fadeInUp');
                 buttonContainer.style.animationDelay = '0.15s';
-
                 setTimeout(() => {
                     aboutLink.style.opacity = 1;
                     aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
                 }, 250);
             }, 1500);
-            
             // Инициализация обработчиков
             init();
         });
-
         function sendRequest(action) {
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
             const data = { action, user };
-
             if (window.Telegram?.WebApp?.sendData) {
                 window.Telegram.WebApp.sendData(JSON.stringify(data));
                 window.Telegram.WebApp.close();
             }
         }
-
         // Инициализация Telegram WebApp
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.ready();
