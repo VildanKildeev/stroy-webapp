@@ -353,7 +353,6 @@
         Ваш браузер не поддерживает видео.
     </video>
     <audio id="clickSound" src="click.mp3"></audio>
-    
     <!-- Стартовый экран -->
     <div class="start-screen" id="startScreen">
         <div class="start-content">
@@ -367,19 +366,20 @@
             </button>
         </div>
     </div>
-    
     <div class="button-container" id="buttonContainer">
-        <button style="background-image: url('btn-master.jpg');">
+        <button style="background-image: url('btn-master.jpg');" id="masterButton">
             <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
         </button>
-        <button style="background-image: url('btn-shop.jpg');">
+        <button style="background-image: url('btn-shop.jpg');" id="shopButton">
             <span>ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ (онлайн заказ)</span>
         </button>
-        <button style="background-image: url('btn-machinery.jpg');">
+        <button style="background-image: url('btn-machinery.jpg');" id="machineryButton">
             <span>СПЕЦТЕХНИКА В АРЕНДУ</span>
         </button>
     </div>
     <div class="about-link" id="aboutLink">О нас</div>
+    
+    <!-- Модальное окно для мастера -->
     <div class="modal" id="masterModal">
         <button class="close-modal">×</button>
         <div class="modal-content">
@@ -394,10 +394,29 @@
             </div>
         </div>
     </div>
+    
+    <!-- Модальное окно для интернет магазина (копия) -->
+    <div class="modal" id="shopModal">
+        <button class="close-modal">×</button>
+        <div class="modal-content">
+            <div class="modal-title">ИНТЕРНЕТ МАГАЗИН</div>
+            <div class="modal-buttons">
+                <button class="modal-button" id="shopWhatsAppButton">
+                    ОНЛАЙН ЗАЯВКА
+                </button>
+                <button class="modal-button" id="shopCallButton">
+                    ПОЗВОНИТЬ ПО ТЕЛЕФОНУ
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // Константы для номеров телефонов
-        const WHATSAPP_PHONE = "79046660999";
-        const CALL_PHONE = "+79046660999";
+        const WHATSAPP_PHONE_MASTER = "79046660999";
+        const CALL_PHONE_MASTER = "+79046660999";
+        const WHATSAPP_PHONE_SHOP = "79625590099"; // Новый номер для магазина
+        const CALL_PHONE_SHOP = "+79625590099";   // Новый номер для магазина
         const clickSound = document.getElementById('clickSound');
         
         // Инициализация обработчиков событий
@@ -410,32 +429,47 @@
             });
             
             // Основные кнопки
-            document.querySelector('.button-container button:nth-child(1)').addEventListener('click', () => {
+            document.getElementById('masterButton').addEventListener('click', () => {
                 playSound();
                 openMasterModal();
             });
-            document.querySelector('.button-container button:nth-child(2)').addEventListener('click', () => {
+            document.getElementById('shopButton').addEventListener('click', () => {
                 playSound();
-                sendRequest('shop');
+                openShopModal(); // Открываем модальное окно для магазина
             });
-            document.querySelector('.button-container button:nth-child(3)').addEventListener('click', () => {
+            document.getElementById('machineryButton').addEventListener('click', () => {
                 playSound();
                 sendRequest('machinery');
             });
-            // Кнопки модального окна
+            
+            // Кнопки модального окна мастера
             document.getElementById('whatsappButton').addEventListener('click', () => {
                 playSound();
-                openWhatsApp();
+                openWhatsAppMaster();
             });
             document.getElementById('callButton').addEventListener('click', () => {
                 playSound();
-                callPhone();
+                callPhoneMaster();
             });
-            // Закрытие модального окна
-            document.querySelector('.close-modal').addEventListener('click', () => {
+            
+            // Кнопки модального окна магазина (копия функционала)
+            document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
                 playSound();
-                closeMasterModal();
+                openWhatsAppShop(); // Используем функцию для магазина
             });
+            document.getElementById('shopCallButton').addEventListener('click', () => {
+                playSound();
+                callPhoneShop(); // Используем функцию для магазина
+            });
+            
+            // Закрытие модальных окон
+            document.querySelectorAll('.close-modal').forEach(button => {
+                button.addEventListener('click', () => {
+                    playSound();
+                    closeAllModals();
+                });
+            });
+            
             // Ссылка "О нас"
             document.getElementById('aboutLink').addEventListener('click', () => {
                 playSound();
@@ -454,15 +488,19 @@
             document.getElementById('masterModal').classList.add('active');
         }
         
-        function closeMasterModal() {
+        function openShopModal() {
+            document.getElementById('shopModal').classList.add('active');
+        }
+        
+        function closeAllModals() {
             document.getElementById('masterModal').classList.remove('active');
+            document.getElementById('shopModal').classList.remove('active');
         }
         
         // Показать основной контент
         function showMainContent() {
             const buttonContainer = document.getElementById('buttonContainer');
             const aboutLink = document.getElementById('aboutLink');
-            
             setTimeout(() => {
                 buttonContainer.style.opacity = 1;
                 buttonContainer.classList.add('animate__animated', 'animate__fadeInUp');
@@ -474,12 +512,10 @@
             }, 300);
         }
         
-        // ОБНОВЛЕННЫЙ ТЕКСТ ДЛЯ WHATSAPP
-        function openWhatsApp() {
-            // Текст изменен по вашему запросу
+        // Функции для мастера
+        function openWhatsAppMaster() {
             const message = "Здравствуйте! Хочу оформить заявку!";
-            const url = "https://wa.me/" + WHATSAPP_PHONE + "?text=" + encodeURIComponent(message);
-            // Для iOS используем специальный метод
+            const url = "https://wa.me/" + WHATSAPP_PHONE_MASTER + "?text=" + encodeURIComponent(message);
             if (isIOS()) {
                 openUrlForIOS(url);
             } else if (window.Telegram?.WebApp?.openLink) {
@@ -487,7 +523,57 @@
             } else {
                 window.open(url, '_blank');
             }
-            closeMasterModal();
+            closeAllModals();
+        }
+        
+        function callPhoneMaster() {
+            if (isIOS()) {
+                showIOSPhoneModal(CALL_PHONE_MASTER);
+            } else {
+                try {
+                    const link = document.createElement('a');
+                    link.href = 'tel:' + encodeURIComponent(CALL_PHONE_MASTER);
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => document.body.removeChild(link), 100);
+                } catch (e) {
+                    alert("Пожалуйста, позвоните по номеру: " + CALL_PHONE_MASTER);
+                }
+            }
+            closeAllModals();
+        }
+        
+        // Функции для интернет магазина (с новыми номерами)
+        function openWhatsAppShop() {
+            const message = "Здравствуйте! Хочу оформить заказ в интернет-магазине!";
+            const url = "https://wa.me/" + WHATSAPP_PHONE_SHOP + "?text=" + encodeURIComponent(message);
+            if (isIOS()) {
+                openUrlForIOS(url);
+            } else if (window.Telegram?.WebApp?.openLink) {
+                window.Telegram.WebApp.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+            closeAllModals();
+        }
+        
+        function callPhoneShop() {
+            if (isIOS()) {
+                showIOSPhoneModal(CALL_PHONE_SHOP);
+            } else {
+                try {
+                    const link = document.createElement('a');
+                    link.href = 'tel:' + encodeURIComponent(CALL_PHONE_SHOP);
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => document.body.removeChild(link), 100);
+                } catch (e) {
+                    alert("Пожалуйста, позвоните по номеру: " + CALL_PHONE_SHOP);
+                }
+            }
+            closeAllModals();
         }
         
         // Функция для определения iOS
@@ -507,62 +593,46 @@
             }
         }
         
-        // Функция для вызова телефона
-        function callPhone() {
-            // Для iOS всегда показываем модальное окно
-            if (isIOS()) {
-                showIOSPhoneModal();
-            } else {
-                // Для Android и других платформ
-                try {
-                    const link = document.createElement('a');
-                    link.href = 'tel:' + encodeURIComponent(CALL_PHONE);
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-                    setTimeout(() => document.body.removeChild(link), 100);
-                } catch (e) {
-                    alert("Пожалуйста, позвоните по номеру: " + CALL_PHONE);
-                }
-            }
-            closeMasterModal();
-        }
-        
-        // Модальное окно для телефона (iOS)
-        function showIOSPhoneModal() {
+        // Модальное окно для телефона (iOS) - обновлено для работы с разными номерами
+        function showIOSPhoneModal(phoneNumber) {
             const modal = document.createElement('div');
             modal.className = 'ios-modal';
             modal.innerHTML = `
                 <div class="ios-modal-content">
                     <h2>Позвоните нам</h2>
                     <p>Нажмите на номер телефона ниже, чтобы позвонить:</p>
-                    <div class="ios-modal-phone" id="iosPhoneNumber">${CALL_PHONE}</div>
+                    <div class="ios-modal-phone" data-phone="${phoneNumber}">${phoneNumber}</div>
                     <p>Или скопируйте номер для использования вручную</p>
-                    <button class="ios-modal-button copy" id="iosCopyButton">Скопировать номер</button>
+                    <button class="ios-modal-button copy" data-phone="${phoneNumber}">Скопировать номер</button>
                     <button class="ios-modal-button close">Закрыть</button>
                 </div>
             `;
             document.body.appendChild(modal);
+            
             // Обработчик для копирования номера
-            document.getElementById('iosCopyButton').addEventListener('click', () => {
-                copyToClipboard(CALL_PHONE, "Номер скопирован!");
+            modal.querySelector('.copy').addEventListener('click', (e) => {
+                const phone = e.target.getAttribute('data-phone');
+                copyToClipboard(phone, "Номер скопирован!");
             });
+            
             // Обработчик для закрытия модалки
             modal.querySelector('.close').addEventListener('click', () => {
                 document.body.removeChild(modal);
             });
+            
             // Обработчик клика по номеру телефона
-            document.getElementById('iosPhoneNumber').addEventListener('click', () => {
+            modal.querySelector('.ios-modal-phone').addEventListener('click', (e) => {
+                const phone = e.target.getAttribute('data-phone');
                 // Попытка позвонить через стандартный метод
                 try {
                     const link = document.createElement('a');
-                    link.href = 'tel:' + encodeURIComponent(CALL_PHONE);
+                    link.href = 'tel:' + encodeURIComponent(phone);
                     link.style.display = 'none';
                     document.body.appendChild(link);
                     link.click();
                     setTimeout(() => document.body.removeChild(link), 100);
-                } catch (e) {
-                    console.error('Call failed', e);
+                } catch (error) {
+                    console.error('Call failed', error);
                 }
                 document.body.removeChild(modal);
             });
