@@ -151,13 +151,13 @@
         }
         /* Уникальные фоны для каждого модального окна */
         .master-modal-content::before {
-            background-image: url('modal-background.jpg'); /* Фон для первого окна */
+            background-image: url('modal-background.jpg');
         }
         .shop-modal-content::before {
-            background-image: url('modal-shop.jpg'); /* Фон для второго окна */
+            background-image: url('modal-shop.jpg');
         }
         .machinery-modal-content::before {
-            background-image: url('modal-machinery.jpg'); /* Фон для третьего окна */
+            background-image: url('modal-machinery.jpg');
         }
         .modal-title {
             font-size: 24px;
@@ -367,7 +367,7 @@
         <div class="start-content">
             <h1 class="start-title">Добро пожаловать!</h1>
             <p class="start-message">
-                Добро пожаловать в наше приложение! Здесь вы можете сделать заказ,
+                Добро пожаловать в наше приложение! Здесь вы можете сделать заказ, 
                 вызвать мастера или арендовать спецтехнику. Начните прямо сейчас!
             </p>
             <button class="start-button" id="openAppButton">
@@ -388,39 +388,39 @@
     </div>
     <div class="about-link" id="aboutLink">О нас</div>
 
-    <!-- Модальное окно для мастера (первое) -->
+    <!-- Модальное окно для мастера -->
     <div class="modal" id="masterModal">
         <button class="close-modal">×</button>
         <div class="modal-content master-modal-content">
             <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
             <div class="modal-buttons">
-                <button class="modal-button" id="whatsappButton">
+                <button class="modal-button" id="masterWhatsAppButton">
                     ОНЛАЙН ЗАЯВКА
                 </button>
-                <button class="modal-button" id="callButton">
+                <button class="modal-button" id="masterCallButton">
                     ПОЗВОНИТЬ ПО ТЕЛЕФОНУ
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно для интернет магазина (второе) -->
+    <!-- Модальное окно для интернет магазина -->
     <div class="modal" id="shopModal">
         <button class="close-modal">×</button>
         <div class="modal-content shop-modal-content">
             <div class="modal-title">ИНТЕРНЕТ МАГАЗИН</div>
             <div class="modal-buttons">
                 <button class="modal-button" id="shopWhatsAppButton">
-                    КУПИТЬ ЧЕРЕЗ ЧАТ
+                    ОНЛАЙН ЗАЯВКА
                 </button>
                 <button class="modal-button" id="shopCallButton">
-                    СОБРАТЬ КОРЗИНУ ПО ТЕЛЕФОНУ
+                    ПОЗВОНИТЬ ПО ТЕЛЕФОНУ
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно для спецтехники (третье) -->
+    <!-- Модальное окно для спецтехники -->
     <div class="modal" id="machineryModal">
         <button class="close-modal">×</button>
         <div class="modal-content machinery-modal-content">
@@ -440,8 +440,8 @@
         // Константы для номеров телефонов
         const WHATSAPP_PHONE_MASTER = "79046660999";
         const CALL_PHONE_MASTER = "+79046660999";
-        const WHATSAPP_PHONE_SHOP = "79625590099";
-        const CALL_PHONE_SHOP = "+79625590099";
+        const WHATSAPP_PHONE_SHOP = "79539991666";
+        const CALL_PHONE_SHOP = "+79539991666";
         const WHATSAPP_PHONE_MACHINERY = "79046661000";
         const CALL_PHONE_MACHINERY = "+79046661000";
         const clickSound = document.getElementById('clickSound');
@@ -462,24 +462,24 @@
             });
             document.getElementById('shopButton').addEventListener('click', () => {
                 playSound();
-                openShopModal(); // Открываем второе модальное окно
+                openShopModal();
             });
             document.getElementById('machineryButton').addEventListener('click', () => {
                 playSound();
-                openMachineryModal(); // Открываем третье модальное окно
+                openMachineryModal();
             });
 
-            // Кнопки модального окна мастера (первое)
-            document.getElementById('whatsappButton').addEventListener('click', () => {
+            // Кнопки модального окна мастера
+            document.getElementById('masterWhatsAppButton').addEventListener('click', () => {
                 playSound();
                 openWhatsAppMaster();
             });
-            document.getElementById('callButton').addEventListener('click', () => {
+            document.getElementById('masterCallButton').addEventListener('click', () => {
                 playSound();
                 callPhoneMaster();
             });
 
-            // Кнопки модального окна магазина (второе)
+            // Кнопки модального окна магазина
             document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
                 playSound();
                 openWhatsAppShop();
@@ -489,7 +489,7 @@
                 callPhoneShop();
             });
 
-            // Кнопки модального окна спецтехники (третье)
+            // Кнопки модального окна спецтехники
             document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
                 playSound();
                 openWhatsAppMachinery();
@@ -558,9 +558,7 @@
         function openWhatsAppMaster() {
             const message = "Здравствуйте! Хочу оформить заявку!";
             const url = "https://wa.me/" + WHATSAPP_PHONE_MASTER + "?text=" + encodeURIComponent(message);
-            if (isIOS()) {
-                openUrlForIOS(url);
-            } else if (window.Telegram?.WebApp?.openLink) {
+            if (window.Telegram?.WebApp?.openLink) {
                 window.Telegram.WebApp.openLink(url);
             } else {
                 window.open(url, '_blank');
@@ -590,9 +588,7 @@
         function openWhatsAppShop() {
             const message = "Здравствуйте! Хочу сделать заказ в интернет-магазине!";
             const url = "https://wa.me/" + WHATSAPP_PHONE_SHOP + "?text=" + encodeURIComponent(message);
-            if (isIOS()) {
-                openUrlForIOS(url);
-            } else if (window.Telegram?.WebApp?.openLink) {
+            if (window.Telegram?.WebApp?.openLink) {
                 window.Telegram.WebApp.openLink(url);
             } else {
                 window.open(url, '_blank');
@@ -622,9 +618,7 @@
         function openWhatsAppMachinery() {
             const message = "Здравствуйте! Хочу арендовать спецтехнику!";
             const url = "https://wa.me/" + WHATSAPP_PHONE_MACHINERY + "?text=" + encodeURIComponent(message);
-            if (isIOS()) {
-                openUrlForIOS(url);
-            } else if (window.Telegram?.WebApp?.openLink) {
+            if (window.Telegram?.WebApp?.openLink) {
                 window.Telegram.WebApp.openLink(url);
             } else {
                 window.open(url, '_blank');
@@ -653,16 +647,6 @@
         // Функция для определения iOS
         function isIOS() {
             return /iPad|iPhone|iPod/.test(navigator.userAgent);
-        }
-
-        // Универсальный метод открытия URL на iOS
-        function openUrlForIOS(url) {
-            const newWindow = window.open('', '_blank');
-            if (newWindow) {
-                newWindow.location.href = url;
-            } else {
-                showIOSUrlModal(url);
-            }
         }
 
         // Модальное окно для телефона (iOS) - универсальное
