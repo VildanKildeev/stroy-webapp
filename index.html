@@ -137,6 +137,7 @@
             position: relative;
             overflow: hidden;
         }
+        /* Общий стиль фона для модальных окон */
         .modal-content::before {
             content: "";
             position: absolute;
@@ -144,11 +145,17 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('modal-background.jpg');
             background-position: center;
             background-size: cover;
             background-repeat: no-repeat;
             z-index: -1;
+        }
+        /* Уникальные фоны для каждого модального окна */
+        .master-modal-content::before {
+            background-image: url('modal-master.jpg');
+        }
+        .shop-modal-content::before {
+            background-image: url('modal-shop.jpg');
         }
         .modal-title {
             font-size: 24px;
@@ -382,7 +389,7 @@
     <!-- Модальное окно для мастера -->
     <div class="modal" id="masterModal">
         <button class="close-modal">×</button>
-        <div class="modal-content">
+        <div class="modal-content master-modal-content">
             <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
             <div class="modal-buttons">
                 <button class="modal-button" id="whatsappButton">
@@ -395,10 +402,10 @@
         </div>
     </div>
     
-    <!-- Модальное окно для интернет магазина (копия) -->
+    <!-- Модальное окно для интернет магазина -->
     <div class="modal" id="shopModal">
         <button class="close-modal">×</button>
-        <div class="modal-content">
+        <div class="modal-content shop-modal-content">
             <div class="modal-title">ИНТЕРНЕТ МАГАЗИН</div>
             <div class="modal-buttons">
                 <button class="modal-button" id="shopWhatsAppButton">
@@ -415,8 +422,8 @@
         // Константы для номеров телефонов
         const WHATSAPP_PHONE_MASTER = "79046660999";
         const CALL_PHONE_MASTER = "+79046660999";
-        const WHATSAPP_PHONE_SHOP = "79625590099"; // Новый номер для магазина
-        const CALL_PHONE_SHOP = "+79625590099";   // Новый номер для магазина
+        const WHATSAPP_PHONE_SHOP = "79625590099";
+        const CALL_PHONE_SHOP = "+79625590099";
         const clickSound = document.getElementById('clickSound');
         
         // Инициализация обработчиков событий
@@ -435,7 +442,7 @@
             });
             document.getElementById('shopButton').addEventListener('click', () => {
                 playSound();
-                openShopModal(); // Открываем модальное окно для магазина
+                openShopModal();
             });
             document.getElementById('machineryButton').addEventListener('click', () => {
                 playSound();
@@ -452,14 +459,14 @@
                 callPhoneMaster();
             });
             
-            // Кнопки модального окна магазина (копия функционала)
+            // Кнопки модального окна магазина
             document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
                 playSound();
-                openWhatsAppShop(); // Используем функцию для магазина
+                openWhatsAppShop();
             });
             document.getElementById('shopCallButton').addEventListener('click', () => {
                 playSound();
-                callPhoneShop(); // Используем функцию для магазина
+                callPhoneShop();
             });
             
             // Закрытие модальных окон
@@ -544,7 +551,7 @@
             closeAllModals();
         }
         
-        // Функции для интернет магазина (с новыми номерами)
+        // Функции для интернет магазина
         function openWhatsAppShop() {
             const message = "Здравствуйте! Хочу оформить заказ в интернет-магазине!";
             const url = "https://wa.me/" + WHATSAPP_PHONE_SHOP + "?text=" + encodeURIComponent(message);
@@ -593,7 +600,7 @@
             }
         }
         
-        // Модальное окно для телефона (iOS) - обновлено для работы с разными номерами
+        // Модальное окно для телефона (iOS)
         function showIOSPhoneModal(phoneNumber) {
             const modal = document.createElement('div');
             modal.className = 'ios-modal';
