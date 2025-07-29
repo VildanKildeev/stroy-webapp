@@ -94,6 +94,10 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
+        button:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
         .about-link {
             margin-top: 60px;
             font-size: 16px;
@@ -104,6 +108,10 @@
             opacity: 0;
             z-index: 10;
             touch-action: manipulation;
+            transition: transform 0.2s ease;
+        }
+        .about-link:active {
+            transform: scale(0.95);
         }
         .modal {
             position: fixed;
@@ -139,6 +147,13 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
         }
         .modal-content::before {
             content: "";
@@ -204,6 +219,9 @@
             background: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
         }
+        .modal-button:active {
+            transform: scale(0.98);
+        }
         .close-modal {
             position: absolute;
             top: 20px;
@@ -221,9 +239,14 @@
             justify-content: center;
             z-index: 10;
             text-shadow: 1px 1px 2px black;
+            transition: all 0.2s ease;
         }
         .close-modal:hover {
             background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+        .close-modal:active {
+            transform: scale(0.9) rotate(90deg);
         }
         .start-screen {
             position: fixed;
@@ -240,6 +263,8 @@
             padding: 20px;
             box-sizing: border-box;
             text-align: center;
+            opacity: 1;
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
         .start-content {
             background: rgba(30, 30, 30, 0.9);
@@ -250,6 +275,13 @@
             width: 100%;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
+            transform: scale(0.95);
+            opacity: 0;
+            animation: scaleIn 0.8s forwards 0.3s;
+        }
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
         .start-title {
             color: white;
@@ -278,11 +310,21 @@
             transition: all 0.3s ease;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             touch-action: manipulation;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeUpIn 0.8s forwards 0.8s;
+        }
+        @keyframes fadeUpIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .start-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: linear-gradient(45deg, #2980b9, #3498db);
+        }
+        .start-button:active {
+            transform: scale(0.98) translateY(-3px);
         }
         .phone-number {
             font-size: 24px;
@@ -291,6 +333,19 @@
             background: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
             word-break: break-all;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .fade-out {
+            animation: fadeOut 0.6s forwards;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
         }
     </style>
 </head>
@@ -427,15 +482,17 @@
         
         const clickSound = document.getElementById('clickSound');
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const isWebView = window.Telegram?.WebApp?.isWebView;
         let currentPhoneNumber = '';
 
         // Инициализация
         function init() {
             document.getElementById('openAppButton').addEventListener('click', () => {
                 playSound();
-                document.getElementById('startScreen').style.display = 'none';
-                showMainContent();
+                document.getElementById('startScreen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('startScreen').style.display = 'none';
+                    showMainContent();
+                }, 500);
             });
 
             // Мастер
@@ -472,7 +529,9 @@
             document.getElementById('tradeMaterialsButton').addEventListener('click', () => {
                 playSound();
                 closeAllModals();
-                openTradeModal();
+                setTimeout(() => {
+                    openTradeModal();
+                }, 300);
             });
             document.getElementById('buyMaterialsButton').addEventListener('click', () => {
                 playSound();
@@ -534,26 +593,30 @@
             playSound();
             currentPhoneNumber = phoneNumber;
             
-            if (isIOS && isWebView) {
+            // Всегда показываем модалку для iOS
+            if (isIOS) {
                 showPhoneModal(phoneNumber);
-                attemptPhoneCall(phoneNumber);
-            } else {
-                attemptPhoneCall(phoneNumber);
             }
+            
+            // Пробуем сделать звонок
+            attemptPhoneCall(phoneNumber);
         }
 
         function attemptPhoneCall(phoneNumber) {
+            // Создаем временную ссылку для звонка
             const telLink = document.createElement('a');
             telLink.href = `tel:${phoneNumber}`;
             telLink.style.display = 'none';
             document.body.appendChild(telLink);
             
             try {
+                // Пытаемся инициировать звонок
                 telLink.click();
             } catch (e) {
                 console.error("Ошибка при звонке:", e);
             }
             
+            // Убираем ссылку через 1 секунду
             setTimeout(() => {
                 document.body.removeChild(telLink);
             }, 1000);
@@ -562,10 +625,28 @@
         // Универсальное открытие WhatsApp
         function openWhatsApp(phone, message) {
             const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            
+            // 1. Попытка открыть в новом окне
             const newWindow = window.open(url, '_blank');
             
+            // 2. Если не получилось, пробуем другой метод
             if (!newWindow || newWindow.closed) {
-                window.location.href = url;
+                // Создаем временную ссылку
+                const waLink = document.createElement('a');
+                waLink.href = url;
+                waLink.style.display = 'none';
+                document.body.appendChild(waLink);
+                
+                try {
+                    waLink.click();
+                } catch (e) {
+                    console.error("Ошибка при открытии WhatsApp:", e);
+                }
+                
+                // Убираем ссылку через 1 секунду
+                setTimeout(() => {
+                    document.body.removeChild(waLink);
+                }, 1000);
             }
         }
 
@@ -581,6 +662,7 @@
                 document.execCommand('copy');
             } catch (err) {
                 console.error('Ошибка копирования:', err);
+                prompt('Скопируйте номер вручную:', text);
             }
             
             document.body.removeChild(textArea);
@@ -590,7 +672,9 @@
         function showPhoneModal(phoneNumber) {
             closeAllModals();
             document.getElementById('displayPhoneNumber').textContent = formatPhone(phoneNumber);
-            document.getElementById('phoneModal').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('phoneModal').classList.add('active');
+            }, 50);
         }
 
         // Форматирование номера для отображения
@@ -607,33 +691,42 @@
 
         function openMasterModal() {
             closeAllModals();
-            document.getElementById('masterModal').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('masterModal').classList.add('active');
+            }, 50);
         }
         function openShopModal() {
             closeAllModals();
-            document.getElementById('shopModal').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('shopModal').classList.add('active');
+            }, 50);
         }
         function openMachineryModal() {
             closeAllModals();
-            document.getElementById('machineryModal').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('machineryModal').classList.add('active');
+            }, 50);
         }
         function openTradeModal() {
             closeAllModals();
-            document.getElementById('tradeModal').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('tradeModal').classList.add('active');
+            }, 50);
         }
         function closeAllModals() {
-            document.getElementById('masterModal').classList.remove('active');
-            document.getElementById('shopModal').classList.remove('active');
-            document.getElementById('machineryModal').classList.remove('active');
-            document.getElementById('tradeModal').classList.remove('active');
-            document.getElementById('phoneModal').classList.remove('active');
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.classList.remove('active');
+            });
         }
         function showMainContent() {
             const buttonContainer = document.getElementById('buttonContainer');
             const aboutLink = document.getElementById('aboutLink');
+            
             setTimeout(() => {
                 buttonContainer.style.opacity = 1;
                 buttonContainer.classList.add('animate__animated', 'animate__fadeInUp');
+                
                 setTimeout(() => {
                     aboutLink.style.opacity = 1;
                     aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
@@ -644,13 +737,18 @@
         // Загрузка
         window.addEventListener('load', () => {
             init();
+            
+            // Автоматическое воспроизведение видео для iOS
+            document.getElementById('bgVideo').play().catch(e => {
+                console.log("Автовоспроизведение видео заблокировано:", e);
+            });
+            
+            // Инициализация Telegram WebApp
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+            }
         });
-
-        // Telegram WebApp
-        if (window.Telegram?.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-        }
     </script>
 </body>
 </html>
