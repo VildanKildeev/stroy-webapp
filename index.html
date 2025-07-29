@@ -19,7 +19,7 @@
             overflow: hidden;
             background: black;
             -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation; /* Ускоряет клики на iOS */
+            touch-action: manipulation;
         }
         .background-video {
             position: fixed;
@@ -57,7 +57,7 @@
             background-size: cover;
             position: relative;
             overflow: hidden;
-            touch-action: manipulation; /* Важно для iOS */
+            touch-action: manipulation;
         }
         button::before {
             content: "";
@@ -105,7 +105,6 @@
             z-index: 10;
             touch-action: manipulation;
         }
-        /* Стили модального окна */
         .modal {
             position: fixed;
             top: 0;
@@ -165,6 +164,9 @@
         .trade-modal-content::before {
             background-image: url('modal-shop.jpg');
         }
+        .phone-modal-content {
+            background: rgba(40, 40, 40, 0.95);
+        }
         .modal-title {
             font-size: 24px;
             margin-bottom: 30px;
@@ -223,7 +225,6 @@
         .close-modal:hover {
             background: rgba(255, 255, 255, 0.1);
         }
-        /* Стили для стартового экрана */
         .start-screen {
             position: fixed;
             top: 0;
@@ -283,6 +284,14 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: linear-gradient(45deg, #2980b9, #3498db);
         }
+        .phone-number {
+            font-size: 24px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
@@ -291,6 +300,7 @@
         Ваш браузер не поддерживает видео.
     </video>
     <audio id="clickSound" src="click.mp3"></audio>
+    
     <!-- Стартовый экран -->
     <div class="start-screen" id="startScreen">
         <div class="start-content">
@@ -304,6 +314,7 @@
             </button>
         </div>
     </div>
+    
     <!-- Основные кнопки -->
     <div class="button-container" id="buttonContainer">
         <button style="background-image: url('btn-master.jpg');" id="masterButton">
@@ -317,6 +328,7 @@
         </button>
     </div>
     <div class="about-link" id="aboutLink">О нас</div>
+    
     <!-- Модальное окно: Вызвать мастера -->
     <div class="modal" id="masterModal">
         <button class="close-modal">×</button>
@@ -332,6 +344,7 @@
             </div>
         </div>
     </div>
+    
     <!-- Модальное окно: Интернет магазин -->
     <div class="modal" id="shopModal">
         <button class="close-modal">×</button>
@@ -350,6 +363,7 @@
             </div>
         </div>
     </div>
+    
     <!-- Модальное окно: Купи / Продай остатки -->
     <div class="modal" id="tradeModal">
         <button class="close-modal">×</button>
@@ -365,6 +379,7 @@
             </div>
         </div>
     </div>
+    
     <!-- Модальное окно: Спецтехника -->
     <div class="modal" id="machineryModal">
         <button class="close-modal">×</button>
@@ -380,6 +395,24 @@
             </div>
         </div>
     </div>
+    
+    <!-- Модальное окно для телефона (iOS) -->
+    <div class="modal" id="phoneModal">
+        <button class="close-modal">×</button>
+        <div class="modal-content phone-modal-content">
+            <div class="modal-title">Позвонить</div>
+            <div class="phone-number" id="displayPhoneNumber"></div>
+            <div class="modal-buttons">
+                <button class="modal-button" id="directCallButton">
+                    ПОПРОБОВАТЬ ЕЩЕ РАЗ
+                </button>
+                <button class="modal-button" id="copyPhoneButton">
+                    СКОПИРОВАТЬ НОМЕР
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // Константы
         const WHATSAPP_PHONE_MASTER = "79046660999";
@@ -389,9 +422,13 @@
         const WHATSAPP_PHONE_MACHINERY = "79046661000";
         const CALL_PHONE_MACHINERY = "+79046661000";
         const WHATSAPP_PHONE_SELL = "79539991666";
-        const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6"; // "О нас"
-        const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy"; // "Купить"
+        const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
+        const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
+        
         const clickSound = document.getElementById('clickSound');
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        const isWebView = window.Telegram?.WebApp?.isWebView;
+        let currentPhoneNumber = '';
 
         // Инициализация
         function init() {
@@ -409,11 +446,10 @@
             document.getElementById('masterWhatsAppButton').addEventListener('click', () => {
                 playSound();
                 const message = "Здравствуйте! Хочу оформить заявку на выполнение строительных работ!";
-                window.open(`https://wa.me/${WHATSAPP_PHONE_MASTER}?text=${encodeURIComponent(message)}`, '_blank');
+                openWhatsApp(WHATSAPP_PHONE_MASTER, message);
                 closeAllModals();
             });
             document.getElementById('masterCallButton').addEventListener('click', () => {
-                playSound();
                 callPhone(CALL_PHONE_MASTER);
             });
 
@@ -425,11 +461,10 @@
             document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
                 playSound();
                 const message = "Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой";
-                window.open(`https://wa.me/${WHATSAPP_PHONE_SHOP}?text=${encodeURIComponent(message)}`, '_blank');
+                openWhatsApp(WHATSAPP_PHONE_SHOP, message);
                 closeAllModals();
             });
             document.getElementById('shopCallButton').addEventListener('click', () => {
-                playSound();
                 callPhone(CALL_PHONE_SHOP);
             });
 
@@ -447,7 +482,7 @@
             document.getElementById('sellMaterialsButton').addEventListener('click', () => {
                 playSound();
                 const message = "Здравствуйте я хочу продать лишние остатки строительных материалов! ВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.";
-                window.open(`https://wa.me/${WHATSAPP_PHONE_SELL}?text=${encodeURIComponent(message)}`, '_blank');
+                openWhatsApp(WHATSAPP_PHONE_SELL, message);
                 closeAllModals();
             });
 
@@ -459,11 +494,10 @@
             document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
                 playSound();
                 const message = "Здравствуйте! Хочу арендовать спецтехнику!";
-                window.open(`https://wa.me/${WHATSAPP_PHONE_MACHINERY}?text=${encodeURIComponent(message)}`, '_blank');
+                openWhatsApp(WHATSAPP_PHONE_MACHINERY, message);
                 closeAllModals();
             });
             document.getElementById('machineryCallButton').addEventListener('click', () => {
-                playSound();
                 callPhone(CALL_PHONE_MACHINERY);
             });
 
@@ -480,17 +514,88 @@
                 playSound();
                 window.open(TELEGRAM_CHANNEL_URL, '_blank');
             });
+            
+            // Обработчики для модального окна телефона
+            document.getElementById('directCallButton').addEventListener('click', () => {
+                playSound();
+                attemptPhoneCall(currentPhoneNumber);
+            });
+            
+            document.getElementById('copyPhoneButton').addEventListener('click', () => {
+                playSound();
+                copyToClipboard(currentPhoneNumber);
+                alert('Номер скопирован! Вставьте его в приложении телефона');
+                closeAllModals();
+            });
         }
 
-        // Универсальная функция для звонка (работает на iPhone)
+        // Универсальная функция для звонка
         function callPhone(phoneNumber) {
-            // Используем window.open вместо location.href
+            playSound();
+            currentPhoneNumber = phoneNumber;
+            
+            if (isIOS && isWebView) {
+                showPhoneModal(phoneNumber);
+                attemptPhoneCall(phoneNumber);
+            } else {
+                attemptPhoneCall(phoneNumber);
+            }
+        }
+
+        function attemptPhoneCall(phoneNumber) {
             const telLink = document.createElement('a');
             telLink.href = `tel:${phoneNumber}`;
             telLink.style.display = 'none';
             document.body.appendChild(telLink);
-            telLink.click();
-            document.body.removeChild(telLink);
+            
+            try {
+                telLink.click();
+            } catch (e) {
+                console.error("Ошибка при звонке:", e);
+            }
+            
+            setTimeout(() => {
+                document.body.removeChild(telLink);
+            }, 1000);
+        }
+
+        // Универсальное открытие WhatsApp
+        function openWhatsApp(phone, message) {
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            const newWindow = window.open(url, '_blank');
+            
+            if (!newWindow || newWindow.closed) {
+                window.location.href = url;
+            }
+        }
+
+        // Функция для копирования в буфер обмена
+        function copyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Ошибка копирования:', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Показ модального окна с номером телефона
+        function showPhoneModal(phoneNumber) {
+            closeAllModals();
+            document.getElementById('displayPhoneNumber').textContent = formatPhone(phoneNumber);
+            document.getElementById('phoneModal').classList.add('active');
+        }
+
+        // Форматирование номера для отображения
+        function formatPhone(phone) {
+            return phone.replace(/(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '+$1 ($2) $3-$4-$5');
         }
 
         function playSound() {
@@ -521,6 +626,7 @@
             document.getElementById('shopModal').classList.remove('active');
             document.getElementById('machineryModal').classList.remove('active');
             document.getElementById('tradeModal').classList.remove('active');
+            document.getElementById('phoneModal').classList.remove('active');
         }
         function showMainContent() {
             const buttonContainer = document.getElementById('buttonContainer');
