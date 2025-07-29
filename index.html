@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram Web App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
@@ -18,7 +18,6 @@
             color: white;
             overflow: hidden;
             background: black;
-            -webkit-tap-highlight-color: transparent;
         }
         .background-video {
             position: fixed;
@@ -150,17 +149,18 @@
             background-repeat: no-repeat;
             z-index: -1;
         }
+        /* Уникальные фоны для каждого модального окна */
         .master-modal-content::before {
-            background-image: url('modal-background.jpg');
+            background-image: url('modal-background.jpg'); /* Фон для первого окна */
         }
         .shop-modal-content::before {
-            background-image: url('modal-shop.jpg');
+            background-image: url('modal-shop.jpg'); /* Фон для второго окна */
         }
         .machinery-modal-content::before {
-            background-image: url('modal-machinery.jpg');
+            background-image: url('modal-machinery.jpg'); /* Фон для третьего окна */
         }
         .trade-modal-content::before {
-            background-image: url('modal-shop.jpg');
+            background-image: url('modal-shop.jpg'); /* Можно использовать тот же фон */
         }
         .modal-title {
             font-size: 24px;
@@ -286,7 +286,6 @@
         Ваш браузер не поддерживает видео.
     </video>
     <audio id="clickSound" src="click.mp3"></audio>
-
     <!-- Стартовый экран -->
     <div class="start-screen" id="startScreen">
         <div class="start-content">
@@ -300,7 +299,6 @@
             </button>
         </div>
     </div>
-
     <!-- Основные кнопки -->
     <div class="button-container" id="buttonContainer">
         <button style="background-image: url('btn-master.jpg');" id="masterButton">
@@ -313,9 +311,7 @@
             <span>СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ<br><small>(аренда / прокат)</small></span>
         </button>
     </div>
-
     <div class="about-link" id="aboutLink">О нас</div>
-
     <!-- Модальное окно: Вызвать мастера -->
     <div class="modal" id="masterModal">
         <button class="close-modal">×</button>
@@ -331,7 +327,6 @@
             </div>
         </div>
     </div>
-
     <!-- Модальное окно: Интернет магазин -->
     <div class="modal" id="shopModal">
         <button class="close-modal">×</button>
@@ -350,7 +345,6 @@
             </div>
         </div>
     </div>
-
     <!-- Модальное окно: Купи / Продай остатки -->
     <div class="modal" id="tradeModal">
         <button class="close-modal">×</button>
@@ -366,7 +360,6 @@
             </div>
         </div>
     </div>
-
     <!-- Модальное окно: Спецтехника -->
     <div class="modal" id="machineryModal">
         <button class="close-modal">×</button>
@@ -382,7 +375,6 @@
             </div>
         </div>
     </div>
-
     <script>
         // Константы
         const WHATSAPP_PHONE_MASTER = "79046660999";
@@ -472,7 +464,7 @@
                 closeAllModals();
             });
 
-            // Закрытие модалок
+            // Закрытие модальных окон
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', () => {
                     playSound();
@@ -480,7 +472,7 @@
                 });
             });
 
-            // О нас
+            // Ссылка "О нас"
             document.getElementById('aboutLink').addEventListener('click', () => {
                 playSound();
                 window.open(TELEGRAM_CHANNEL_URL, '_blank');
@@ -498,24 +490,29 @@
             closeAllModals();
             document.getElementById('masterModal').classList.add('active');
         }
+
         function openShopModal() {
             closeAllModals();
             document.getElementById('shopModal').classList.add('active');
         }
+
         function openMachineryModal() {
             closeAllModals();
             document.getElementById('machineryModal').classList.add('active');
         }
+
         function openTradeModal() {
             closeAllModals();
             document.getElementById('tradeModal').classList.add('active');
         }
+
         function closeAllModals() {
             document.getElementById('masterModal').classList.remove('active');
             document.getElementById('shopModal').classList.remove('active');
             document.getElementById('machineryModal').classList.remove('active');
             document.getElementById('tradeModal').classList.remove('active');
         }
+
         function showMainContent() {
             const buttonContainer = document.getElementById('buttonContainer');
             const aboutLink = document.getElementById('aboutLink');
