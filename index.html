@@ -368,7 +368,7 @@
             <h1 class="start-title">Добро пожаловать!</h1>
             <p class="start-message">
                 Добро пожаловать в наше приложение! Здесь вы можете сделать заказ,
-                вызвать мастера или арендовать спецтехнику. Начните прямо сейчас!
+                вызвать мастера или арендовать спецтехнику. Получить консультацию или проектную документацию и многое другое... Здесь всё про строительство! Начни прямо сейчас!
             </p>
             <button class="start-button" id="openAppButton">
                 ПОСТРОИТЬ!
@@ -377,22 +377,21 @@
     </div>
     <div class="button-container" id="buttonContainer">
         <button style="background-image: url('btn-master.jpg');" id="masterButton">
-            <span>ВЫЗВАТЬ МАСТЕРА (СДЕЛАТЬ ЗАЯВКУ)</span>
+            <span>НАНЯТЬ МАСТЕРА / НАЙТИ БРИГАДУ<br><small>(проверенные специалисты)</small></span>
         </button>
         <button style="background-image: url('btn-shop.jpg');" id="shopButton">
-            <span>ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ (онлайн заказ)</span>
+            <span>ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ<br><small>(новые и б/у, можно продать свои)</small></span>
         </button>
         <button style="background-image: url('btn-machinery.jpg');" id="machineryButton">
-            <span>СПЕЦТЕХНИКА В АРЕНДУ</span>
+            <span>СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ<br><small>(аренда / прокат)</small></span>
         </button>
     </div>
     <div class="about-link" id="aboutLink">О нас</div>
-
     <!-- Модальное окно для мастера -->
     <div class="modal" id="masterModal">
         <button class="close-modal">×</button>
         <div class="modal-content master-modal-content">
-            <div class="modal-title">ВЫЗВАТЬ МАСТЕРА</div>
+            <div class="modal-title">НАНЯТЬ МАСТЕРА / НАЙТИ БРИГАДУ</div>
             <div class="modal-buttons">
                 <button class="modal-button" id="masterWhatsAppButton">
                     ОНЛАЙН ЗАЯВКА
@@ -403,12 +402,11 @@
             </div>
         </div>
     </div>
-
     <!-- Модальное окно для интернет магазина -->
     <div class="modal" id="shopModal">
         <button class="close-modal">×</button>
         <div class="modal-content shop-modal-content">
-            <div class="modal-title">ИНТЕРНЕТ МАГАЗИН</div>
+            <div class="modal-title">ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ</div>
             <div class="modal-buttons">
                 <button class="modal-button" id="shopWhatsAppButton">
                     ОНЛАЙН ЗАЯВКА
@@ -419,12 +417,11 @@
             </div>
         </div>
     </div>
-
     <!-- Модальное окно для спецтехники -->
     <div class="modal" id="machineryModal">
         <button class="close-modal">×</button>
         <div class="modal-content machinery-modal-content">
-            <div class="modal-title">СПЕЦТЕХНИКА В АРЕНДУ</div>
+            <div class="modal-title">СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ</div>
             <div class="modal-buttons">
                 <button class="modal-button" id="machineryWhatsAppButton">
                     ОНЛАЙН ЗАЯВКА
@@ -435,7 +432,6 @@
             </div>
         </div>
     </div>
-
     <script>
         // Константы для номеров телефонов и ссылок
         const WHATSAPP_PHONE_MASTER = "79046660999";
@@ -446,7 +442,6 @@
         const CALL_PHONE_MACHINERY = "+79046661000";
         const ABOUT_LINK_URL = "https://t.me/+JNKZPQaVBGhlMzQ6"; // Ссылка "О нас"
         const clickSound = document.getElementById('clickSound');
-
         // Инициализация обработчиков событий
         function init() {
             // Кнопка открытия приложения
@@ -455,7 +450,6 @@
                 document.getElementById('startScreen').style.display = 'none';
                 showMainContent();
             });
-
             // Основные кнопки
             document.getElementById('masterButton').addEventListener('click', () => {
                 playSound();
@@ -469,7 +463,6 @@
                 playSound();
                 openMachineryModal();
             });
-
             // Кнопки модального окна мастера
             document.getElementById('masterWhatsAppButton').addEventListener('click', () => {
                 playSound();
@@ -479,7 +472,6 @@
                 playSound();
                 callPhoneMaster();
             });
-
             // Кнопки модального окна магазина
             document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
                 playSound();
@@ -489,7 +481,6 @@
                 playSound();
                 callPhoneShop();
             });
-
             // Кнопки модального окна спецтехники
             document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
                 playSound();
@@ -499,7 +490,6 @@
                 playSound();
                 callPhoneMachinery();
             });
-
             // Закрытие модальных окон
             document.querySelectorAll('.close-modal').forEach(button => {
                 button.addEventListener('click', () => {
@@ -507,7 +497,6 @@
                     closeAllModals();
                 });
             });
-
             // Ссылка "О нас" - исправленный обработчик
             document.getElementById('aboutLink').addEventListener('click', () => {
                 playSound();
@@ -515,32 +504,26 @@
                 window.location.href = ABOUT_LINK_URL;
             });
         }
-
         function playSound() {
             if (clickSound) {
                 clickSound.currentTime = 0;
                 clickSound.play().catch(e => console.log("Звук не воспроизведён"));
             }
         }
-
         function openMasterModal() {
             document.getElementById('masterModal').classList.add('active');
         }
-
         function openShopModal() {
             document.getElementById('shopModal').classList.add('active');
         }
-
         function openMachineryModal() {
             document.getElementById('machineryModal').classList.add('active');
         }
-
         function closeAllModals() {
             document.getElementById('masterModal').classList.remove('active');
             document.getElementById('shopModal').classList.remove('active');
             document.getElementById('machineryModal').classList.remove('active');
         }
-
         // Показать основной контент
         function showMainContent() {
             const buttonContainer = document.getElementById('buttonContainer');
@@ -555,66 +538,44 @@
                 }, 250);
             }, 300);
         }
-
         // --- Функции для первого модального окна (мастер) ---
         function openWhatsAppMaster() {
             const message = "Здравствуйте! Хочу оформить заявку!";
             const url = "https://wa.me/" + WHATSAPP_PHONE_MASTER + "?text=" + encodeURIComponent(message);
-            
-            // Используем window.location.href для прямого перехода (новый способ)
             window.location.href = url;
-            
-            // Альтернативно, можно использовать window.open в том же окне:
-            // window.open(url, '_self');
-            
             closeAllModals();
         }
-
         function callPhoneMaster() {
-            // Прямой переход по tel: ссылке
             window.location.href = 'tel:' + encodeURIComponent(CALL_PHONE_MASTER);
             closeAllModals();
         }
-
         // --- Функции для второго модального окна (магазин) ---
         function openWhatsAppShop() {
             const message = "Здравствуйте! Хочу сделать заказ в интернет-магазине!";
             const url = "https://wa.me/" + WHATSAPP_PHONE_SHOP + "?text=" + encodeURIComponent(message);
-            
-            // Используем window.location.href для прямого перехода
             window.location.href = url;
             closeAllModals();
         }
-
         function callPhoneShop() {
-            // Прямой переход по tel: ссылке
             window.location.href = 'tel:' + encodeURIComponent(CALL_PHONE_SHOP);
             closeAllModals();
         }
-
         // --- Функции для третьего модального окна (спецтехника) ---
         function openWhatsAppMachinery() {
             const message = "Здравствуйте! Хочу арендовать спецтехнику!";
             const url = "https://wa.me/" + WHATSAPP_PHONE_MACHINERY + "?text=" + encodeURIComponent(message);
-            
-            // Используем window.location.href для прямого перехода
             window.location.href = url;
             closeAllModals();
         }
-
         function callPhoneMachinery() {
-            // Прямой переход по tel: ссылке
             window.location.href = 'tel:' + encodeURIComponent(CALL_PHONE_MACHINERY);
             closeAllModals();
         }
-
-
         // Анимация появления элементов
         window.addEventListener('load', function () {
             // Инициализация обработчиков
             init();
         });
-
         function sendRequest(action) {
             const user = window.Telegram?.WebApp?.initDataUnsafe?.user || {};
             const data = { action, user };
@@ -623,7 +584,6 @@
                 window.Telegram.WebApp.close();
             }
         }
-
         // Инициализация Telegram WebApp
         if (window.Telegram?.WebApp) {
             window.Telegram.WebApp.ready();
