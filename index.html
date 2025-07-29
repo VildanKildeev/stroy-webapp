@@ -384,7 +384,7 @@
         const WHATSAPP_PHONE_MACHINERY = "79046661000";
         const CALL_PHONE_MACHINERY = "+79046661000";
         const WHATSAPP_PHONE_SELL = "79539991666"; // Продать остатки
-        const TELEGRAM_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
+        const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6"; // Исправлено: ссылка "О нас" теперь ведёт сюда
         const clickSound = document.getElementById('clickSound');
 
         // Инициализация
@@ -437,7 +437,7 @@
             });
             document.getElementById('buyMaterialsButton').addEventListener('click', () => {
                 playSound();
-                window.open(TELEGRAM_CHANNEL_URL, '_blank');
+                window.open("https://t.me/+ZWvnEf6UgzJhYWEy", '_blank');
                 closeAllModals();
             });
             document.getElementById('sellMaterialsButton').addEventListener('click', () => {
@@ -472,7 +472,7 @@
                 });
             });
 
-            // Ссылка "О нас"
+            // Ссылка "О нас" — исправлена на правильный канал
             document.getElementById('aboutLink').addEventListener('click', () => {
                 playSound();
                 window.open(TELEGRAM_CHANNEL_URL, '_blank');
