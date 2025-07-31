@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Нанять мастера</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: #f0f0f0;
+            color: #333;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #25D366;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        button.back {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛠️ Нанять мастера / Бригаду</h1>
+    <p>Выбран город: <strong id="cityDisplay">ваш город</strong></p>
+    <button onclick="sendWhatsApp()">Сделать заявку в WhatsApp</button>
+    <button class="back" onclick="window.history.back()">Назад</button>
+
+    <script>
+        // Получаем город из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const city = urlParams.get('city') || 'вашем городе';
+        document.getElementById('cityDisplay').textContent = city;
+
+        function sendWhatsApp() {
+            const message = `Здравствуйте! Хочу нанять мастера в ${city}!`;
+            window.open(`https://wa.me/79046660999?text=${encodeURIComponent(message)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
