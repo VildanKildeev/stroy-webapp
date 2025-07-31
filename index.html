@@ -292,22 +292,6 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: linear-gradient(45deg, #2980b9, #3498db);
         }
-        /* iOS Telegram предупреждение */
-        .ios-telegram-warning {
-            display: none;
-            background: rgba(200, 0, 0, 0.3);
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 14px;
-            text-align: center;
-        }
-        /* Временное поле для копирования */
-        #copyTemp {
-            position: absolute;
-            left: -9999px;
-            opacity: 0;
-        }
     </style>
 </head>
 <body>
@@ -316,8 +300,6 @@
         Ваш браузер не поддерживает видео.
     </video>
     <audio id="clickSound" src="click.mp3"></audio>
-    <!-- Временное поле для копирования -->
-    <input type="text" id="copyTemp">
 
     <!-- Стартовый экран -->
     <div class="start-screen" id="startScreen">
@@ -366,7 +348,7 @@
             <div class="modal-title">ИНТЕРНЕТ МАГАЗИН</div>
             <div class="modal-buttons">
                 <button class="modal-button" id="shopWhatsAppButton">СДЕЛАТЬ ОНЛАЙН ЗАЯВКУ</button>
-                <button class="modal-button" id="shopCallButton">ПОЗВОНИТЬ ПО ТЕЛЕФОНу</button>
+                <button class="modal-button" id="shopCallButton">ПОЗВОНИТЬ ПО ТЕЛЕФОНУ</button>
                 <button class="modal-button" id="tradeMaterialsButton">КУПИ / ПРОДАЙ ОСТАТКИ<br><small>НОВЫЕ И Б/У</small></button>
             </div>
         </div>
@@ -389,7 +371,7 @@
             <div class="modal-title">СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ</div>
             <div class="modal-buttons">
                 <button class="modal-button" id="machineryWhatsAppButton">АРЕНДОВАТЬ ОНЛАЙН</button>
-                <button class="modal-button" id="machineryCallButton">АРЕНДОВАТЬ ПО ТЕЛЕФОНу</button>
+                <button class="modal-button" id="machineryCallButton">АРЕНДОВАТЬ ПО ТЕЛЕФОНУ</button>
             </div>
         </div>
     </div>
@@ -400,13 +382,8 @@
         <div class="modal-content phone-modal-content">
             <div class="modal-title">Позвонить</div>
             <div class="phone-number" id="displayPhoneNumber"></div>
-            <!-- Предупреждение для iOS в Telegram -->
-            <div class="ios-telegram-warning" id="iosTelegramWarning">
-                В приложении Telegram для iOS звонки недоступны.<br>
-                Скопируйте номер и вставьте в приложение "Телефон"
-            </div>
             <div class="modal-buttons">
-                <button class="modal-button" id="directCallButton">ПОЗВОНИТЬ</button>
+                <button class="modal-button" id="directCallButton">ПОПРОБОВАТЬ ПОЗВОНИТЬ</button>
                 <button class="modal-button" id="copyPhoneButton">СКОПИРОВАТЬ НОМЕР</button>
             </div>
         </div>
@@ -427,14 +404,11 @@
         const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
         const clickSound = document.getElementById('clickSound');
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        const tg = window.Telegram?.WebApp;
         let currentPhoneNumber = '';
         let currentPage = 'main';
 
-        // Определение iOS в Telegram
-        const isTelegramIOS = isIOS && navigator.userAgent.includes('Telegram');
-
-        // Telegram WebApp
-        const tg = window.Telegram?.WebApp;
+        // Инициализация Telegram WebApp
         if (tg) {
             tg.ready();
             tg.expand();
@@ -452,35 +426,20 @@
         function callPhone(phoneNumber) {
             playSound();
             currentPhoneNumber = phoneNumber;
-            const formatted = formatPhone(phoneNumber);
-
-            // Показываем модалку
-            document.getElementById('displayPhoneNumber').textContent = formatted;
-            
-            // Показываем предупреждение для iOS в Telegram
-            document.getElementById('iosTelegramWarning').style.display = 
-                isTelegramIOS ? 'block' : 'none';
-            
+            document.getElementById('displayPhoneNumber').textContent = formatPhone(phoneNumber);
             closeAllModals();
             setTimeout(() => {
                 document.getElementById('phoneModal').classList.add('active');
             }, 100);
 
-            // Для всех случаев, кроме iOS в Telegram, пробуем автоматический звонок
-            if (!isTelegramIOS) {
-                setTimeout(() => {
-                    try {
-                        const a = document.createElement('a');
-                        a.href = `tel:${phoneNumber}`;
-                        a.style.display = 'none';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                    } catch (e) {
-                        console.log("Автозвонок не удался", e);
-                    }
-                }, 500);
-            }
+            // Через 500 мс пробуем открыть звонок
+            setTimeout(() => {
+                try {
+                    tg.openTelegramLink(`tg://call?number=${phoneNumber.replace(/\D/g, '')}`);
+                } catch (e) {
+                    console.log("Не удалось открыть звонок", e);
+                }
+            }, 500);
         }
 
         // Открытие WhatsApp
@@ -494,75 +453,22 @@
             closeAllModals();
         }
 
-        // Копирование номера (ИСПРАВЛЕННАЯ ФУНКЦИЯ)
+        // Копирование номера
         function copyToClipboard(text) {
             playSound();
-            
-            // Для Telegram используем встроенный метод
             if (tg) {
-                try {
-                    tg.writeText(text);
-                    alert('✅ Номер скопирован в буфер обмена!');
-                } catch (e) {
-                    console.error("Ошибка при копировании в Telegram:", e);
-                    alert('❌ Не удалось скопировать номер');
-                }
-                return;
+                tg.writeText(text);
+                alert('✅ Номер скопирован в буфер обмена!');
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                alert('✅ Номер скопирован!');
             }
-            
-            // Для iOS в WebView используем специальный метод
-            if (isIOS) {
-                copyForIOS(text);
-                return;
-            }
-            
-            // Стандартный метод для других платформ
-            try {
-                const tempInput = document.getElementById('copyTemp');
-                tempInput.value = text;
-                tempInput.select();
-                tempInput.setSelectionRange(0, 99999); // Для мобильных устройств
-                
-                const result = document.execCommand('copy');
-                if (result) {
-                    alert('✅ Номер скопирован!');
-                } else {
-                    throw new Error('Copy command failed');
-                }
-            } catch (err) {
-                console.error("Ошибка при копировании:", err);
-                alert('❌ Не удалось скопировать номер. Скопируйте его вручную.');
-            }
-        }
-
-        // Специальный метод копирования для iOS
-        function copyForIOS(text) {
-            try {
-                // Создаем временное поле
-                const tempInput = document.createElement('input');
-                tempInput.value = text;
-                tempInput.setAttribute('readonly', '');
-                tempInput.style.position = 'absolute';
-                tempInput.style.left = '-9999px';
-                document.body.appendChild(tempInput);
-                
-                // Выделяем текст
-                tempInput.select();
-                tempInput.setSelectionRange(0, 99999);
-                
-                // Копируем
-                const result = document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                
-                if (result) {
-                    alert('✅ Номер скопирован!');
-                } else {
-                    throw new Error('Copy command failed');
-                }
-            } catch (err) {
-                console.error("Ошибка при копировании на iOS:", err);
-                alert('❌ Не удалось скопировать номер. Скопируйте его вручную.');
-            }
+            closeAllModals();
         }
 
         // Форматирование номера
@@ -686,21 +592,12 @@
             // Fallback модалка
             document.getElementById('directCallButton').addEventListener('click', () => {
                 playSound();
-                if (isTelegramIOS) {
-                    // Для iOS в Telegram показываем инструкцию
-                    alert("Для звонка:\n1. Скопируйте номер\n2. Выйдите из Telegram\n3. Откройте приложение 'Телефон'\n4. Вставьте номер и нажмите вызов");
-                } else {
-                    // Для других устройств пробуем позвонить
-                    const a = document.createElement('a');
-                    a.href = `tel:${currentPhoneNumber}`;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                try {
+                    tg.openTelegramLink(`tg://call?number=${currentPhoneNumber.replace(/\D/g, '')}`);
+                } catch (e) {
+                    alert('Не удалось начать звонок. Попробуйте вручную.');
                 }
             });
-            
-            // ИСПРАВЛЕННАЯ КНОПКА КОПИРОВАНИЯ
             document.getElementById('copyPhoneButton').addEventListener('click', () => {
                 copyToClipboard(currentPhoneNumber);
             });
