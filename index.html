@@ -406,9 +406,9 @@
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
         let currentPhoneNumber = '';
         let currentPage = 'main';
-        const tg = window.Telegram?.WebApp;
 
-        // Инициализация Telegram WebApp
+        // Telegram WebApp
+        const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
             tg.expand();
@@ -428,14 +428,14 @@
             currentPhoneNumber = phoneNumber;
             const formatted = formatPhone(phoneNumber);
 
-            // Показываем номер
+            // Показываем модалку
             document.getElementById('displayPhoneNumber').textContent = formatted;
             closeAllModals();
             setTimeout(() => {
                 document.getElementById('phoneModal').classList.add('active');
             }, 100);
 
-            // Пробуем позвонить
+            // Через 500 мс пробуем позвонить
             setTimeout(() => {
                 try {
                     const a = document.createElement('a');
@@ -463,9 +463,10 @@
 
         // Копирование номера
         function copyToClipboard(text) {
+            playSound();
             if (tg) {
                 tg.writeText(text);
-                alert('✅ Номер скопирован!');
+                alert('✅ Номер скопирован в буфер обмена!');
             } else {
                 const ta = document.createElement('textarea');
                 ta.value = text;
@@ -607,7 +608,6 @@
                 document.body.removeChild(a);
             });
             document.getElementById('copyPhoneButton').addEventListener('click', () => {
-                playSound();
                 copyToClipboard(currentPhoneNumber);
             });
 
