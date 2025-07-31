@@ -233,6 +233,16 @@
             border-radius: 10px;
             word-break: break-all;
         }
+        /* Предупреждение для iOS в Telegram */
+        .ios-telegram-warning {
+            display: none;
+            background: rgba(200, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
         /* Стартовый экран */
         .start-screen {
             position: fixed;
@@ -291,16 +301,6 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: linear-gradient(45deg, #2980b9, #3498db);
-        }
-        /* iOS Telegram предупреждение */
-        .ios-telegram-warning {
-            display: none;
-            background: rgba(200, 0, 0, 0.3);
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 14px;
-            text-align: center;
         }
     </style>
 </head>
@@ -392,7 +392,6 @@
         <div class="modal-content phone-modal-content">
             <div class="modal-title">Позвонить</div>
             <div class="phone-number" id="displayPhoneNumber"></div>
-            <!-- Предупреждение для iOS в Telegram -->
             <div class="ios-telegram-warning" id="iosTelegramWarning">
                 В приложении Telegram для iOS звонки недоступны.<br>
                 Скопируйте номер и вставьте в приложение "Телефон"
@@ -419,11 +418,9 @@
         const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
         const clickSound = document.getElementById('clickSound');
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        const isTelegramIOS = isIOS && navigator.userAgent.includes('Telegram');
         let currentPhoneNumber = '';
         let currentPage = 'main';
-
-        // Определение iOS в Telegram
-        const isTelegramIOS = isIOS && navigator.userAgent.includes('Telegram');
 
         // Telegram WebApp
         const tg = window.Telegram?.WebApp;
@@ -446,30 +443,25 @@
             currentPhoneNumber = phoneNumber;
             const formatted = formatPhone(phoneNumber);
 
-            // Показываем модалку
+            // Показываем номер
             document.getElementById('displayPhoneNumber').textContent = formatted;
-            
-            // Показываем предупреждение для iOS в Telegram
-            document.getElementById('iosTelegramWarning').style.display = 
-                isTelegramIOS ? 'block' : 'none';
-            
+
+            // Показываем предупреждение только для iOS в Telegram
+            const warning = document.getElementById('iosTelegramWarning');
+            warning.style.display = isTelegramIOS ? 'block' : 'none';
+
             closeAllModals();
             setTimeout(() => {
                 document.getElementById('phoneModal').classList.add('active');
             }, 100);
 
-            // Для всех случаев, кроме iOS в Telegram, пробуем автоматический звонок
+            // Попытка автоматического звонка для не-iOS
             if (!isTelegramIOS) {
                 setTimeout(() => {
                     try {
-                        const a = document.createElement('a');
-                        a.href = `tel:${phoneNumber}`;
-                        a.style.display = 'none';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
+                        tg.openTelegramLink(`tg://call?number=${phoneNumber.replace('+', '')}`);
                     } catch (e) {
-                        console.log("Автозвонок не удался", e);
+                        console.log("Не удалось открыть звонок", e);
                     }
                 }, 500);
             }
@@ -586,7 +578,7 @@
                 openWhatsApp(WHATSAPP_PHONE_MASTER, "Здравствуйте! Хочу оформить заявку на выполнение строительных работ!");
             });
             document.getElementById('masterCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_MASTER);
+                callPhone(CALL_PHONE_MASTER.replace('+', ''));
             });
 
             // Магазин
@@ -595,7 +587,7 @@
                 openWhatsApp(WHATSAPP_PHONE_SHOP, "Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой");
             });
             document.getElementById('shopCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_SHOP);
+                callPhone(CALL_PHONE_SHOP.replace('+', ''));
             });
             document.getElementById('tradeMaterialsButton').addEventListener('click', openTradeModal);
 
@@ -619,23 +611,20 @@
                 openWhatsApp(WHATSAPP_PHONE_MACHINERY, "Здравствуйте! Хочу арендовать спецтехнику!");
             });
             document.getElementById('machineryCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_MACHINERY);
+                callPhone(CALL_PHONE_MACHINERY.replace('+', ''));
             });
 
             // Fallback модалка
             document.getElementById('directCallButton').addEventListener('click', () => {
                 playSound();
                 if (isTelegramIOS) {
-                    // Для iOS в Telegram показываем инструкцию
                     alert("Для звонка:\n1. Скопируйте номер\n2. Выйдите из Telegram\n3. Откройте приложение 'Телефон'\n4. Вставьте номер и нажмите вызов");
                 } else {
-                    // Для других устройств пробуем позвонить
-                    const a = document.createElement('a');
-                    a.href = `tel:${currentPhoneNumber}`;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    try {
+                        tg.openTelegramLink(`tg://call?number=${currentPhoneNumber.replace('+', '')}`);
+                    } catch (e) {
+                        console.log("Не удалось открыть звонок", e);
+                    }
                 }
             });
             document.getElementById('copyPhoneButton').addEventListener('click', () => {
