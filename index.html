@@ -409,14 +409,13 @@
             <div class="modal-buttons">
                 <button class="modal-button" id="directCallButton">ПОЗВОНИТЬ</button>
                 <button class="modal-button" id="copyPhoneButton">СКОПИРОВАТЬ НОМЕР</button>
-                <button class="modal-button" id="addContactButton" style="display: none;">ДОБАВИТЬ КОНТАКТ</button>
             </div>
             <div class="instructions" id="iosInstructions" style="display: none;">
-                <strong>Инструкция для iOS:</strong><br>
-                1. Нажмите "Добавить контакт"<br>
-                2. Сохраните контакт<br>
+                <strong>Инструкция для iOS в Telegram:</strong><br>
+                1. Скопируйте номер<br>
+                2. Выйдите из Telegram<br>
                 3. Откройте приложение "Телефон"<br>
-                4. Найдите контакт и нажмите вызов
+                4. Вставьте номер и нажмите вызов
             </div>
         </div>
     </div>
@@ -440,7 +439,10 @@
         let currentPage = 'main';
 
         // Определение iOS в Telegram
-        const isTelegramIOS = isIOS && (navigator.userAgent.includes('Telegram') || window.Telegram);
+        const isTelegramIOS = isIOS && navigator.userAgent.includes('Telegram');
+        
+        // Определение Safari на iOS
+        const isSafariIOS = isIOS && /Safari/.test(navigator.userAgent) && !/CriOS/.test(navigator.userAgent);
 
         // Telegram WebApp
         const tg = window.Telegram?.WebApp;
@@ -466,15 +468,11 @@
             // Показываем модалку
             document.getElementById('displayPhoneNumber').textContent = formatted;
             
-            // Показываем предупреждение для iOS в Telegram
+            // Показываем предупреждение только для Telegram на iOS
             document.getElementById('iosTelegramWarning').style.display = 
                 isTelegramIOS ? 'block' : 'none';
-            
-            // Показываем кнопку "Добавить контакт" для iOS в Telegram
-            document.getElementById('addContactButton').style.display = 
-                isTelegramIOS ? 'block' : 'none';
                 
-            // Показываем инструкцию для iOS в Telegram
+            // Показываем инструкцию только для Telegram на iOS
             document.getElementById('iosInstructions').style.display = 
                 isTelegramIOS ? 'block' : 'none';
             
@@ -483,7 +481,7 @@
                 document.getElementById('phoneModal').classList.add('active');
             }, 100);
 
-            // Для всех случаев, кроме iOS в Telegram, пробуем автоматический звонок
+            // Для Safari на iOS и других платформ (кроме Telegram на iOS) пробуем автоматический звонок
             if (!isTelegramIOS) {
                 setTimeout(() => {
                     try {
@@ -511,19 +509,19 @@
             closeAllModals();
         }
 
-        // Копирование номера (ИСПРАВЛЕННАЯ ФУНКЦИЯ)
+        // Копирование номера
         async function copyToClipboard(text) {
             playSound();
             
             try {
-                // Пробуем использовать современный API
+                // Используем современный API для копирования
                 if (navigator.clipboard) {
                     await navigator.clipboard.writeText(text);
                     alert('✅ Номер скопирован!');
                     return;
                 }
                 
-                // Для старых браузеров
+                // Фолбэк для старых браузеров
                 const tempInput = document.createElement('textarea');
                 tempInput.value = text;
                 tempInput.style.position = 'fixed';
@@ -663,37 +661,24 @@
                 callPhone(CALL_PHONE_MACHINERY);
             });
 
-            // Fallback модалка
+            // Кнопка "Позвонить"
             document.getElementById('directCallButton').addEventListener('click', () => {
                 playSound();
-                if (isTelegramIOS) {
-                    // Для iOS в Telegram показываем инструкцию
-                    alert("Для звонка:\n1. Скопируйте номер\n2. Выйдите из Telegram\n3. Откройте приложение 'Телефон'\n4. Вставьте номер и нажмите вызов");
-                } else {
-                    // Для других устройств пробуем позвонить
+                try {
                     const a = document.createElement('a');
                     a.href = `tel:${currentPhoneNumber}`;
                     a.style.display = 'none';
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
+                } catch (e) {
+                    console.log("Звонок не удался", e);
                 }
             });
             
-            // ИСПРАВЛЕННАЯ КНОПКА КОПИРОВАНИЯ
+            // Кнопка "Скопировать номер"
             document.getElementById('copyPhoneButton').addEventListener('click', () => {
                 copyToClipboard(currentPhoneNumber);
-            });
-            
-            // Кнопка добавления контакта (для iOS Telegram)
-            document.getElementById('addContactButton').addEventListener('click', () => {
-                playSound();
-                const name = "СтройПоКарману";
-                const encodedName = encodeURIComponent(name);
-                const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;TYPE=VOICE:${currentPhoneNumber}\nEND:VCARD`;
-                const encodedVCard = encodeURIComponent(vcard);
-                
-                window.open(`https://api.whatsapp.com/send?phone=${currentPhoneNumber}&text=${encodedVCard}`, '_blank');
             });
 
             // Закрытие модалок
