@@ -292,6 +292,16 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: linear-gradient(45deg, #2980b9, #3498db);
         }
+        /* iOS Telegram предупреждение */
+        .ios-telegram-warning {
+            display: none;
+            background: rgba(200, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -382,8 +392,13 @@
         <div class="modal-content phone-modal-content">
             <div class="modal-title">Позвонить</div>
             <div class="phone-number" id="displayPhoneNumber"></div>
+            <!-- Предупреждение для iOS в Telegram -->
+            <div class="ios-telegram-warning" id="iosTelegramWarning">
+                В приложении Telegram для iOS звонки недоступны.<br>
+                Скопируйте номер и вставьте в приложение "Телефон"
+            </div>
             <div class="modal-buttons">
-                <button class="modal-button" id="directCallButton">ПОПРОБОВАТЬ ЕЩЕ РАЗ</button>
+                <button class="modal-button" id="directCallButton">ПОЗВОНИТЬ</button>
                 <button class="modal-button" id="copyPhoneButton">СКОПИРОВАТЬ НОМЕР</button>
             </div>
         </div>
@@ -406,6 +421,9 @@
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
         let currentPhoneNumber = '';
         let currentPage = 'main';
+
+        // Определение iOS в Telegram
+        const isTelegramIOS = isIOS && navigator.userAgent.includes('Telegram');
 
         // Telegram WebApp
         const tg = window.Telegram?.WebApp;
@@ -430,24 +448,31 @@
 
             // Показываем модалку
             document.getElementById('displayPhoneNumber').textContent = formatted;
+            
+            // Показываем предупреждение для iOS в Telegram
+            document.getElementById('iosTelegramWarning').style.display = 
+                isTelegramIOS ? 'block' : 'none';
+            
             closeAllModals();
             setTimeout(() => {
                 document.getElementById('phoneModal').classList.add('active');
             }, 100);
 
-            // Через 500 мс пробуем позвонить
-            setTimeout(() => {
-                try {
-                    const a = document.createElement('a');
-                    a.href = `tel:${phoneNumber}`;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                } catch (e) {
-                    console.log("Звонок не удался", e);
-                }
-            }, 500);
+            // Для всех случаев, кроме iOS в Telegram, пробуем автоматический звонок
+            if (!isTelegramIOS) {
+                setTimeout(() => {
+                    try {
+                        const a = document.createElement('a');
+                        a.href = `tel:${phoneNumber}`;
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    } catch (e) {
+                        console.log("Автозвонок не удался", e);
+                    }
+                }, 500);
+            }
         }
 
         // Открытие WhatsApp
@@ -600,12 +625,18 @@
             // Fallback модалка
             document.getElementById('directCallButton').addEventListener('click', () => {
                 playSound();
-                const a = document.createElement('a');
-                a.href = `tel:${currentPhoneNumber}`;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                if (isTelegramIOS) {
+                    // Для iOS в Telegram показываем инструкцию
+                    alert("Для звонка:\n1. Скопируйте номер\n2. Выйдите из Telegram\n3. Откройте приложение 'Телефон'\n4. Вставьте номер и нажмите вызов");
+                } else {
+                    // Для других устройств пробуем позвонить
+                    const a = document.createElement('a');
+                    a.href = `tel:${currentPhoneNumber}`;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
             });
             document.getElementById('copyPhoneButton').addEventListener('click', () => {
                 copyToClipboard(currentPhoneNumber);
