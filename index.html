@@ -36,9 +36,7 @@
             flex-direction: column;
             align-items: center;
             gap: 20px;
-            opacity: 0;
             z-index: 10;
-            transition: opacity 0.5s ease;
         }
         button {
             color: white;
@@ -102,11 +100,8 @@
             text-decoration: underline;
             cursor: pointer;
             text-align: center;
-            opacity: 0;
             z-index: 10;
-            transition: opacity 0.5s ease;
         }
-
         /* Модальные окна */
         .modal {
             position: fixed;
@@ -221,7 +216,6 @@
             border-radius: 10px;
             word-break: break-all;
         }
-
         /* Стартовый экран */
         .start-screen {
             position: fixed;
@@ -281,7 +275,6 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: linear-gradient(45deg, #2980b9, #3498db);
         }
-
         /* === Модалка выбора города === */
         #cityModal .modal-content {
             background: rgba(30, 30, 30, 0.95);
@@ -322,7 +315,6 @@
         .remember-checkbox input {
             margin-right: 6px;
         }
-
         /* Кнопка "Сменить город" */
         #changeCityButton {
             margin-left: 10px;
@@ -332,7 +324,6 @@
             cursor: pointer;
             vertical-align: middle;
         }
-
         /* === Модалка категорий мастера === */
         #categoriesModal .modal-content {
             background: rgba(30, 30, 30, 0.95);
@@ -365,7 +356,6 @@
             color: #ccc;
             line-height: 1.5;
         }
-
         /* === Поиск в категориях === */
         #categoriesSearchContainer {
             position: relative;
@@ -385,7 +375,6 @@
         #categoriesSearch::placeholder {
             color: #999;
         }
-
         /* === Фиксированная кнопка внизу === */
         .phone-bottom-btn {
             position: fixed;
@@ -411,6 +400,17 @@
             text-decoration: none;
             display: block;
         }
+        /* Отображение города */
+        .selected-city {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
     </style>
 </head>
 <body>
@@ -420,7 +420,7 @@
     </video>
     <audio id="clickSound" src="click.mp3"></audio>
 
-    <!-- Стартовый экран -->
+    <!-- Стартовый экран (только для первоначального входа) -->
     <div class="start-screen" id="startScreen">
         <div class="start-content">
             <h1 class="start-title">Добро пожаловать!</h1>
@@ -432,13 +432,13 @@
         </div>
     </div>
 
-    <!-- Отображение города -->
-    <div class="selected-city" id="selectedCityDisplay" style="margin-top: 15px; font-size: 18px; color: #fff; text-align: center; opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center;">
+    <!-- Отображение выбранного города -->
+    <div class="selected-city" id="selectedCityDisplay" style="display: none;">
         <span>Город: <span id="cityName">Не выбран</span></span>
         <span id="changeCityButton">Сменить</span>
     </div>
 
-    <!-- Основные кнопки -->
+    <!-- Основные кнопки (всегда видны) -->
     <div class="button-container" id="buttonContainer">
         <button style="background-image: url('btn-master.jpg');" id="masterButton">
             <span>НАНЯТЬ МАСТЕРА ИЛИ БРИГАДУ<br><small>(проверенные специалисты)</small></span>
@@ -450,9 +450,27 @@
             <span>СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ<br><small>(аренда / прокат)</small></span>
         </button>
     </div>
+
     <div class="about-link" id="aboutLink">О нас</div>
 
-    <!-- === Модалка выбора услуги === -->
+    <!-- Модалка выбора города -->
+    <div class="modal" id="cityModal">
+        <button class="close-modal">×</button>
+        <div class="modal-content">
+            <div class="modal-title">ВЫБЕРИТЕ ГОРОД</div>
+            <div id="citySearchContainer">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="citySearch" placeholder="Поиск города...">
+            </div>
+            <div id="cityList"></div>
+            <div class="remember-checkbox">
+                <input type="checkbox" id="rememberCityCheckbox" checked>
+                <label for="rememberCityCheckbox">Запомнить город</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка выбора услуги -->
     <div class="modal" id="categoriesModal">
         <button class="close-modal">×</button>
         <div class="modal-content">
@@ -461,9 +479,7 @@
                 <span class="search-icon">🔍</span>
                 <input type="text" id="categoriesSearch" placeholder="Поиск услуги...">
             </div>
-            <div id="categoriesList" style="width: 100%; max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
-                <!-- Категории загрузятся здесь -->
-            </div>
+            <div id="categoriesList" style="width: 100%; max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;"></div>
         </div>
     </div>
 
@@ -479,6 +495,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal" id="tradeModal">
         <button class="close-modal">×</button>
         <div class="modal-content trade-modal-content">
@@ -489,6 +506,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal" id="machineryModal">
         <button class="close-modal">×</button>
         <div class="modal-content machinery-modal-content">
@@ -499,30 +517,20 @@
             </div>
         </div>
     </div>
+
     <div class="modal" id="phoneModal">
         <button class="close-modal">×</button>
         <div class="modal-content phone-modal-content">
             <div class="modal-title">Позвонить</div>
             <div class="phone-number" id="displayPhoneNumber"></div>
-            <div class="ios-telegram-warning" id="iosTelegramWarning">
-                В приложении Telegram для iOS звонки недоступны.<br>
-                Скопируйте номер и вставьте в приложение "Телефон"
-            </div>
             <div class="modal-buttons">
                 <button class="modal-button" id="directCallButton">ПОЗВОНИТЬ</button>
                 <button class="modal-button" id="copyPhoneButton">СКОПИРОВАТЬ НОМЕР</button>
             </div>
-            <div class="instructions" id="iosInstructions" style="display: none;">
-                <strong>Инструкция для iOS в Telegram:</strong><br>
-                1. Скопируйте номер<br>
-                2. Выйдите из Telegram<br>
-                3. Откройте приложение "Телефон"<br>
-                4. Вставьте номер и нажмите вызов
-            </div>
         </div>
     </div>
 
-    <!-- Фиксированная кнопка "Позвонить" (только в категориях) -->
+    <!-- Фиксированная кнопка "Позвонить" -->
     <button class="phone-bottom-btn" id="phoneBottomBtn">
         <a href="tel:+79046660999">ЕСЛИ У ВАС ОСТАЛИСЬ ВОПРОСЫ — ПОЗВОНИТЕ ПО ТЕЛЕФОНУ</a>
     </button>
@@ -532,56 +540,11 @@
     <script>
         // Список городов
         const cities = [
-            "Абакан", "Альметьевск", "Ангарск", "Армавир", "Архангельск", "Астрахань",
-            "Балаково", "Балашиха", "Барнаул", "Белгород", "Березники", "Бийск", "Благовещенск", "Братск", "Брянск",
-            "Великий Новгород", "Владивосток", "Владикавказ", "Владимир", "Волгоград", "Волгодонск", "Волжский", "Вологда", "Воронеж",
-            "Грозный", "Дербент", "Дзержинск", "Димитровград", "Долгопрудный", "Домодедово",
-            "Евпатория", "Екатеринбург", "Елец", "Железногорск (Красноярский край)", "Жуковский", "Златоуст",
-            "Иваново", "Ижевск", "Иркутск", "Йошкар-Ола",
-            "Казань", "Калининград", "Калуга", "Кемерово", "Киров", "Кострома", "Краснодар", "Красноярск", "Курган", "Курск", "Кызыл",
-            "Липецк", "Магнитогорск", "Майкоп", "Махачкала", "Миасс", "Москва", "Мурманск", "Муром", "Мытищи",
-            "Набережные Челны", "Нальчик", "Находка", "Нефтеюганск", "Нижневартовск", "Нижнекамск", "Нижний Новгород", "Нижний Тагил", "Новокузнецк", "Новороссийск", "Новосибирск", "Новочеркасск", "Норильск",
-            "Обнинск", "Одинцово", "Омск", "Орел", "Оренбург", "Орск", "Пенза", "Пермь", "Петрозаводск", "Петропавловск-Камчатский", "Подольск", "Прокопьевск", "Псков", "Пятигорск",
-            "Ростов-на-Дону", "Рыбинск", "Рязань",
-            "Самара", "Санкт-Петербург", "Саранск", "Саратов", "Севастополь", "Северодвинск", "Симферополь", "Смоленск", "Сочи", "Ставрополь", "Старый Оскол", "Стерлитамак", "Сургут", "Сыктывкар",
-            "Таганрог", "Тамбов", "Тверь", "Тольятти", "Томск", "Тула", "Тюмень",
-            "Улан-Удэ", "Ульяновск", "Уссурийск", "Уфа",
-            "Хабаровск", "Ханты-Мансийск", "Чебоксары", "Челябинск", "Череповец", "Черкесск", "Чита",
-            "Шахты", "Щёлково", "Электросталь", "Элиста", "Энгельс",
-            "Южно-Сахалинск", "Якутск", "Ярославль"
+            "Москва", "Санкт-Петербург", "Екатеринбург", "Нижний Новгород", "Казань", "Новосибирск", "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж", "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Улан-Удэ", "Ярославль", "Хабаровск", "Магнитогорск", "Томск", "Оренбург", "Кемерово", "Новокузнецк", "Рязань", "Астрахань", "Пенза", "Липецк", "Севастополь"
         ];
+
         let selectedCity = null;
         let currentPage = 'main';
-
-        // Категории услуг
-        const masterCategories = [
-            { title: "1. ЗЕМЛЯНЫЕ РАБОТЫ", desc: "Расчистка участка, планировка<br>Котлованы, траншеи, дренаж" },
-            { title: "2. ФУНДАМЕНТЫ И ОСНОВАНИЯ", desc: "Подготовка основания<br>Свайные, ленточные, плитные фундаменты" },
-            { title: "3. КЛАДОЧНЫЕ РАБОТЫ", desc: "Кирпич, газоблоки, пенобетон<br>Армировка кладки" },
-            { title: "4. МЕТАЛЛОКОНСТРУКЦИИ", desc: "Монтаж стальных каркасов, ферм<br>Сварка, резка, сборка" },
-            { title: "5. КРОВЕЛЬНЫЕ РАБОТЫ", desc: "Стропильная система, утепление<br>Профнастил, металлочерепица, мембраны" },
-            { title: "6. ОСТЕКЛЕНИЕ И ФАСАДНЫЕ РАБОТЫ", desc: "Монтаж окон и витражей<br>Утепление фасада, мокрый фасад, облицовка" },
-            { title: "7. ВНУТРЕННИЕ ИНЖЕНЕРНЫЕ СЕТИ", desc: "Электрика, слаботочка<br>Отопление, водоснабжение<br>Канализация, вентиляция" },
-            { title: "8. САНТЕХНИЧЕСКИЕ И ВОДОПРОВОДНЫЕ РАБОТЫ", desc: "Прокладка труб, разводка по помещениям<br>Установка сантехники" },
-            { title: "9. ОТОПЛЕНИЕ И ТЕПЛОСНАБЖЕНИЕ", desc: "Радиаторы, теплый пол, котлы<br>Пусконаладка систем" },
-            { title: "10. ВЕНТИЛЯЦИЯ И КОНДИЦИОНИРОВАНИЕ", desc: "Воздуховоды, сплит-системы, вытяжки" },
-            { title: "11. ЭЛЕКТРОМОНТАЖНЫЕ РАБОТЫ", desc: "Щиты, кабельные трассы, розетки<br>Умный дом, автоматика" },
-            { title: "12. ОТДЕЛОЧНЫЕ РАБОТЫ", desc: "Штукатурка, шпаклевка<br>Выравнивание, стяжка" },
-            { title: "13. МОНТАЖ ПОТОЛКОВ", desc: "Гипсокартон, натяжные потолки<br>Армстронг и др." },
-            { title: "14. ПОЛУСУХАЯ СТЯЖКА ПОЛА", desc: "Полусухая механизированная стяжка<br>Рейка, бетономешалка, виброрейка" },
-            { title: "15. МАЛЯРНЫЕ РАБОТЫ", desc: "Покраска, декоративные покрытия<br>Обои, шпатлевка" },
-            { title: "16. БЛАГОУСТРОЙСТВО ТЕРРИТОРИИ", desc: "Асфальт, тротуарная плитка<br>Заборы, освещение, озеленение" },
-            { title: "17. СТРОИТЕЛЬСТВО ДОМОВ ПОД КЛЮЧ", desc: "Все этапы: от нуля до чистовой отделки" },
-            { title: "18. ДЕМОНТАЖНЫЕ РАБОТЫ", desc: "Снос зданий, удаление старых покрытий<br>Демонтаж инженерии" },
-            { title: "19. МОНТАЖ ОБОРУДОВАНИЯ", desc: "Лифты, насосы, котлы, сигнализация<br>«Умный дом», камеры" },
-            { title: "20. РАЗНОРАБОЧИЕ", desc: "Подсобники, грузчики, черновые работы" },
-            { title: "21. КЛИНИНГ, УБОРКА ПОМЕЩЕНИЙ", desc: "Уборка после ремонта, вывоз мусора" },
-            { title: "22. МУЖ НА ЧАС", desc: "Мелкий ремонт: полки, розетки, краны и т.п." },
-            { title: "23. БУРЕНИЕ, УСТРОЙСТВО СКВАЖИН", desc: "Бурение под воду, геотермальные скважины" },
-            { title: "24. ПРОЕКТИРОВАНИЕ", desc: "Архитектура, инженерные расчёты, согласование" },
-            { title: "25. ГЕОЛОГИЯ", desc: "Изучение грунтов, анализ, отчёты" },
-            { title: "26. ДЕРЕВО - И ПЛОТНИЦКИЕ РАБОТЫ", desc: "Монтаж деревянных перекрытий<br>Устройство стропильной системы<br>Монтаж лаг, балок<br>Плотницкие изделия (лестницы, перила)<br>Защита древесины" }
-        ];
 
         // Константы
         const WHATSAPP_PHONE_MASTER = "79046660999";
@@ -618,109 +581,25 @@
         }
 
         function closeAllModals() {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
             currentPage = 'main';
-            hidePhoneBottomBtn();
+            document.getElementById('phoneBottomBtn').style.display = 'none';
             if (tg) tg.BackButton.hide();
         }
 
         function showPhoneBottomBtn() {
             document.getElementById('phoneBottomBtn').style.display = 'block';
         }
-        function hidePhoneBottomBtn() {
-            document.getElementById('phoneBottomBtn').style.display = 'none';
-        }
 
-        // Открытие окна с выбором услуги
-        function openCategoriesModal() {
-            closeAllModals();
-            currentPage = 'categories';
-            if (tg) tg.BackButton.show();
-            showPhoneBottomBtn();
-
-            const list = document.getElementById('categoriesList');
-            list.innerHTML = '';
-            masterCategories.forEach(cat => {
-                const div = document.createElement('div');
-                div.className = 'category-item';
-                div.innerHTML = `<div class="category-title">${cat.title}</div><div class="category-desc">${cat.desc}</div>`;
-                div.onclick = () => {
-                    playSound();
-                    const serviceName = cat.title.replace(/^\d+\.\s*/, '');
-                    const message = `Здравствуйте! Хочу заказать услугу: ${serviceName} в ${selectedCity || 'моём городе'}`;
-                    openWhatsApp(WHATSAPP_PHONE_MASTER, message);
-                };
-                list.appendChild(div);
-            });
-
-            const search = document.getElementById('categoriesSearch');
-            search.value = '';
-            search.addEventListener('input', () => {
-                const q = search.value.toLowerCase();
-                document.querySelectorAll('.category-item').forEach(el => {
-                    const text = el.textContent.toLowerCase();
-                    el.style.display = text.includes(q) ? 'block' : 'none';
-                });
-            });
-
-            setTimeout(() => {
-                document.getElementById('categoriesModal').classList.add('active');
-            }, 50);
-        }
-
-        // Открытие WhatsApp
-        function openWhatsApp(phone, message) {
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            if (tg) {
-                tg.openLink(url);
+        function requireCityBefore(action) {
+            if (!selectedCity) {
+                initCityModal();
+                document.getElementById('cityModal').classList.add('active');
+                // После выбора города выполнить действие
+                window.onCitySelected = action;
             } else {
-                window.open(url, '_blank');
+                action();
             }
-            closeAllModals();
-        }
-
-        // Склонение города
-        function getCityInPrepositional(city) {
-            const exceptions = {
-                "Москва": "в Москве", "Санкт-Петербург": "в Санкт-Петербурге", "Екатеринбург": "в Екатеринбурге",
-                "Нижний Новгород": "в Нижнем Новгороде", "Новосибирск": "в Новосибирске", "Казань": "в Казани",
-                "Самара": "в Самаре", "Омск": "в Омске", "Челябинск": "в Челябинске", "Уфа": "в Уфе",
-                "Ростов-на-Дону": "в Ростове-на-Дону", "Красноярск": "в Красноярске", "Пермь": "в Перми",
-                "Воронеж": "в Воронеже", "Волгоград": "в Волгограде", "Краснодар": "в Краснодаре",
-                "Тюмень": "в Тюмени", "Ижевск": "в Ижевске", "Барнаул": "в Барнауле", "Улан-Удэ": "в Улан-Удэ",
-                "Ярославль": "в Ярославле", "Хабаровск": "в Хабаровске", "Магнитогорск": "в Магнитогорске",
-                "Томск": "в Томске", "Оренбург": "в Оренбурге", "Кемерово": "в Кемерово",
-                "Новокузнецк": "в Новокузнецке", "Рязань": "в Рязани", "Астрахань": "в Астрахани",
-                "Пенза": "в Пензе", "Липецк": "в Липецке", "Севастополь": "в Севастополе"
-            };
-            if (exceptions[city]) return exceptions[city];
-            const last = city.slice(-1).toLowerCase();
-            if (last === 'а' || last === 'я') return `в ${city.replace(/а$/, 'е').replace(/я$/, 'е')}`;
-            else if (last === 'ь') return `в ${city}е`;
-            else return `в ${city}е`;
-        }
-
-        function updateButtonTitles(city) {
-            if (!city) return;
-            const cityInCase = getCityInPrepositional(city);
-            document.getElementById('masterButton').innerHTML = `<span>НАНЯТЬ МАСТЕРА ИЛИ БРИГАДУ<br><small>${cityInCase}, проверенные специалисты</small></span>`;
-            document.getElementById('shopButton').innerHTML = `<span>ИНТЕРНЕТ МАГАЗИН ${cityInCase}<br><small>(новые и б/у, можно продать свои)</small></span>`;
-            document.getElementById('machineryButton').innerHTML = `<span>СПЕЦТЕХНИКА ${cityInCase}<br><small>(аренда / прокат)</small></span>`;
-        }
-
-        function showMainContent() {
-            const btnContainer = document.getElementById('buttonContainer');
-            const aboutLink = document.getElementById('aboutLink');
-            const cityDisplay = document.getElementById('selectedCityDisplay');
-            const cityNameSpan = document.getElementById('cityName');
-            cityNameSpan.textContent = selectedCity || 'Не выбран';
-            updateButtonTitles(selectedCity);
-            cityDisplay.style.opacity = 1;
-            setTimeout(() => {
-                btnContainer.style.opacity = 1;
-                aboutLink.style.opacity = 1;
-            }, 300);
         }
 
         function initCityModal() {
@@ -753,10 +632,12 @@
                         if (rememberCheckbox.checked) {
                             localStorage.setItem('selectedCity', city);
                         }
-                        setTimeout(() => {
-                            document.getElementById('cityModal').classList.remove('active');
-                            showMainContent();
-                        }, 150);
+                        document.getElementById('cityModal').classList.remove('active');
+                        updateCityDisplay();
+                        if (window.onCitySelected) {
+                            window.onCitySelected();
+                            window.onCitySelected = null;
+                        }
                     };
                     cityList.appendChild(btn);
                 });
@@ -771,15 +652,23 @@
             renderCities();
         }
 
+        function updateCityDisplay() {
+            const display = document.getElementById('selectedCityDisplay');
+            const nameSpan = document.getElementById('cityName');
+            if (selectedCity) {
+                nameSpan.textContent = selectedCity;
+                display.style.display = 'flex';
+            } else {
+                display.style.display = 'none';
+            }
+        }
+
         function checkSavedCity() {
             const savedCity = localStorage.getItem('selectedCity');
             if (savedCity && cities.includes(savedCity)) {
                 selectedCity = savedCity;
-                document.getElementById('startScreen').style.display = 'none';
-                showMainContent();
-                return true;
+                updateCityDisplay();
             }
-            return false;
         }
 
         function setupChangeCityButton() {
@@ -790,52 +679,81 @@
             });
         }
 
-        // Инициализация
+        // === Инициализация ===
         window.addEventListener('load', () => {
-            if (checkSavedCity()) {
-                setupChangeCityButton();
-            } else {
-                document.getElementById('openAppButton').addEventListener('click', () => {
-                    playSound();
-                    document.getElementById('startScreen').style.display = 'none';
-                    initCityModal();
-                    setTimeout(() => {
-                        document.getElementById('cityModal').classList.add('active');
-                    }, 100);
-                });
-            }
+            // Сразу скрываем стартовый экран
+            document.getElementById('startScreen').style.display = 'none';
+
+            // Проверяем сохранённый город
+            checkSavedCity();
+
+            // Настройка кнопки "Сменить город"
             setupChangeCityButton();
 
-            // Кнопки
-            document.getElementById('masterButton').addEventListener('click', openCategoriesModal);
-            document.getElementById('shopButton').addEventListener('click', () => {
-                closeAllModals();
-                currentPage = 'shop';
-                if (tg) tg.BackButton.show();
-                setTimeout(() => {
-                    document.getElementById('shopModal').classList.add('active');
-                }, 50);
+            // Открытие категорий
+            document.getElementById('masterButton').addEventListener('click', () => {
+                requireCityBefore(() => {
+                    closeAllModals();
+                    currentPage = 'categories';
+                    if (tg) tg.BackButton.show();
+                    showPhoneBottomBtn();
+                    const list = document.getElementById('categoriesList');
+                    list.innerHTML = '';
+                    masterCategories.forEach(cat => {
+                        const div = document.createElement('div');
+                        div.className = 'category-item';
+                        div.innerHTML = `<div class="category-title">${cat.title}</div><div class="category-desc">${cat.desc}</div>`;
+                        div.onclick = () => {
+                            playSound();
+                            const serviceName = cat.title.replace(/^\d+\.\s*/, '');
+                            const message = `Здравствуйте! Хочу заказать услугу: ${serviceName} в ${selectedCity}`;
+                            openWhatsApp(WHATSAPP_PHONE_MASTER, message);
+                        };
+                        list.appendChild(div);
+                    });
+                    setTimeout(() => {
+                        document.getElementById('categoriesModal').classList.add('active');
+                    }, 50);
+                });
             });
+
+            document.getElementById('shopButton').addEventListener('click', () => {
+                requireCityBefore(() => {
+                    closeAllModals();
+                    currentPage = 'shop';
+                    if (tg) tg.BackButton.show();
+                    setTimeout(() => {
+                        document.getElementById('shopModal').classList.add('active');
+                    }, 50);
+                });
+            });
+
             document.getElementById('machineryButton').addEventListener('click', () => {
-                closeAllModals();
-                currentPage = 'machinery';
-                if (tg) tg.BackButton.show();
-                setTimeout(() => {
-                    document.getElementById('machineryModal').classList.add('active');
-                }, 50);
+                requireCityBefore(() => {
+                    closeAllModals();
+                    currentPage = 'machinery';
+                    if (tg) tg.BackButton.show();
+                    setTimeout(() => {
+                        document.getElementById('machineryModal').classList.add('active');
+                    }, 50);
+                });
             });
 
             // Остальные обработчики...
             document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SHOP, `Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой ${getCityInPrepositional(selectedCity || '')}`);
+                openWhatsApp(WHATSAPP_PHONE_SHOP, `Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой в ${selectedCity}`);
             });
+
             document.getElementById('shopCallButton').addEventListener('click', () => {
                 playSound();
-                document.getElementById('phoneModal').classList.remove('active');
-                setTimeout(() => {
-                    document.getElementById('phoneModal').classList.add('active');
-                }, 100);
+                document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_SHOP;
+                document.getElementById('directCallButton').onclick = () => {
+                    window.open(`tel:${CALL_PHONE_SHOP}`, '_self');
+                };
+                document.getElementById('copyPhoneButton').onclick = () => copyToClipboard(CALL_PHONE_SHOP);
+                document.getElementById('phoneModal').classList.add('active');
             });
+
             document.getElementById('tradeMaterialsButton').addEventListener('click', () => {
                 closeAllModals();
                 currentPage = 'trade';
@@ -844,53 +762,51 @@
                     document.getElementById('tradeModal').classList.add('active');
                 }, 50);
             });
+
             document.getElementById('buyMaterialsButton').addEventListener('click', () => {
                 playSound();
-                if (tg) {
-                    tg.openLink(BUILDING_CHANNEL_URL);
-                } else {
-                    window.open(BUILDING_CHANNEL_URL, '_blank');
-                }
+                if (tg) tg.openLink(BUILDING_CHANNEL_URL);
+                else window.open(BUILDING_CHANNEL_URL, '_blank');
                 closeAllModals();
             });
+
             document.getElementById('sellMaterialsButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SELL, `Здравствуйте, я хочу продать лишние остатки строительных материалов ${getCityInPrepositional(selectedCity || '')}! ВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.`);
+                openWhatsApp(WHATSAPP_PHONE_SELL, `Здравствуйте, я хочу продать лишние остатки строительных материалов в ${selectedCity}!`);
             });
+
             document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_MACHINERY, `Здравствуйте! Хочу арендовать спецтехнику ${getCityInPrepositional(selectedCity || '')}!`);
+                openWhatsApp(WHATSAPP_PHONE_MACHINERY, `Здравствуйте! Хочу арендовать спецтехнику в ${selectedCity}!`);
             });
+
             document.getElementById('machineryCallButton').addEventListener('click', () => {
                 playSound();
-                document.getElementById('phoneModal').classList.remove('active');
-                setTimeout(() => {
-                    document.getElementById('phoneModal').classList.add('active');
-                }, 100);
+                document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_MACHINERY;
+                document.getElementById('directCallButton').onclick = () => {
+                    window.open(`tel:${CALL_PHONE_MACHINERY}`, '_self');
+                };
+                document.getElementById('copyPhoneButton').onclick = () => copyToClipboard(CALL_PHONE_MACHINERY);
+                document.getElementById('phoneModal').classList.add('active');
             });
+
             document.getElementById('directCallButton').addEventListener('click', () => {
-                playSound();
-                const a = document.createElement('a');
-                a.href = `tel:${CALL_PHONE_MASTER}`;
-                a.style.display = 'none';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                window.open(`tel:${CALL_PHONE_MASTER}`, '_self');
             });
+
             document.getElementById('copyPhoneButton').addEventListener('click', () => {
                 copyToClipboard(CALL_PHONE_MASTER);
             });
+
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', () => {
                     playSound();
                     closeAllModals();
                 });
             });
+
             document.getElementById('aboutLink').addEventListener('click', () => {
                 playSound();
-                if (tg) {
-                    tg.openLink(TELEGRAM_CHANNEL_URL);
-                } else {
-                    window.open(TELEGRAM_CHANNEL_URL, '_blank');
-                }
+                if (tg) tg.openLink(TELEGRAM_CHANNEL_URL);
+                else window.open(TELEGRAM_CHANNEL_URL, '_blank');
             });
         });
 
@@ -899,21 +815,50 @@
                 if (navigator.clipboard) {
                     await navigator.clipboard.writeText(text);
                     alert('✅ Номер скопирован!');
-                    return;
+                } else {
+                    const temp = document.createElement('textarea');
+                    temp.value = text;
+                    temp.style.position = 'fixed';
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    alert('✅ Номер скопирован!');
                 }
-                const tempInput = document.createElement('textarea');
-                tempInput.value = text;
-                tempInput.style.position = 'fixed';
-                tempInput.style.opacity = 0;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                alert('✅ Номер скопирован!');
             } catch (err) {
-                alert('❌ Не удалось скопировать номер.');
+                alert('❌ Не удалось скопировать.');
             }
         }
+
+        // Категории услуг
+        const masterCategories = [
+            { title: "1. ЗЕМЛЯНЫЕ РАБОТЫ", desc: "Расчистка участка, планировка<br>Котлованы, траншеи, дренаж" },
+            { title: "2. ФУНДАМЕНТЫ И ОСНОВАНИЯ", desc: "Подготовка основания<br>Свайные, ленточные, плитные фундаменты" },
+            { title: "3. КЛАДОЧНЫЕ РАБОТЫ", desc: "Кирпич, газоблоки, пенобетон<br>Армировка кладки" },
+            { title: "4. МЕТАЛЛОКОНСТРУКЦИИ", desc: "Монтаж стальных каркасов, ферм<br>Сварка, резка, сборка" },
+            { title: "5. КРОВЕЛЬНЫЕ РАБОТЫ", desc: "Стропильная система, утепление<br>Профнастил, металлочерепица, мембраны" },
+            { title: "6. ОСТЕКЛЕНИЕ И ФАСАДНЫЕ РАБОТЫ", desc: "Монтаж окон и витражей<br>Утепление фасада, мокрый фасад, облицовка" },
+            { title: "7. ВНУТРЕННИЕ ИНЖЕНЕРНЫЕ СЕТИ", desc: "Электрика, слаботочка<br>Отопление, водоснабжение<br>Канализация, вентиляция" },
+            { title: "8. САНТЕХНИЧЕСКИЕ И ВОДОПРОВОДНЫЕ РАБОТЫ", desc: "Прокладка труб, разводка по помещениям<br>Установка сантехники" },
+            { title: "9. ОТОПЛЕНИЕ И ТЕПЛОСНАБЖЕНИЕ", desc: "Радиаторы, теплый пол, котлы<br>Пусконаладка систем" },
+            { title: "10. ВЕНТИЛЯЦИЯ И КОНДИЦИОНИРОВАНИЕ", desc: "Воздуховоды, сплит-системы, вытяжки" },
+            { title: "11. ЭЛЕКТРОМОНТАЖНЫЕ РАБОТЫ", desc: "Щиты, кабельные трассы, розетки<br>Умный дом, автоматика" },
+            { title: "12. ОТДЕЛОЧНЫЕ РАБОТЫ", desc: "Штукатурка, шпаклевка<br>Выравнивание, стяжка" },
+            { title: "13. МОНТАЖ ПОТОЛКОВ", desc: "Гипсокартон, натяжные потолки<br>Армстронг и др." },
+            { title: "14. ПОЛУСУХАЯ СТЯЖКА ПОЛА", desc: "Полусухая механизированная стяжка<br>Рейка, бетономешалка, виброрейка" },
+            { title: "15. МАЛЯРНЫЕ РАБОТЫ", desc: "Покраска, декоративные покрытия<br>Обои, шпатлевка" },
+            { title: "16. БЛАГОУСТРОЙСТВО ТЕРРИТОРИИ", desc: "Асфальт, тротуарная плитка<br>Заборы, освещение, озеленение" },
+            { title: "17. СТРОИТЕЛЬСТВО ДОМОВ ПОД КЛЮЧ", desc: "Все этапы: от нуля до чистовой отделки" },
+            { title: "18. ДЕМОНТАЖНЫЕ РАБОТЫ", desc: "Снос зданий, удаление старых покрытий<br>Демонтаж инженерии" },
+            { title: "19. МОНТАЖ ОБОРУДОВАНИЯ", desc: "Лифты, насосы, котлы, сигнализация<br>«Умный дом», камеры" },
+            { title: "20. РАЗНОРАБОЧИЕ", desc: "Подсобники, грузчики, черновые работы" },
+            { title: "21. КЛИНИНГ, УБОРКА ПОМЕЩЕНИЙ", desc: "Уборка после ремонта, вывоз мусора" },
+            { title: "22. МУЖ НА ЧАС", desc: "Мелкий ремонт: полки, розетки, краны и т.п." },
+            { title: "23. БУРЕНИЕ, УСТРОЙСТВО СКВАЖИН", desc: "Бурение под воду, геотермальные скважины" },
+            { title: "24. ПРОЕКТИРОВАНИЕ", desc: "Архитектура, инженерные расчёты, согласование" },
+            { title: "25. ГЕОЛОГИЯ", desc: "Изучение грунтов, анализ, отчёты" },
+            { title: "26. ДЕРЕВО - И ПЛОТНИЦКИЕ РАБОТЫ", desc: "Монтаж деревянных перекрытий<br>Устройство стропильной системы<br>Монтаж лаг, балок<br>Плотницкие изделия (лестницы, перила)<br>Защита древесины" }
+        ];
     </script>
 </body>
 </html>
