@@ -481,8 +481,8 @@
                 document.getElementById('phoneModal').classList.add('active');
             }, 100);
 
-            // Для Safari на iOS и других платформ (кроме Telegram на iOS) пробуем автоматический звонок
-            if (!isTelegramIOS) {
+            // Для Safari на iOS пробуем автоматический звонок
+            if (isSafariIOS) {
                 setTimeout(() => {
                     try {
                         const a = document.createElement('a');
@@ -661,7 +661,7 @@
                 callPhone(CALL_PHONE_MACHINERY);
             });
 
-            // Кнопка "Позвонить"
+            // Кнопка "Позвонить" в модалке
             document.getElementById('directCallButton').addEventListener('click', () => {
                 playSound();
                 try {
