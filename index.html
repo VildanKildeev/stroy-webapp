@@ -1,90 +1,230 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>СТРОЙ по КАрману</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            color: white;
-            overflow: hidden;
-            background: black;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+    const WHATSAPP_PHONE_MASTER = "79046660999";
+    const CALL_PHONE_MASTER = "+79046660999";
+    const WHATSAPP_PHONE_SHOP = "79539991666";
+    const CALL_PHONE_SHOP = "+79539991666";
+    const WHATSAPP_PHONE_MACHINERY = "79046661000";
+    const CALL_PHONE_MACHINERY = "+79046661000";
+    const WHATSAPP_PHONE_SELL = "79539991666";
+    const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
+    const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
+    const clickSound = document.getElementById('clickSound');
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    let currentPhoneNumber = '';
+    let currentPage = 'main';
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+        tg.HeaderColor = '#000000';
+        tg.BackgroundColor = '#000000';
+
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            if (currentPage === 'main') {
+                tg.close();
+            } else {
+                closeAllModals();
+                currentPage = 'main';
+                tg.BackButton.hide();
+            }
+        });
+    }
+
+    function callPhone(phoneNumber) {
+        playSound();
+        currentPhoneNumber = phoneNumber;
+        const formatted = formatPhone(phoneNumber);
+
+        document.getElementById('displayPhoneNumber').textContent = formatted;
+        closeAllModals();
+        setTimeout(() => {
+            document.getElementById('phoneModal').classList.add('active');
+        }, 100);
+
+        if (!isIOS) {
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = `tel:${phoneNumber}`;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, 500);
         }
-        .background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -2;
+    }
+
+    function openWhatsApp(phone, message) {
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        if (tg) {
+            tg.openLink(url);
+        } else {
+            window.open(url, '_blank');
         }
-        .button-container {
-            margin-top: 25vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            opacity: 0;
-            z-index: 10;
+        closeAllModals();
+    }
+
+    function copyToClipboard(text) {
+        if (tg) {
+            tg.writeText(text);
+            alert('Номер скопирован!');
+        } else {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            alert('Номер скопирован!');
         }
-        button {
-            color: white;
-            border: 2px solid white;
-            padding: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            width: 80%;
-            max-width: 350px;
-            text-align: center;
-            background-color: transparent;
-            background-position: center;
-            background-size: cover;
-            position: relative;
-            overflow: hidden;
-            touch-action: manipulation;
+        closeAllModals();
+    }
+
+    function formatPhone(phone) {
+        return phone.replace(/(\+)?(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '+$2 ($3) $4-$5-$6');
+    }
+
+    function playSound() {
+        if (clickSound) {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(e => console.log("Звук не воспроизведён"));
         }
-        button::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: inherit;
-            background-position: center;
-            background-size: cover;
-            filter: brightness(0.9);
-            border-radius: 10px;
-            z-index: -1;
-        }
-        button::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            z-index: -1;
-            pointer-events: none;
-        }
-        button span {
-            position: relative;
-            z-index: 2
+    }
+
+    function openMasterModal() {
+        closeAllModals();
+        currentPage = 'master';
+        if (tg) tg.BackButton.show();
+        setTimeout(() => {
+            document.getElementById('masterModal').classList.add('active');
+        }, 50);
+    }
+
+    function openShopModal() {
+        closeAllModals();
+        currentPage = 'shop';
+        if (tg) tg.BackButton.show();
+        setTimeout(() => {
+            document.getElementById('shopModal').classList.add('active');
+        }, 50);
+    }
+
+    function openMachineryModal() {
+        closeAllModals();
+        currentPage = 'machinery';
+        if (tg) tg.BackButton.show();
+        setTimeout(() => {
+            document.getElementById('machineryModal').classList.add('active');
+        }, 50);
+    }
+
+    function openTradeModal() {
+        closeAllModals();
+        currentPage = 'trade';
+        if (tg) tg.BackButton.show();
+        setTimeout(() => {
+            document.getElementById('tradeModal').classList.add('active');
+        }, 50);
+    }
+
+    function closeAllModals() {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(m => m.classList.remove('active'));
+        currentPage = 'main';
+        if (tg) tg.BackButton.hide();
+    }
+
+    function showMainContent() {
+        const btnContainer = document.getElementById('buttonContainer');
+        const aboutLink = document.getElementById('aboutLink');
+        setTimeout(() => {
+            btnContainer.style.opacity = 1;
+            btnContainer.classList.add('animate__animated', 'animate__fadeInUp');
+            setTimeout(() => {
+                aboutLink.style.opacity = 1;
+                aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
+            }, 250);
+        }, 300);
+    }
+
+    window.addEventListener('load', () => {
+        document.getElementById('openAppButton').addEventListener('click', () => {
+            playSound();
+            document.getElementById('startScreen').style.display = 'none';
+            showMainContent();
+        });
+
+        document.getElementById('masterButton').addEventListener('click', openMasterModal);
+        document.getElementById('masterWhatsAppButton').addEventListener('click', () => {
+            openWhatsApp(WHATSAPP_PHONE_MASTER, "Здравствуйте! Хочу оформить заявку на выполнение строительных работ!");
+        });
+        document.getElementById('masterCallButton').addEventListener('click', () => {
+            callPhone(CALL_PHONE_MASTER);
+        });
+
+        document.getElementById('shopButton').addEventListener('click', openShopModal);
+        document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
+            openWhatsApp(WHATSAPP_PHONE_SHOP, "Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой");
+        });
+        document.getElementById('shopCallButton').addEventListener('click', () => {
+            callPhone(CALL_PHONE_SHOP);
+        });
+        document.getElementById('tradeMaterialsButton').addEventListener('click', openTradeModal);
+
+        document.getElementById('buyMaterialsButton').addEventListener('click', () => {
+            playSound();
+            if (tg) {
+                tg.openLink(BUILDING_CHANNEL_URL);
+            } else {
+                window.open(BUILDING_CHANNEL_URL, '_blank');
+            }
+            closeAllModals();
+        });
+        document.getElementById('sellMaterialsButton').addEventListener('click', () => {
+            openWhatsApp(WHATSAPP_PHONE_SELL, "Здравствуйте я хочу продать лишние остатки строительных материалов! ВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.");
+        });
+
+        document.getElementById('machineryButton').addEventListener('click', openMachineryModal);
+        document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
+            openWhatsApp(WHATSAPP_PHONE_MACHINERY, "Здравствуйте! Хочу арендовать спецтехнику!");
+        });
+        document.getElementById('machineryCallButton').addEventListener('click', () => {
+            callPhone(CALL_PHONE_MACHINERY);
+        });
+
+        document.getElementById('directCallButton').addEventListener('click', () => {
+            playSound();
+            if (!isIOS) {
+                const link = document.createElement('a');
+                link.href = `tel:${currentPhoneNumber}`;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        });
+
+        document.getElementById('copyPhoneButton').addEventListener('click', () => {
+            playSound();
+            copyToClipboard(currentPhoneNumber);
+        });
+
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                playSound();
+                closeAllModals();
+            });
+        });
+
+        document.getElementById('aboutLink').addEventListener('click', () => {
+            playSound();
+            if (tg) {
+                tg.openLink(TELEGRAM_CHANNEL_URL);
+            } else {
+                window.open(TELEGRAM_CHANNEL_URL, '_blank');
+            }
+        });
+    });
+</script>
