@@ -149,15 +149,50 @@
             opacity: 1;
         }
 
+        /* === Фоновые изображения для модальных окон === */
+        .master-modal-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('modal-master.jpg');
+            background-position: center;
+            background-size: cover;
+            filter: brightness(0.8);
+            border-radius: 15px;
+            z-index: -1;
+        }
         .shop-modal-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-image: url('modal-shop.jpg');
+            background-position: center;
+            background-size: cover;
+            filter: brightness(0.8);
+            border-radius: 15px;
+            z-index: -1;
         }
         .machinery-modal-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-image: url('modal-machinery.jpg');
+            background-position: center;
+            background-size: cover;
+            filter: brightness(0.8);
+            border-radius: 15px;
+            z-index: -1;
         }
-        .trade-modal-content::before {
-            background-image: url('modal-shop.jpg');
-        }
+
         .phone-modal-content {
             background: rgba(40, 40, 40, 0.95);
         }
@@ -440,7 +475,7 @@
     <!-- === Модалка выбора услуги (мастер) === -->
     <div class="modal" id="categoriesModal">
         <button class="close-modal">×</button>
-        <div class="modal-content">
+        <div class="modal-content master-modal-content">
             <div class="modal-title">ВЫБЕРИТЕ УСЛУГУ</div>
             <div id="categoriesSearchContainer">
                 <span class="search-icon-service">🔍</span>
@@ -453,7 +488,7 @@
     <!-- === Модалка выбора категории (магазин) === -->
     <div class="modal" id="shopCategoriesModal">
         <button class="close-modal">×</button>
-        <div class="modal-content">
+        <div class="modal-content shop-modal-content">
             <div class="modal-title">ИНТЕРНЕТ МАГАЗИН</div>
             <!-- Кнопка "КУПИ / ПРОДАЙ ОСТАТКИ" НАВЕРХУ -->
             <button class="modal-button" id="tradeMaterialsButton" style="margin-bottom: 20px;">
@@ -470,7 +505,7 @@
     <!-- === Модалка выбора спецтехники === -->
     <div class="modal" id="machineryCategoriesModal">
         <button class="close-modal">×</button>
-        <div class="modal-content">
+        <div class="modal-content machinery-modal-content">
             <div class="modal-title">СПЕЦТЕХНИКА</div>
             <div id="machineryCategoriesSearchContainer">
                 <span class="search-icon-service">🔍</span>
