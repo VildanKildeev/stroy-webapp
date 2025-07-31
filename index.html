@@ -36,9 +36,8 @@
             flex-direction: column;
             align-items: center;
             gap: 20px;
-            opacity: 0;
+            opacity: 1;
             z-index: 10;
-            transition: opacity 0.5s ease;
         }
         button {
             color: white;
@@ -102,9 +101,8 @@
             text-decoration: underline;
             cursor: pointer;
             text-align: center;
-            opacity: 0;
+            opacity: 1;
             z-index: 10;
-            transition: opacity 0.5s ease;
         }
         /* Модальные окна */
         .modal {
@@ -220,65 +218,6 @@
             border-radius: 10px;
             word-break: break-all;
         }
-        /* Стартовый экран */
-        .start-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 300;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .start-content {
-            background: rgba(30, 30, 30, 0.9);
-            border: 2px solid white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 90%;
-            width: 100%;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-        }
-        .start-title {
-            color: white;
-            font-size: 28px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        .start-message {
-            color: #ecf0f1;
-            font-size: 18px;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        .start-button {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 18px 30px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            margin: 10px 0;
-            width: 100%;
-            max-width: 320px;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-        .start-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(45deg, #2980b9, #3498db);
-        }
         /* === Модалка выбора города === */
         #cityModal .modal-content {
             background: rgba(30, 30, 30, 0.95);
@@ -317,6 +256,20 @@
             flex-direction: column;
             gap: 10px;
         }
+        .city-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .city-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
         .remember-checkbox {
             margin-top: 10px;
             display: flex;
@@ -327,14 +280,16 @@
         .remember-checkbox input {
             margin-right: 6px;
         }
-        /* Кнопка "Сменить город" */
-        #changeCityButton {
-            margin-left: 10px;
-            font-size: 14px;
-            color: #1e90ff;
-            text-decoration: underline;
-            cursor: pointer;
-            vertical-align: middle;
+        /* Отображение города */
+        .selected-city {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
         /* === Модалка категорий мастера === */
         #categoriesModal .modal-content {
@@ -387,7 +342,16 @@
         #categoriesSearch::placeholder {
             color: #999;
         }
-        /* === Фиксированная кнопка внизу === */
+        .search-icon-service {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        /* === Фиксированная кнопка "Позвонить" === */
         .phone-bottom-btn {
             position: fixed;
             bottom: 0;
@@ -421,20 +385,8 @@
     </video>
     <audio id="clickSound" src="click.mp3"></audio>
 
-    <!-- Стартовый экран -->
-    <div class="start-screen" id="startScreen">
-        <div class="start-content">
-            <h1 class="start-title">Добро пожаловать!</h1>
-            <p class="start-message">
-                Добро пожаловать в наше приложение! Здесь вы можете сделать заказ,
-                вызвать мастера или арендовать спецтехнику. Получить консультацию или проектную документацию и многое другое... Здесь всё про строительство! Начни прямо сейчас!
-            </p>
-            <button class="start-button" id="openAppButton">ПОСТРОИТЬ!</button>
-        </div>
-    </div>
-
-    <!-- Отображение города -->
-    <div class="selected-city" id="selectedCityDisplay" style="margin-top: 15px; font-size: 18px; color: #fff; text-align: center; opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center;">
+    <!-- Отображение выбранного города -->
+    <div class="selected-city" id="selectedCityDisplay" style="display: none;">
         <span>Город: <span id="cityName">Не выбран</span></span>
         <span id="changeCityButton">Сменить</span>
     </div>
@@ -477,7 +429,7 @@
         <div class="modal-content">
             <div class="modal-title">ВЫБЕРИТЕ УСЛУГУ</div>
             <div id="categoriesSearchContainer">
-                <span class="search-icon">🔍</span>
+                <span class="search-icon-service">🔍</span>
                 <input type="text" id="categoriesSearch" placeholder="Поиск услуги...">
             </div>
             <div id="categoriesList" style="width: 100%; max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
@@ -526,25 +478,14 @@
         <div class="modal-content phone-modal-content">
             <div class="modal-title">Позвонить</div>
             <div class="phone-number" id="displayPhoneNumber">+7 904 666 09 99</div>
-            <div class="ios-telegram-warning" id="iosTelegramWarning">
-                В приложении Telegram для iOS звонки недоступны.<br>
-                Скопируйте номер и вставьте в приложение "Телефон"
-            </div>
             <div class="modal-buttons">
                 <button class="modal-button" id="directCallButton">ПОЗВОНИТЬ</button>
                 <button class="modal-button" id="copyPhoneButton">СКОПИРОВАТЬ НОМЕР</button>
             </div>
-            <div class="instructions" id="iosInstructions" style="display: none;">
-                <strong>Инструкция для iOS в Telegram:</strong><br>
-                1. Скопируйте номер<br>
-                2. Выйдите из Telegram<br>
-                3. Откройте приложение "Телефон"<br>
-                4. Вставьте номер и нажмите вызов
-            </div>
         </div>
     </div>
 
-    <!-- Фиксированная кнопка "Позвонить" (только в категориях) -->
+    <!-- Фиксированная кнопка "Позвонить" -->
     <button class="phone-bottom-btn" id="phoneBottomBtn">
         <a href="tel:+79046660999">ЕСЛИ У ВАС ОСТАЛИСЬ ВОПРОСЫ — ПОЗВОНИТЕ ПО ТЕЛЕФОНУ</a>
     </button>
@@ -554,23 +495,11 @@
     <script>
         // Список городов
         const cities = [
-            "Абакан", "Альметьевск", "Ангарск", "Армавир", "Архангельск", "Астрахань",
-            "Балаково", "Балашиха", "Барнаул", "Белгород", "Березники", "Бийск", "Благовещенск", "Братск", "Брянск",
-            "Великий Новгород", "Владивосток", "Владикавказ", "Владимир", "Волгоград", "Волгодонск", "Волжский", "Вологда", "Воронеж",
-            "Грозный", "Дербент", "Дзержинск", "Димитровград", "Долгопрудный", "Домодедово",
-            "Евпатория", "Екатеринбург", "Елец", "Железногорск (Красноярский край)", "Жуковский", "Златоуст",
-            "Иваново", "Ижевск", "Иркутск", "Йошкар-Ола",
-            "Казань", "Калининград", "Калуга", "Кемерово", "Киров", "Кострома", "Краснодар", "Красноярск", "Курган", "Курск", "Кызыл",
-            "Липецк", "Магнитогорск", "Майкоп", "Махачкала", "Миасс", "Москва", "Мурманск", "Муром", "Мытищи",
-            "Набережные Челны", "Нальчик", "Находка", "Нефтеюганск", "Нижневартовск", "Нижнекамск", "Нижний Новгород", "Нижний Тагил", "Новокузнецк", "Новороссийск", "Новосибирск", "Новочеркасск", "Норильск",
-            "Обнинск", "Одинцово", "Омск", "Орел", "Оренбург", "Орск", "Пенза", "Пермь", "Петрозаводск", "Петропавловск-Камчатский", "Подольск", "Прокопьевск", "Псков", "Пятигорск",
-            "Ростов-на-Дону", "Рыбинск", "Рязань",
-            "Самара", "Санкт-Петербург", "Саранск", "Саратов", "Севастополь", "Северодвинск", "Симферополь", "Смоленск", "Сочи", "Ставрополь", "Старый Оскол", "Стерлитамак", "Сургут", "Сыктывкар",
-            "Таганрог", "Тамбов", "Тверь", "Тольятти", "Томск", "Тула", "Тюмень",
-            "Улан-Удэ", "Ульяновск", "Уссурийск", "Уфа",
-            "Хабаровск", "Ханты-Мансийск", "Чебоксары", "Челябинск", "Череповец", "Черкесск", "Чита",
-            "Шахты", "Щёлково", "Электросталь", "Элиста", "Энгельс",
-            "Южно-Сахалинск", "Якутск", "Ярославль"
+            "Москва", "Санкт-Петербург", "Екатеринбург", "Нижний Новгород", "Казань", "Новосибирск",
+            "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж",
+            "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Улан-Удэ",
+            "Ярославль", "Хабаровск", "Магнитогорск", "Томск", "Оренбург", "Кемерово", "Новокузнецк",
+            "Рязань", "Астрахань", "Пенза", "Липецк", "Севастополь"
         ];
         let selectedCity = null;
         let currentPage = 'main';
@@ -640,8 +569,7 @@
         }
 
         function closeAllModals() {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(m => m.classList.remove('active'));
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
             currentPage = 'main';
             hidePhoneBottomBtn();
             if (tg) tg.BackButton.hide();
@@ -655,54 +583,17 @@
             document.getElementById('phoneBottomBtn').style.display = 'none';
         }
 
-        // Открытие окна с выбором услуги
-        function openCategoriesModal() {
-            closeAllModals();
-            currentPage = 'categories';
-            if (tg) tg.BackButton.show();
-            showPhoneBottomBtn();
-            const list = document.getElementById('categoriesList');
-            list.innerHTML = '';
-            masterCategories.forEach(cat => {
-                const div = document.createElement('div');
-                div.className = 'category-item';
-                div.innerHTML = `<div class="category-title">${cat.title}</div><div class="category-desc">${cat.desc}</div>`;
-                div.onclick = () => {
-                    playSound();
-                    const serviceName = cat.title.replace(/^\d+\.\s*/, '');
-                    const message = `Здравствуйте! Хочу заказать услугу: ${serviceName} в ${selectedCity || 'моём городе'}`;
-                    openWhatsApp(WHATSAPP_PHONE_MASTER, message);
-                };
-                list.appendChild(div);
-            });
-
-            const search = document.getElementById('categoriesSearch');
-            search.value = '';
-            search.addEventListener('input', () => {
-                const q = search.value.toLowerCase();
-                document.querySelectorAll('.category-item').forEach(el => {
-                    const text = el.textContent.toLowerCase();
-                    el.style.display = text.includes(q) ? 'block' : 'none';
-                });
-            });
-
-            setTimeout(() => {
-                document.getElementById('categoriesModal').classList.add('active');
-            }, 50);
-        }
-
-        // Открытие WhatsApp
-        function openWhatsApp(phone, message) {
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            if (tg) {
-                tg.openLink(url);
+        function updateCityDisplay() {
+            const display = document.getElementById('selectedCityDisplay');
+            const nameSpan = document.getElementById('cityName');
+            if (selectedCity) {
+                nameSpan.textContent = selectedCity;
+                display.style.display = 'flex';
             } else {
-                window.open(url, '_blank');
+                display.style.display = 'none';
             }
-            closeAllModals();
         }
 
-        // Склонение города
         function getCityInPrepositional(city) {
             const exceptions = {
                 "Москва": "в Москве", "Санкт-Петербург": "в Санкт-Петербурге", "Екатеринбург": "в Екатеринбурге",
@@ -731,18 +622,14 @@
             document.getElementById('machineryButton').innerHTML = `<span>СПЕЦТЕХНИКА ${cityInCase}<br><small>(аренда / прокат)</small></span>`;
         }
 
-        function showMainContent() {
-            const btnContainer = document.getElementById('buttonContainer');
-            const aboutLink = document.getElementById('aboutLink');
-            const cityDisplay = document.getElementById('selectedCityDisplay');
-            const cityNameSpan = document.getElementById('cityName');
-            cityNameSpan.textContent = selectedCity || 'Не выбран';
-            updateButtonTitles(selectedCity);
-            cityDisplay.style.opacity = 1;
-            setTimeout(() => {
-                btnContainer.style.opacity = 1;
-                aboutLink.style.opacity = 1;
-            }, 300);
+        function requireCityBefore(action) {
+            if (!selectedCity) {
+                initCityModal();
+                document.getElementById('cityModal').classList.add('active');
+                window.onCitySelected = action;
+            } else {
+                action();
+            }
         }
 
         function initCityModal() {
@@ -755,30 +642,20 @@
                 filteredCities.forEach(city => {
                     const btn = document.createElement('button');
                     btn.textContent = city.toUpperCase();
-                    btn.style.cssText = `
-                        padding: 12px;
-                        background: rgba(255,255,255,0.1);
-                        border: 1px solid #444;
-                        border-radius: 8px;
-                        color: white;
-                        cursor: pointer;
-                        transition: background 0.2s;
-                        font-size: 13px;
-                        text-align: center;
-                        width: 100%;
-                    `;
-                    btn.onmouseover = () => btn.style.background = 'rgba(255,255,255,0.2)';
-                    btn.onmouseout = () => btn.style.background = 'rgba(255,255,255,0.1)';
+                    btn.className = 'city-item';
                     btn.onclick = () => {
                         selectedCity = city;
                         playSound();
                         if (rememberCheckbox.checked) {
                             localStorage.setItem('selectedCity', city);
                         }
-                        setTimeout(() => {
-                            document.getElementById('cityModal').classList.remove('active');
-                            showMainContent();
-                        }, 150);
+                        document.getElementById('cityModal').classList.remove('active');
+                        updateCityDisplay();
+                        updateButtonTitles(selectedCity);
+                        if (window.onCitySelected) {
+                            window.onCitySelected();
+                            window.onCitySelected = null;
+                        }
                     };
                     cityList.appendChild(btn);
                 });
@@ -793,110 +670,125 @@
             renderCities();
         }
 
-        function checkSavedCity() {
+        function setupChangeCityButton() {
+            document.getElementById('changeCityButton').addEventListener('click', () => {
+                playSound();
+                initCityModal();
+                document.getElementById('cityModal').classList.add('active');
+            });
+        }
+
+        // === Инициализация ===
+        window.addEventListener('load', () => {
+            // Проверяем сохранённый город
             const savedCity = localStorage.getItem('selectedCity');
             if (savedCity && cities.includes(savedCity)) {
                 selectedCity = savedCity;
-                document.getElementById('startScreen').style.display = 'none';
-                showMainContent();
-                return true;
-            }
-            return false;
-        }
-
-        function setupChangeCityButton() {
-            const changeBtn = document.getElementById('changeCityButton');
-            if (changeBtn) {
-                changeBtn.addEventListener('click', () => {
-                    playSound();
-                    initCityModal();
-                    document.getElementById('cityModal').classList.add('active');
-                });
-            }
-        }
-
-        // Инициализация
-        window.addEventListener('load', () => {
-            if (!checkSavedCity()) {
-                document.getElementById('openAppButton').addEventListener('click', () => {
-                    playSound();
-                    document.getElementById('startScreen').style.display = 'none';
-                    initCityModal();
-                    setTimeout(() => {
-                        document.getElementById('cityModal').classList.add('active');
-                    }, 100);
-                });
-            } else {
-                showMainContent();
+                updateCityDisplay();
+                updateButtonTitles(selectedCity);
             }
 
             setupChangeCityButton();
 
-            // Обработчики кнопок
-            document.getElementById('masterButton')?.addEventListener('click', openCategoriesModal);
-            document.getElementById('shopButton')?.addEventListener('click', () => {
-                closeAllModals();
-                currentPage = 'shop';
-                if (tg) tg.BackButton.show();
-                setTimeout(() => document.getElementById('shopModal').classList.add('active'), 50);
-            });
-            document.getElementById('machineryButton')?.addEventListener('click', () => {
-                closeAllModals();
-                currentPage = 'machinery';
-                if (tg) tg.BackButton.show();
-                setTimeout(() => document.getElementById('machineryModal').classList.add('active'), 50);
+            // Обработчики кнопок (требуют выбора города при необходимости)
+            document.getElementById('masterButton').addEventListener('click', () => {
+                requireCityBefore(() => {
+                    closeAllModals();
+                    currentPage = 'categories';
+                    if (tg) tg.BackButton.show();
+                    showPhoneBottomBtn();
+                    const list = document.getElementById('categoriesList');
+                    list.innerHTML = '';
+                    masterCategories.forEach(cat => {
+                        const div = document.createElement('div');
+                        div.className = 'category-item';
+                        div.innerHTML = `<div class="category-title">${cat.title}</div><div class="category-desc">${cat.desc}</div>`;
+                        div.onclick = () => {
+                            playSound();
+                            const serviceName = cat.title.replace(/^\d+\.\s*/, '');
+                            const message = `Здравствуйте! Хочу заказать услугу: ${serviceName} в ${selectedCity}`;
+                            openWhatsApp(WHATSAPP_PHONE_MASTER, message);
+                        };
+                        list.appendChild(div);
+                    });
+                    setTimeout(() => {
+                        document.getElementById('categoriesModal').classList.add('active');
+                    }, 50);
+                });
             });
 
-            // WhatsApp и звонки
-            document.getElementById('shopWhatsAppButton')?.addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SHOP, `Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой ${getCityInPrepositional(selectedCity || '')}`);
+            document.getElementById('shopButton').addEventListener('click', () => {
+                requireCityBefore(() => {
+                    closeAllModals();
+                    currentPage = 'shop';
+                    if (tg) tg.BackButton.show();
+                    setTimeout(() => {
+                        document.getElementById('shopModal').classList.add('active');
+                    }, 50);
+                });
             });
-            document.getElementById('shopCallButton')?.addEventListener('click', () => {
+
+            document.getElementById('machineryButton').addEventListener('click', () => {
+                requireCityBefore(() => {
+                    closeAllModals();
+                    currentPage = 'machinery';
+                    if (tg) tg.BackButton.show();
+                    setTimeout(() => {
+                        document.getElementById('machineryModal').classList.add('active');
+                    }, 50);
+                });
+            });
+
+            // Остальные обработчики (WhatsApp, звонки и т.д.)
+            document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
+                openWhatsApp(WHATSAPP_PHONE_SHOP, `Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой в ${selectedCity}`);
+            });
+
+            document.getElementById('shopCallButton').addEventListener('click', () => {
                 playSound();
                 document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_SHOP;
-                document.getElementById('directCallButton').onclick = () => {
-                    window.open(`tel:${CALL_PHONE_SHOP}`, '_self');
-                };
+                document.getElementById('directCallButton').onclick = () => window.open(`tel:${CALL_PHONE_SHOP}`, '_self');
                 document.getElementById('copyPhoneButton').onclick = () => copyToClipboard(CALL_PHONE_SHOP);
                 document.getElementById('phoneModal').classList.add('active');
             });
 
-            document.getElementById('tradeMaterialsButton')?.addEventListener('click', () => {
+            document.getElementById('tradeMaterialsButton').addEventListener('click', () => {
                 closeAllModals();
                 currentPage = 'trade';
                 if (tg) tg.BackButton.show();
-                setTimeout(() => document.getElementById('tradeModal').classList.add('active'), 50);
+                setTimeout(() => {
+                    document.getElementById('tradeModal').classList.add('active');
+                }, 50);
             });
 
-            document.getElementById('buyMaterialsButton')?.addEventListener('click', () => {
+            document.getElementById('buyMaterialsButton').addEventListener('click', () => {
                 playSound();
                 if (tg) tg.openLink(BUILDING_CHANNEL_URL);
                 else window.open(BUILDING_CHANNEL_URL, '_blank');
                 closeAllModals();
             });
 
-            document.getElementById('sellMaterialsButton')?.addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SELL, `Здравствуйте, я хочу продать лишние остатки строительных материалов ${getCityInPrepositional(selectedCity || '')}! ВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.`);
+            document.getElementById('sellMaterialsButton').addEventListener('click', () => {
+                openWhatsApp(WHATSAPP_PHONE_SELL, `Здравствуйте, я хочу продать лишние остатки строительных материалов в ${selectedCity}!`);
             });
 
-            document.getElementById('machineryWhatsAppButton')?.addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_MACHINERY, `Здравствуйте! Хочу арендовать спецтехнику ${getCityInPrepositional(selectedCity || '')}!`);
+            document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
+                openWhatsApp(WHATSAPP_PHONE_MACHINERY, `Здравствуйте! Хочу арендовать спецтехнику в ${selectedCity}!`);
             });
 
-            document.getElementById('machineryCallButton')?.addEventListener('click', () => {
+            document.getElementById('machineryCallButton').addEventListener('click', () => {
                 playSound();
                 document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_MACHINERY;
-                document.getElementById('directCallButton').onclick = () => {
-                    window.open(`tel:${CALL_PHONE_MACHINERY}`, '_self');
-                };
+                document.getElementById('directCallButton').onclick = () => window.open(`tel:${CALL_PHONE_MACHINERY}`, '_self');
                 document.getElementById('copyPhoneButton').onclick = () => copyToClipboard(CALL_PHONE_MACHINERY);
                 document.getElementById('phoneModal').classList.add('active');
             });
 
-            document.getElementById('directCallButton')?.addEventListener('click', () => {
+            document.getElementById('directCallButton').addEventListener('click', () => {
                 window.open(`tel:${CALL_PHONE_MASTER}`, '_self');
             });
-            document.getElementById('copyPhoneButton')?.addEventListener('click', () => {
+
+            document.getElementById('copyPhoneButton').addEventListener('click', () => {
                 copyToClipboard(CALL_PHONE_MASTER);
             });
 
@@ -907,7 +799,7 @@
                 });
             });
 
-            document.getElementById('aboutLink')?.addEventListener('click', () => {
+            document.getElementById('aboutLink').addEventListener('click', () => {
                 playSound();
                 if (tg) tg.openLink(TELEGRAM_CHANNEL_URL);
                 else window.open(TELEGRAM_CHANNEL_URL, '_blank');
@@ -919,19 +811,18 @@
                 if (navigator.clipboard) {
                     await navigator.clipboard.writeText(text);
                     alert('✅ Номер скопирован!');
-                    return;
+                } else {
+                    const temp = document.createElement('textarea');
+                    temp.value = text;
+                    temp.style.position = 'fixed';
+                    document.body.appendChild(temp);
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    alert('✅ Номер скопирован!');
                 }
-                const tempInput = document.createElement('textarea');
-                tempInput.value = text;
-                tempInput.style.position = 'fixed';
-                tempInput.style.opacity = 0;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                alert('✅ Номер скопирован!');
             } catch (err) {
-                alert('❌ Не удалось скопировать номер.');
+                alert('❌ Не удалось скопировать.');
             }
         }
     </script>
