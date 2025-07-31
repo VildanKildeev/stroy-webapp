@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интернет магазин</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+        button { padding: 15px 30px; font-size: 18px; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🛒 Интернет магазин стройматериалов</h1>
+    <p>Доставка в <strong id="city">ваш город</strong></p>
+    <button onclick="sendWhatsApp()">Сделать заказ в WhatsApp</button>
+    <button onclick="window.history.back()">Назад</button>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const city = urlParams.get('city') || 'вашем городе';
+        document.getElementById('city').textContent = city;
+
+        function sendWhatsApp() {
+            const message = `Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой ${city}!`;
+            window.open(`https://wa.me/79539991666?text=${encodeURIComponent(message)}`, '_blank');
+        }
+    </script>
+</body>
+</html>

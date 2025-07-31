@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аренда спецтехники</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+        button { padding: 15px 30px; font-size: 18px; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🚜 Аренда спецтехники</h1>
+    <p>В районе <strong id="city">вашего города</strong></p>
+    <button onclick="sendWhatsApp()">Арендовать в WhatsApp</button>
+    <button onclick="window.history.back()">Назад</button>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const city = urlParams.get('city') || 'вашем городе';
+        document.getElementById('city').textContent = city;
+
+        function sendWhatsApp() {
+            const message = `Здравствуйте! Хочу арендовать спецтехнику ${city}!`;
+            window.open(`https://wa.me/79046661000?text=${encodeURIComponent(message)}`, '_blank');
+        }
+    </script>
+</body>
+</html>

@@ -104,135 +104,6 @@
             opacity: 0;
             z-index: 10;
         }
-        /* Модальные окна */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .modal-content {
-            background: transparent;
-            border: 2px solid white;
-            border-radius: 15px;
-            padding: 30px;
-            width: 80%;
-            max-width: 350px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            transform: scale(0.9);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .modal.active .modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-        .modal-content::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            z-index: -1;
-        }
-        .master-modal-content::before {
-            background-image: url('modal-background.jpg');
-        }
-        .shop-modal-content::before {
-            background-image: url('modal-shop.jpg');
-        }
-        .machinery-modal-content::before {
-            background-image: url('modal-machinery.jpg');
-        }
-        .trade-modal-content::before {
-            background-image: url('modal-shop.jpg');
-        }
-        .phone-modal-content {
-            background: rgba(40, 40, 40, 0.95);
-        }
-        .modal-title {
-            font-size: 24px;
-            margin-bottom: 30px;
-            color: white;
-            text-align: center;
-            text-shadow: 1px 1px 2px black;
-        }
-        .modal-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            align-items: center;
-        }
-        .modal-button {
-            color: white;
-            border: 2px solid white;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            background: transparent;
-            transition: all 0.3s ease;
-            width: 100%;
-            max-width: 300px;
-            text-align: center;
-            text-shadow: 1px 1px 2px black;
-        }
-        .modal-button:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            color: white;
-            cursor: pointer;
-            background: none;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            text-shadow: 1px 1px 2px black;
-        }
-        .phone-number {
-            font-size: 24px;
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            word-break: break-all;
-        }
         /* Стартовый экран */
         .start-screen {
             position: fixed;
@@ -291,25 +162,6 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: linear-gradient(45deg, #2980b9, #3498db);
-        }
-        /* iOS Telegram предупреждение */
-        .ios-telegram-warning {
-            display: none;
-            background: rgba(200, 0, 0, 0.3);
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 14px;
-            text-align: center;
-        }
-        /* Инструкция */
-        .instructions {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            font-size: 14px;
-            line-height: 1.4;
         }
         /* === Модалка выбора города === */
         #cityModal .modal-content {
@@ -437,64 +289,6 @@
 
     <div class="about-link" id="aboutLink">О нас</div>
 
-    <!-- Модальные окна (остаются для других кнопок) -->
-    <div class="modal" id="shopModal">
-        <button class="close-modal">×</button>
-        <div class="modal-content shop-modal-content">
-            <div class="modal-title">ИНТЕРНЕТ МАГАЗИН</div>
-            <div class="modal-buttons">
-                <button class="modal-button" id="shopWhatsAppButton">СДЕЛАТЬ ОНЛАЙН ЗАЯВКУ</button>
-                <button class="modal-button" id="shopCallButton">ПОЗВОНИТЬ ПО ТЕЛЕФОНу</button>
-                <button class="modal-button" id="tradeMaterialsButton">КУПИ / ПРОДАЙ ОСТАТКИ<br><small>НОВЫЕ И Б/У</small></button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="tradeModal">
-        <button class="close-modal">×</button>
-        <div class="modal-content trade-modal-content">
-            <div class="modal-title">КУПИ / ПРОДАЙ ОСТАТКИ</div>
-            <div class="modal-buttons">
-                <button class="modal-button" id="buyMaterialsButton">КУПИТЬ</button>
-                <button class="modal-button" id="sellMaterialsButton">ПРОДАТЬ</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="machineryModal">
-        <button class="close-modal">×</button>
-        <div class="modal-content machinery-modal-content">
-            <div class="modal-title">СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ</div>
-            <div class="modal-buttons">
-                <button class="modal-button" id="machineryWhatsAppButton">АРЕНДОВАТЬ ОНЛАЙН</button>
-                <button class="modal-button" id="machineryCallButton">АРЕНДОВАТЬ ПО ТЕЛЕФОНу</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="phoneModal">
-        <button class="close-modal">×</button>
-        <div class="modal-content phone-modal-content">
-            <div class="modal-title">Позвонить</div>
-            <div class="phone-number" id="displayPhoneNumber"></div>
-            <div class="ios-telegram-warning" id="iosTelegramWarning">
-                В приложении Telegram для iOS звонки недоступны.<br>
-                Скопируйте номер и вставьте в приложение "Телефон"
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-button" id="directCallButton">ПОЗВОНИТЬ</button>
-                <button class="modal-button" id="copyPhoneButton">СКОПИРОВАТЬ НОМЕР</button>
-            </div>
-            <div class="instructions" id="iosInstructions" style="display: none;">
-                <strong>Инструкция для iOS в Telegram:</strong><br>
-                1. Скопируйте номер<br>
-                2. Выйдите из Telegram<br>
-                3. Откройте приложение "Телефон"<br>
-                4. Вставьте номер и нажмите вызов
-            </div>
-        </div>
-    </div>
-
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
@@ -520,25 +314,6 @@
         ];
         let selectedCity = null;
 
-        // Константы
-        const WHATSAPP_PHONE_SHOP = "79539991666";
-        const CALL_PHONE_SHOP = "+79539991666";
-        const WHATSAPP_PHONE_MACHINERY = "79046661000";
-        const CALL_PHONE_MACHINERY = "+79046661000";
-        const WHATSAPP_PHONE_SELL = "79539991666";
-        const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
-        const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
-
-        const clickSound = document.getElementById('clickSound');
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        let currentPhoneNumber = '';
-        let currentPage = 'main';
-
-        // Определение iOS в Telegram
-        const isTelegramIOS = isIOS && navigator.userAgent.includes('Telegram');
-        // Определение Safari на iOS
-        const isSafariIOS = isIOS && /Safari/.test(navigator.userAgent) && !/CriOS/.test(navigator.userAgent);
-
         // Telegram WebApp
         const tg = window.Telegram?.WebApp;
         if (tg) {
@@ -546,108 +321,33 @@
             tg.expand();
             tg.BackButton.show();
             tg.BackButton.onClick(() => {
-                if (currentPage === 'main') {
-                    tg.close();
-                } else {
-                    closeAllModals();
-                }
+                tg.close();
             });
         }
 
         function playSound() {
+            const clickSound = document.getElementById('clickSound');
             if (clickSound) {
                 clickSound.currentTime = 0;
                 clickSound.play().catch(e => console.log("Звук не воспроизведён"));
             }
         }
 
-        function openShopModal() {
-            closeAllModals();
-            currentPage = 'shop';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('shopModal').classList.add('active');
-            }, 50);
-        }
-
-        function openMachineryModal() {
-            closeAllModals();
-            currentPage = 'machinery';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('machineryModal').classList.add('active');
-            }, 50);
-        }
-
-        function openTradeModal() {
-            closeAllModals();
-            currentPage = 'trade';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('tradeModal').classList.add('active');
-            }, 50);
-        }
-
-        function closeAllModals() {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(m => m.classList.remove('active'));
-            currentPage = 'main';
-            if (tg) tg.BackButton.hide();
-        }
-
         // Функция для склонения города в предложном падеже
         function getCityInPrepositional(city) {
             const exceptions = {
-                "Москва": "в Москве",
-                "Санкт-Петербург": "в Санкт-Петербурге",
-                "Екатеринбург": "в Екатеринбурге",
-                "Нижний Новгород": "в Нижнем Новгороде",
-                "Новосибирск": "в Новосибирске",
-                "Казань": "в Казани",
-                "Самара": "в Самаре",
-                "Омск": "в Омске",
-                "Челябинск": "в Челябинске",
-                "Уфа": "в Уфе",
-                "Ростов-на-Дону": "в Ростове-на-Дону",
-                "Красноярск": "в Красноярске",
-                "Пермь": "в Перми",
-                "Воронеж": "в Воронеже",
-                "Волгоград": "в Волгограде",
-                "Краснодар": "в Краснодаре",
-                "Тюмень": "в Тюмени",
-                "Ижевск": "в Ижевске",
-                "Барнаул": "в Барнауле",
-                "Улан-Удэ": "в Улан-Удэ",
-                "Ярославль": "в Ярославле",
-                "Хабаровск": "в Хабаровске",
-                "Магнитогорск": "в Магнитогорске",
-                "Томск": "в Томске",
-                "Оренбург": "в Оренбурге",
-                "Кемерово": "в Кемерово",
-                "Новокузнецк": "в Новокузнецке",
-                "Рязань": "в Рязани",
-                "Астрахань": "в Астрахани",
-                "Пенза": "в Пензе",
-                "Липецк": "в Липецке",
-                "Севастополь": "в Севастополе",
-                "Белгород": "в Белгороде",
-                "Курск": "в Курске",
-                "Сочи": "в Сочи"
+                "Москва": "в Москве", "Санкт-Петербург": "в Санкт-Петербурге", "Екатеринбург": "в Екатеринбурге",
+                "Нижний Новгород": "в Нижнем Новгороде", "Новосибирск": "в Новосибирске", "Казань": "в Казани",
+                "Самара": "в Самаре", "Омск": "в Омске", "Челябинск": "в Челябинске", "Уфа": "в Уфе",
+                "Ростов-на-Дону": "в Ростове-на-Дону", "Красноярск": "в Красноярске", "Пермь": "в Перми",
+                "Воронеж": "в Воронеже", "Волгоград": "в Волгограде", "Краснодар": "в Краснодаре",
+                "Тюмень": "в Тюмени", "Ижевск": "в Ижевске", "Барнаул": "в Барнауле", "Улан-Удэ": "в Улан-Удэ",
+                "Ярославль": "в Ярославле", "Хабаровск": "в Хабаровске", "Магнитогорск": "в Магнитогорске",
+                "Томск": "в Томске", "Оренбург": "в Оренбурге", "Кемерово": "в Кемерово", "Новокузнецк": "в Новокузнецке",
+                "Рязань": "в Рязани", "Астрахань": "в Астрахани", "Пенза": "в Пензе", "Липецк": "в Липецке",
+                "Севастополь": "в Севастополе", "Белгород": "в Белгороде", "Курск": "в Курске", "Сочи": "в Сочи"
             };
-            if (exceptions[city]) return exceptions[city];
-            const last = city.slice(-1).toLowerCase();
-            const lastTwo = city.slice(-2).toLowerCase();
-            if (last === 'а' || last === 'я') {
-                return `в ${city.replace(/а$/, 'е').replace(/я$/, 'е')}`;
-            } else if (last === 'ь') {
-                return `в ${city}е`;
-            } else if (lastTwo === 'ей') {
-                return `в ${city}`;
-            } else if (['о', 'е', 'и'].includes(last)) {
-                return `в ${city}`;
-            } else {
-                return `в ${city}е`;
-            }
+            return exceptions[city] || (['а', 'я'].includes(city.slice(-1)) ? `в ${city.replace(/а$/, 'е').replace(/я$/, 'е')}` : `в ${city}е`);
         }
 
         function updateButtonTitles(city) {
@@ -703,9 +403,6 @@
                         transition: background 0.2s;
                         font-size: 13px;
                         text-align: center;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
                         width: 100%;
                         box-sizing: border-box;
                     `;
@@ -746,7 +443,7 @@
             });
         }
 
-        // Инициализация при загрузке
+        // === Инициализация при загрузке ===
         window.addEventListener('load', () => {
             // Всегда показываем стартовый экран
             document.getElementById('startScreen').style.display = 'flex';
@@ -763,7 +460,7 @@
 
             setupChangeCityButton();
 
-            // === КНОПКА "НАНЯТЬ МАСТЕРА" ПЕРЕХОДИТ НА master.html ===
+            // === КНОПКИ ПЕРЕХОДЯТ НА HTML-ФАЙЛЫ ===
             document.getElementById('masterButton').addEventListener('click', () => {
                 playSound();
                 const cityParam = selectedCity ? `?city=${encodeURIComponent(selectedCity)}` : '';
@@ -774,139 +471,36 @@
                 }
             });
 
-            // Остальные кнопки остаются как есть
-            document.getElementById('shopButton').addEventListener('click', openShopModal);
-            document.getElementById('machineryButton').addEventListener('click', openMachineryModal);
-
-            // Обработчики для модалок
-            document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SHOP, `Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой ${getCityInPrepositional(selectedCity || '')}`);
-            });
-            document.getElementById('shopCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_SHOP);
-            });
-            document.getElementById('tradeMaterialsButton').addEventListener('click', openTradeModal);
-            document.getElementById('buyMaterialsButton').addEventListener('click', () => {
+            document.getElementById('shopButton').addEventListener('click', () => {
                 playSound();
+                const cityParam = selectedCity ? `?city=${encodeURIComponent(selectedCity)}` : '';
                 if (tg) {
-                    tg.openLink(BUILDING_CHANNEL_URL);
+                    tg.openLink('shop.html' + cityParam);
                 } else {
-                    window.open(BUILDING_CHANNEL_URL, '_blank');
+                    window.location.href = 'shop.html' + cityParam;
                 }
-                closeAllModals();
             });
-            document.getElementById('sellMaterialsButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SELL, `Здравствуйте, я хочу продать лишние остатки строительных материалов ${getCityInPrepositional(selectedCity || '')}! ВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.`);
-            });
-            document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_MACHINERY, `Здравствуйте! Хочу арендовать спецтехнику ${getCityInPrepositional(selectedCity || '')}!`);
-            });
-            document.getElementById('machineryCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_MACHINERY);
-            });
-            document.getElementById('directCallButton').addEventListener('click', () => {
+
+            document.getElementById('machineryButton').addEventListener('click', () => {
                 playSound();
-                try {
-                    const a = document.createElement('a');
-                    a.href = `tel:${currentPhoneNumber}`;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                } catch (e) {
-                    console.log("Звонок не удался", e);
+                const cityParam = selectedCity ? `?city=${encodeURIComponent(selectedCity)}` : '';
+                if (tg) {
+                    tg.openLink('machinery.html' + cityParam);
+                } else {
+                    window.location.href = 'machinery.html' + cityParam;
                 }
             });
-            document.getElementById('copyPhoneButton').addEventListener('click', () => {
-                copyToClipboard(currentPhoneNumber);
-            });
-            document.querySelectorAll('.close-modal').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    playSound();
-                    closeAllModals();
-                });
-            });
+
+            // Ссылка "О нас"
             document.getElementById('aboutLink').addEventListener('click', () => {
                 playSound();
                 if (tg) {
-                    tg.openLink(TELEGRAM_CHANNEL_URL);
+                    tg.openLink('https://t.me/+JNKZPQaVBGhlMzQ6');
                 } else {
-                    window.open(TELEGRAM_CHANNEL_URL, '_blank');
+                    window.open('https://t.me/+JNKZPQaVBGhlMzQ6', '_blank');
                 }
             });
         });
-
-        // Универсальная функция для звонка
-        function callPhone(phoneNumber) {
-            playSound();
-            currentPhoneNumber = phoneNumber;
-            const formatted = formatPhone(phoneNumber);
-            document.getElementById('displayPhoneNumber').textContent = formatted;
-            document.getElementById('iosTelegramWarning').style.display = isTelegramIOS ? 'block' : 'none';
-            document.getElementById('iosInstructions').style.display = isTelegramIOS ? 'block' : 'none';
-            closeAllModals();
-            setTimeout(() => {
-                document.getElementById('phoneModal').classList.add('active');
-            }, 100);
-            if (isSafariIOS) {
-                setTimeout(() => {
-                    try {
-                        const a = document.createElement('a');
-                        a.href = `tel:${phoneNumber}`;
-                        a.style.display = 'none';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                    } catch (e) {
-                        console.log("Автозвонок не удался", e);
-                    }
-                }, 500);
-            }
-        }
-
-        // Открытие WhatsApp
-        function openWhatsApp(phone, message) {
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            if (tg) {
-                tg.openLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
-            closeAllModals();
-        }
-
-        // Копирование номера
-        async function copyToClipboard(text) {
-            playSound();
-            try {
-                if (navigator.clipboard) {
-                    await navigator.clipboard.writeText(text);
-                    alert('✅ Номер скопирован!');
-                    return;
-                }
-                const tempInput = document.createElement('textarea');
-                tempInput.value = text;
-                tempInput.style.position = 'fixed';
-                tempInput.style.opacity = 0;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                const result = document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                if (result) {
-                    alert('✅ Номер скопирован!');
-                } else {
-                    throw new Error('Copy command failed');
-                }
-            } catch (err) {
-                console.error("Ошибка при копировании:", err);
-                alert('❌ Не удалось скопировать номер. Скопируйте его вручную.');
-            }
-        }
-
-        // Форматирование номера
-        function formatPhone(phone) {
-            return phone.replace(/(\+)?(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '+$2 ($3) $4-$5-$6');
-        }
     </script>
 </body>
 </html>
