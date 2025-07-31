@@ -104,6 +104,7 @@
             opacity: 0;
             z-index: 10;
         }
+
         /* Модальные окна */
         .modal {
             position: fixed;
@@ -233,6 +234,7 @@
             border-radius: 10px;
             word-break: break-all;
         }
+
         /* Стартовый экран */
         .start-screen {
             position: fixed;
@@ -292,6 +294,7 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: linear-gradient(45deg, #2980b9, #3498db);
         }
+
         /* iOS Telegram предупреждение */
         .ios-telegram-warning {
             display: none;
@@ -318,8 +321,12 @@
             border: 2px solid white;
             max-width: 400px;
         }
+        #citySearchContainer {
+            position: relative;
+            width: 100%;
+        }
         #citySearch {
-            padding: 12px;
+            padding: 12px 12px 12px 40px;
             width: 100%;
             margin-bottom: 15px;
             border: 1px solid #555;
@@ -329,8 +336,34 @@
             background: #222;
             color: white;
         }
-        #citySearch::placeholder {
-            color: #888;
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        .remember-checkbox {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #ccc;
+        }
+        .remember-checkbox input {
+            margin-right: 6px;
+        }
+
+        /* Кнопка "Сменить город" */
+        #changeCityButton {
+            margin-left: 10px;
+            font-size: 14px;
+            color: #1e90ff;
+            text-decoration: underline;
+            cursor: pointer;
+            vertical-align: middle;
         }
     </style>
 </head>
@@ -359,9 +392,16 @@
     <div class="modal" id="cityModal">
         <div class="modal-content">
             <div class="modal-title">Выберите город</div>
-            <input type="text" id="citySearch" placeholder="Поиск по городу...">
+            <div id="citySearchContainer">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="citySearch" placeholder="Поиск по городу...">
+            </div>
             <div id="cityList" style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
                 <!-- Города загрузятся динамически -->
+            </div>
+            <div class="remember-checkbox">
+                <input type="checkbox" id="rememberCityCheckbox">
+                <label for="rememberCityCheckbox">Запомнить мой выбор</label>
             </div>
             <div style="color: #aaa; font-size: 14px; margin-top: 15px;">
                 Не нашли свой город? Напишите нам — работаем по всей России
@@ -369,9 +409,10 @@
         </div>
     </div>
 
-    <!-- Отображение выбранного города -->
-    <div class="selected-city" id="selectedCityDisplay" style="margin-top: 15px; font-size: 18px; color: #fff; text-align: center; opacity: 0; transition: opacity 0.3s ease;">
-        Город: <span id="cityName">Не выбран</span>
+    <!-- Отображение выбранного города и кнопка "Сменить" -->
+    <div class="selected-city" id="selectedCityDisplay" style="margin-top: 15px; font-size: 18px; color: #fff; text-align: center; opacity: 0; transition: opacity 0.3s ease; display: flex; align-items: center; justify-content: center;">
+        <span>Город: <span id="cityName">Не выбран</span></span>
+        <span id="changeCityButton">Сменить</span>
     </div>
 
     <!-- Основные кнопки -->
@@ -640,7 +681,6 @@
 
         // Функция для склонения города в предложном падеже
         function getCityInPrepositional(city) {
-            // Список исключений
             const exceptions = {
                 "Москва": "в Москве",
                 "Санкт-Петербург": "в Санкт-Петербурге",
@@ -681,7 +721,6 @@
 
             if (exceptions[city]) return exceptions[city];
 
-            // Обычные правила
             const last = city.slice(-1).toLowerCase();
             const lastTwo = city.slice(-2).toLowerCase();
 
@@ -738,28 +777,37 @@
         function initCityModal() {
             const cityList = document.getElementById('cityList');
             const citySearch = document.getElementById('citySearch');
+            const rememberCheckbox = document.getElementById('rememberCityCheckbox');
 
             function renderCities(filteredCities = cities) {
                 cityList.innerHTML = '';
                 filteredCities.forEach(city => {
                     const btn = document.createElement('button');
-                    btn.textContent = city.toUpperCase(); // Все буквы заглавные
+                    btn.textContent = city.toUpperCase();
                     btn.style.cssText = `
                         padding: 12px;
                         background: rgba(255,255,255,0.1);
                         border: 1px solid #444;
                         border-radius: 8px;
                         color: white;
-                        text-align: left;
                         cursor: pointer;
                         transition: background 0.2s;
-                        font-size: 13px; /* Уменьшаем шрифт */
+                        font-size: 13px;
+                        text-align: center;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 100%;
+                        box-sizing: border-box;
                     `;
                     btn.onmouseover = () => btn.style.background = 'rgba(255,255,255,0.2)';
                     btn.onmouseout = () => btn.style.background = 'rgba(255,255,255,0.1)';
                     btn.onclick = () => {
                         selectedCity = city;
                         playSound();
+                        if (rememberCheckbox.checked) {
+                            localStorage.setItem('selectedCity', city);
+                        }
                         setTimeout(() => {
                             document.getElementById('cityModal').classList.remove('active');
                             showMainContent();
@@ -778,19 +826,45 @@
             renderCities();
         }
 
+        // Проверка сохранённого города
+        function checkSavedCity() {
+            const savedCity = localStorage.getItem('selectedCity');
+            if (savedCity && cities.includes(savedCity)) {
+                selectedCity = savedCity;
+                document.getElementById('startScreen').style.display = 'none';
+                showMainContent();
+                return true;
+            }
+            return false;
+        }
+
+        // Обработчик кнопки "Сменить город"
+        function setupChangeCityButton() {
+            document.getElementById('changeCityButton').addEventListener('click', () => {
+                playSound();
+                initCityModal();
+                document.getElementById('cityModal').classList.add('active');
+            });
+        }
+
         // Инициализация при загрузке
         window.addEventListener('load', () => {
-            initCityModal();
+            if (checkSavedCity()) {
+                setupChangeCityButton();
+            } else {
+                document.getElementById('openAppButton').addEventListener('click', () => {
+                    playSound();
+                    document.getElementById('startScreen').style.display = 'none';
+                    initCityModal();
+                    setTimeout(() => {
+                        document.getElementById('cityModal').classList.add('active');
+                    }, 100);
+                });
+            }
 
-            document.getElementById('openAppButton').addEventListener('click', () => {
-                playSound();
-                document.getElementById('startScreen').style.display = 'none';
-                setTimeout(() => {
-                    document.getElementById('cityModal').classList.add('active');
-                }, 100);
-            });
+            setupChangeCityButton();
 
-            // Остальные обработчики
+            // Остальные обработчики...
             document.getElementById('masterButton').addEventListener('click', openMasterModal);
             document.getElementById('masterWhatsAppButton').addEventListener('click', () => {
                 openWhatsApp(WHATSAPP_PHONE_MASTER, `Здравствуйте! Хочу оформить заявку на выполнение строительных работ в ${selectedCity || 'вашем городе'}!`);
