@@ -69,7 +69,7 @@
             background-image: inherit;
             background-position: center;
             background-size: cover;
-            filter: brightness(0.9);
+            filter: brightness(0.7); /* Увеличено затемнение */
             border-radius: 10px;
             z-index: -1;
         }
@@ -80,7 +80,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.4); /* Усилено затемнение */
             border-radius: 10px;
             z-index: -1;
             pointer-events: none;
@@ -150,34 +150,8 @@
         }
 
         /* === Фоновые изображения для модальных окон === */
-        .master-modal-content::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('modal-master.jpg');
-            background-position: center;
-            background-size: cover;
-            filter: brightness(0.8);
-            border-radius: 15px;
-            z-index: -1;
-        }
-        .shop-modal-content::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('modal-shop.jpg');
-            background-position: center;
-            background-size: cover;
-            filter: brightness(0.8);
-            border-radius: 15px;
-            z-index: -1;
-        }
+        .master-modal-content::before,
+        .shop-modal-content::before,
         .machinery-modal-content::before {
             content: "";
             position: absolute;
@@ -185,13 +159,15 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('modal-machinery.jpg');
             background-position: center;
             background-size: cover;
             filter: brightness(0.8);
             border-radius: 15px;
             z-index: -1;
         }
+        .master-modal-content::before { background-image: url('modal-master.jpg'); }
+        .shop-modal-content::before { background-image: url('modal-shop.jpg'); }
+        .machinery-modal-content::before { background-image: url('modal-machinery.jpg'); }
 
         .phone-modal-content {
             background: rgba(40, 40, 40, 0.95);
@@ -199,7 +175,7 @@
 
         .modal-title {
             font-size: 24px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             color: white;
             text-align: center;
             text-shadow: 1px 1px 2px black;
@@ -211,6 +187,7 @@
             gap: 15px;
             width: 100%;
             align-items: center;
+            margin-top: auto;
         }
 
         .modal-button {
@@ -269,15 +246,15 @@
         }
         #citySearchContainer {
             position: relative;
-            width: 100%;
+            width: 90%; /* Уменьшена ширина */
+            margin-bottom: 15px;
         }
         #citySearch {
             padding: 12px 12px 12px 40px;
             width: 100%;
-            margin-bottom: 15px;
             border: 1px solid #555;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 13px; /* Размер текста 13px */
             outline: none;
             background: #222;
             color: white;
@@ -334,12 +311,14 @@
             overflow-y: auto;
             max-height: 80vh;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
         #categoriesSearchContainer,
         #shopCategoriesSearchContainer,
         #machineryCategoriesSearchContainer {
             position: relative;
-            width: 100%;
+            width: 90%; /* Уменьшена ширина */
             margin-bottom: 15px;
         }
         #categoriesSearch,
@@ -400,31 +379,7 @@
             gap: 5px;
         }
 
-        /* === Фиксированная кнопка "Позвонить" === */
-        .phone-bottom-btn {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #28a745, #218838);
-            color: white;
-            text-align: center;
-            font-weight: bold;
-            font-size: 15px;
-            border: none;
-            border-top-left-radius: 14px;
-            border-top-right-radius: 14px;
-            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            display: none;
-            cursor: pointer;
-        }
-        .phone-bottom-btn a {
-            color: white;
-            text-decoration: none;
-            display: block;
-        }
+        /* Фиксированная кнопка "Позвонить" — УДАЛЕНА из DOM, т.к. перенесена в модалки */
     </style>
 </head>
 <body>
@@ -482,6 +437,10 @@
                 <input type="text" id="categoriesSearch" placeholder="Поиск услуги...">
             </div>
             <div id="categoriesList"></div>
+            <!-- Кнопка "Позвонить по телефону" внизу модалки -->
+            <div class="modal-buttons" style="margin-top: auto; margin-bottom: 0;">
+                <button class="modal-button" id="callMasterButton">ПОЗВОНИТЬ ПО ТЕЛЕФОНУ</button>
+            </div>
         </div>
     </div>
 
@@ -499,6 +458,10 @@
                 <input type="text" id="shopCategoriesSearch" placeholder="Поиск категории...">
             </div>
             <div id="shopCategoriesList"></div>
+            <!-- Кнопка "Позвонить по телефону" внизу -->
+            <div class="modal-buttons" style="margin-top: auto; margin-bottom: 0;">
+                <button class="modal-button" id="callShopButton">ПОЗВОНИТЬ ПО ТЕЛЕФОНУ</button>
+            </div>
         </div>
     </div>
 
@@ -512,6 +475,10 @@
                 <input type="text" id="machineryCategoriesSearch" placeholder="Поиск техники...">
             </div>
             <div id="machineryCategoriesList"></div>
+            <!-- Кнопка "Позвонить по телефону" внизу -->
+            <div class="modal-buttons" style="margin-top: auto; margin-bottom: 0;">
+                <button class="modal-button" id="callMachineryButton">ПОЗВОНИТЬ ПО ТЕЛЕФОНУ</button>
+            </div>
         </div>
     </div>
 
@@ -539,10 +506,8 @@
         </div>
     </div>
 
-    <!-- Фиксированная кнопка "Позвонить" -->
-    <button class="phone-bottom-btn" id="phoneBottomBtn">
-        <a href="tel:+79046660999">ЕСЛИ У ВАС ОСТАЛИСЬ ВОПРОСЫ — ПОЗВОНИТЕ ПО ТЕЛЕФОНУ</a>
-    </button>
+    <!-- Удалена фиксированная кнопка "Позвонить" -->
+    <!-- Она теперь внутри каждой модалки -->
 
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -584,16 +549,7 @@
         function closeAllModals() {
             document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
             currentPage = 'main';
-            hidePhoneBottomBtn();
             if (tg) tg.BackButton.hide();
-        }
-
-        function showPhoneBottomBtn() {
-            document.getElementById('phoneBottomBtn').style.display = 'block';
-        }
-
-        function hidePhoneBottomBtn() {
-            document.getElementById('phoneBottomBtn').style.display = 'none';
         }
 
         function updateCityDisplay() {
@@ -791,7 +747,6 @@
                     closeAllModals();
                     currentPage = 'categories';
                     if (tg) tg.BackButton.show();
-                    showPhoneBottomBtn();
                     const list = document.getElementById('categoriesList');
                     list.innerHTML = '';
                     masterCategories.forEach(cat => {
@@ -827,7 +782,6 @@
                     closeAllModals();
                     currentPage = 'shop';
                     if (tg) tg.BackButton.show();
-                    showPhoneBottomBtn();
                     const list = document.getElementById('shopCategoriesList');
                     list.innerHTML = '';
                     shopCategories.forEach(cat => {
@@ -863,7 +817,6 @@
                     closeAllModals();
                     currentPage = 'machinery';
                     if (tg) tg.BackButton.show();
-                    showPhoneBottomBtn();
                     const list = document.getElementById('machineryCategoriesList');
                     list.innerHTML = '';
                     machineryCategories.forEach(cat => {
@@ -914,6 +867,25 @@
                 playSound();
                 const message = `Здравствуйте, я хочу продать лишние остатки строительных материалов ${getCityInPrepositional(selectedCity)}!\n\nВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.`;
                 openWhatsApp(WHATSAPP_PHONE_SELL, message);
+            });
+
+            // === Кнопки "Позвонить по телефону" внутри модалок ===
+            document.getElementById('callMasterButton').addEventListener('click', () => {
+                playSound();
+                document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_MASTER;
+                document.getElementById('phoneModal').classList.add('active');
+            });
+
+            document.getElementById('callShopButton').addEventListener('click', () => {
+                playSound();
+                document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_SHOP;
+                document.getElementById('phoneModal').classList.add('active');
+            });
+
+            document.getElementById('callMachineryButton').addEventListener('click', () => {
+                playSound();
+                document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_MACHINERY;
+                document.getElementById('phoneModal').classList.add('active');
             });
 
             // === Звонки ===
