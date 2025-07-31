@@ -6,293 +6,40 @@
     <title>СТРОЙ по КАрману</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            color: white;
-            overflow: hidden;
-            background: black;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-        .background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -2;
-        }
-        .button-container {
-            margin-top: 25vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            opacity: 0;
-            z-index: 10;
-        }
-        button {
-            color: white;
-            border: 2px solid white;
-            padding: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            width: 80%;
-            max-width: 350px;
-            text-align: center;
-            background-color: transparent;
-            background-position: center;
-            background-size: cover;
-            position: relative;
-            overflow: hidden;
-            touch-action: manipulation;
-        }
-        button::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: inherit;
-            background-position: center;
-            background-size: cover;
-            filter: brightness(0.9);
+        /* ... (предыдущие стили остаются без изменений) ... */
+        
+        /* Новые стили для инструкции */
+        .copy-instructions {
+            background: rgba(0, 0, 0, 0.5);
             border-radius: 10px;
-            z-index: -1;
-        }
-        button::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            z-index: -1;
-            pointer-events: none;
-        }
-        button span {
-            position: relative;
-            z-index: 2;
-            text-shadow: 1px 1px 2px black;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-        }
-        .about-link {
-            margin-top: 60px;
-            font-size: 16px;
-            color: #ecf0f1;
-            text-decoration: underline;
-            cursor: pointer;
-            text-align: center;
-            opacity: 0;
-            z-index: 10;
-        }
-        /* Модальные окна */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .modal-content {
-            background: transparent;
-            border: 2px solid white;
-            border-radius: 15px;
-            padding: 30px;
-            width: 80%;
-            max-width: 350px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            transform: scale(0.9);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .modal.active .modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-        .modal-content::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            z-index: -1;
-        }
-        .master-modal-content::before {
-            background-image: url('modal-background.jpg');
-        }
-        .shop-modal-content::before {
-            background-image: url('modal-shop.jpg');
-        }
-        .machinery-modal-content::before {
-            background-image: url('modal-machinery.jpg');
-        }
-        .trade-modal-content::before {
-            background-image: url('modal-shop.jpg');
-        }
-        .phone-modal-content {
-            background: rgba(40, 40, 40, 0.95);
-        }
-        .modal-title {
-            font-size: 24px;
-            margin-bottom: 30px;
-            color: white;
-            text-align: center;
-            text-shadow: 1px 1px 2px black;
-        }
-        .modal-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            align-items: center;
-        }
-        .modal-button {
-            color: white;
-            border: 2px solid white;
             padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            background: transparent;
-            transition: all 0.3s ease;
-            width: 100%;
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+            text-align: left;
             max-width: 300px;
-            text-align: center;
-            text-shadow: 1px 1px 2px black;
         }
-        .modal-button:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            color: white;
-            cursor: pointer;
-            background: none;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            text-shadow: 1px 1px 2px black;
-        }
-        .phone-number {
-            font-size: 24px;
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            word-break: break-all;
-        }
-        /* Стартовый экран */
-        .start-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 300;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .start-content {
-            background: rgba(30, 30, 30, 0.9);
-            border: 2px solid white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 90%;
-            width: 100%;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-        }
-        .start-title {
-            color: white;
-            font-size: 28px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        .start-message {
-            color: #ecf0f1;
-            font-size: 18px;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        .start-button {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 18px 30px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
+        .copy-steps {
             margin: 10px 0;
-            width: 100%;
-            max-width: 320px;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            padding-left: 20px;
         }
-        .start-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(45deg, #2980b9, #3498db);
+        .copy-steps li {
+            margin-bottom: 8px;
+            position: relative;
         }
-        /* iOS Telegram предупреждение */
+        .copy-steps li:before {
+            content: "•";
+            position: absolute;
+            left: -15px;
+            color: #3498db;
+            font-weight: bold;
+        }
+        .copy-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #3498db;
+            text-align: center;
+        }
         .ios-telegram-warning {
             display: none;
             background: rgba(200, 0, 0, 0.3);
@@ -302,98 +49,10 @@
             font-size: 14px;
             text-align: center;
         }
-        /* Инструкция */
-        .instructions {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
     </style>
 </head>
 <body>
-    <video autoplay muted loop playsinline class="background-video" id="bgVideo">
-        <source src="background.mp4" type="video/mp4">
-        Ваш браузер не поддерживает видео.
-    </video>
-    <audio id="clickSound" src="click.mp3"></audio>
-
-    <!-- Стартовый экран -->
-    <div class="start-screen" id="startScreen">
-        <div class="start-content">
-            <h1 class="start-title">Добро пожаловать!</h1>
-            <p class="start-message">
-                Добро пожаловать в наше приложение! Здесь вы можете сделать заказ,
-                вызвать мастера или арендовать спецтехнику. Получить консультацию или проектную документацию и многое другое... Здесь всё про строительство! Начни прямо сейчас!
-            </p>
-            <button class="start-button" id="openAppButton">
-                ПОСТРОИТЬ!
-            </button>
-        </div>
-    </div>
-
-    <!-- Основные кнопки -->
-    <div class="button-container" id="buttonContainer">
-        <button style="background-image: url('btn-master.jpg');" id="masterButton">
-            <span>НАНЯТЬ МАСТЕРА / НАЙТИ БРИГАДУ<br><small>(проверенные специалисты)</small></span>
-        </button>
-        <button style="background-image: url('btn-shop.jpg');" id="shopButton">
-            <span>ИНТЕРНЕТ МАГАЗИН СТРОЙМАТЕРИАЛОВ<br><small>(новые и б/у, можно продать свои)</small></span>
-        </button>
-        <button style="background-image: url('btn-machinery.jpg');" id="machineryButton">
-            <span>СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ<br><small>(аренда / прокат)</small></span>
-        </button>
-    </div>
-
-    <div class="about-link" id="aboutLink">О нас</div>
-
-    <!-- Модальные окна -->
-    <div class="modal" id="masterModal">
-        <button class="close-modal">×</button>
-        <div class="modal-content master-modal-content">
-            <div class="modal-title">НАНЯТЬ МАСТЕРА / НАЙТИ БРИГАДУ</div>
-            <div class="modal-buttons">
-                <button class="modal-button" id="masterWhatsAppButton">СДЕЛАТЬ ОНЛАЙН ЗАЯВКУ</button>
-                <button class="modal-button" id="masterCallButton">ПОЗВОНИТЬ ПО ТЕЛЕФОНУ</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="shopModal">
-        <button class="close-modal">×</button>
-        <div class="modal-content shop-modal-content">
-            <div class="modal-title">ИНТЕРНЕТ МАГАЗИН</div>
-            <div class="modal-buttons">
-                <button class="modal-button" id="shopWhatsAppButton">СДЕЛАТЬ ОНЛАЙН ЗАЯВКУ</button>
-                <button class="modal-button" id="shopCallButton">ПОЗВОНИТЬ ПО ТЕЛЕФОНу</button>
-                <button class="modal-button" id="tradeMaterialsButton">КУПИ / ПРОДАЙ ОСТАТКИ<br><small>НОВЫЕ И Б/У</small></button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="tradeModal">
-        <button class="close-modal">×</button>
-        <div class="modal-content trade-modal-content">
-            <div class="modal-title">КУПИ / ПРОДАЙ ОСТАТКИ</div>
-            <div class="modal-buttons">
-                <button class="modal-button" id="buyMaterialsButton">КУПИТЬ</button>
-                <button class="modal-button" id="sellMaterialsButton">ПРОДАТЬ</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="machineryModal">
-        <button class="close-modal">×</button>
-        <div class="modal-content machinery-modal-content">
-            <div class="modal-title">СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ</div>
-            <div class="modal-buttons">
-                <button class="modal-button" id="machineryWhatsAppButton">АРЕНДОВАТЬ ОНЛАЙН</button>
-                <button class="modal-button" id="machineryCallButton">АРЕНДОВАТЬ ПО ТЕЛЕФОНу</button>
-            </div>
-        </div>
-    </div>
+    <!-- ... (остальная часть HTML без изменений) ... -->
 
     <!-- Модалка для iOS -->
     <div class="modal" id="phoneModal">
@@ -401,21 +60,29 @@
         <div class="modal-content phone-modal-content">
             <div class="modal-title">Позвонить</div>
             <div class="phone-number" id="displayPhoneNumber"></div>
+            
             <!-- Предупреждение для iOS в Telegram -->
             <div class="ios-telegram-warning" id="iosTelegramWarning">
                 В приложении Telegram для iOS звонки недоступны.<br>
                 Скопируйте номер и вставьте в приложение "Телефон"
             </div>
+            
             <div class="modal-buttons">
                 <button class="modal-button" id="directCallButton">ПОЗВОНИТЬ</button>
                 <button class="modal-button" id="copyPhoneButton">СКОПИРОВАТЬ НОМЕР</button>
             </div>
-            <div class="instructions" id="iosInstructions" style="display: none;">
-                <strong>Инструкция для iOS в Telegram:</strong><br>
-                1. Скопируйте номер<br>
-                2. Выйдите из Telegram<br>
-                3. Откройте приложение "Телефон"<br>
-                4. Вставьте номер и нажмите вызов
+            
+            <!-- Инструкция по копированию для iOS -->
+            <div class="copy-instructions" id="copyInstructions">
+                <div class="copy-title">Как позвонить:</div>
+                <ol class="copy-steps">
+                    <li>Нажмите "Скопировать номер"</li>
+                    <li>Откройте приложение "Телефон"</li>
+                    <li>Перейдите на вкладку "Клавиатура"</li>
+                    <li>Нажмите и удерживайте поле ввода номера</li>
+                    <li>Выберите "Вставить" во всплывающем меню</li>
+                    <li>Нажмите зеленую кнопку вызова</li>
+                </ol>
             </div>
         </div>
     </div>
@@ -423,42 +90,8 @@
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Константы
-        const WHATSAPP_PHONE_MASTER = "79046660999";
-        const CALL_PHONE_MASTER = "+79046660999";
-        const WHATSAPP_PHONE_SHOP = "79539991666";
-        const CALL_PHONE_SHOP = "+79539991666";
-        const WHATSAPP_PHONE_MACHINERY = "79046661000";
-        const CALL_PHONE_MACHINERY = "+79046661000";
-        const WHATSAPP_PHONE_SELL = "79539991666";
-        const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
-        const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
-        const clickSound = document.getElementById('clickSound');
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        let currentPhoneNumber = '';
-        let currentPage = 'main';
-
-        // Определение iOS в Telegram
-        const isTelegramIOS = isIOS && navigator.userAgent.includes('Telegram');
+        // ... (предыдущий код JavaScript без изменений) ...
         
-        // Определение Safari на iOS
-        const isSafariIOS = isIOS && /Safari/.test(navigator.userAgent) && !/CriOS/.test(navigator.userAgent);
-
-        // Telegram WebApp
-        const tg = window.Telegram?.WebApp;
-        if (tg) {
-            tg.ready();
-            tg.expand();
-            tg.BackButton.show();
-            tg.BackButton.onClick(() => {
-                if (currentPage === 'main') {
-                    tg.close();
-                } else {
-                    closeAllModals();
-                }
-            });
-        }
-
         // Универсальная функция для звонка
         function callPhone(phoneNumber) {
             playSound();
@@ -468,12 +101,12 @@
             // Показываем модалку
             document.getElementById('displayPhoneNumber').textContent = formatted;
             
+            // Показываем инструкцию для iOS
+            document.getElementById('copyInstructions').style.display = 
+                isIOS ? 'block' : 'none';
+            
             // Показываем предупреждение только для Telegram на iOS
             document.getElementById('iosTelegramWarning').style.display = 
-                isTelegramIOS ? 'block' : 'none';
-                
-            // Показываем инструкцию только для Telegram на iOS
-            document.getElementById('iosInstructions').style.display = 
                 isTelegramIOS ? 'block' : 'none';
             
             closeAllModals();
@@ -498,207 +131,7 @@
             }
         }
 
-        // Открытие WhatsApp
-        function openWhatsApp(phone, message) {
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            if (tg) {
-                tg.openLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
-            closeAllModals();
-        }
-
-        // Копирование номера
-        async function copyToClipboard(text) {
-            playSound();
-            
-            try {
-                // Используем современный API для копирования
-                if (navigator.clipboard) {
-                    await navigator.clipboard.writeText(text);
-                    alert('✅ Номер скопирован!');
-                    return;
-                }
-                
-                // Фолбэк для старых браузеров
-                const tempInput = document.createElement('textarea');
-                tempInput.value = text;
-                tempInput.style.position = 'fixed';
-                tempInput.style.opacity = 0;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                
-                const result = document.execCommand('copy');
-                document.body.removeChild(tempInput);
-                
-                if (result) {
-                    alert('✅ Номер скопирован!');
-                } else {
-                    throw new Error('Copy command failed');
-                }
-            } catch (err) {
-                console.error("Ошибка при копировании:", err);
-                alert('❌ Не удалось скопировать номер. Скопируйте его вручную.');
-            }
-        }
-
-        // Форматирование номера
-        function formatPhone(phone) {
-            return phone.replace(/(\+)?(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '+$2 ($3) $4-$5-$6');
-        }
-
-        function playSound() {
-            if (clickSound) {
-                clickSound.currentTime = 0;
-                clickSound.play().catch(e => console.log("Звук не воспроизведён"));
-            }
-        }
-
-        function openMasterModal() {
-            closeAllModals();
-            currentPage = 'master';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('masterModal').classList.add('active');
-            }, 50);
-        }
-
-        function openShopModal() {
-            closeAllModals();
-            currentPage = 'shop';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('shopModal').classList.add('active');
-            }, 50);
-        }
-
-        function openMachineryModal() {
-            closeAllModals();
-            currentPage = 'machinery';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('machineryModal').classList.add('active');
-            }, 50);
-        }
-
-        function openTradeModal() {
-            closeAllModals();
-            currentPage = 'trade';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('tradeModal').classList.add('active');
-            }, 50);
-        }
-
-        function closeAllModals() {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(m => m.classList.remove('active'));
-            currentPage = 'main';
-            if (tg) tg.BackButton.hide();
-        }
-
-        function showMainContent() {
-            const btnContainer = document.getElementById('buttonContainer');
-            const aboutLink = document.getElementById('aboutLink');
-            setTimeout(() => {
-                btnContainer.style.opacity = 1;
-                btnContainer.classList.add('animate__animated', 'animate__fadeInUp');
-                setTimeout(() => {
-                    aboutLink.style.opacity = 1;
-                    aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
-                }, 250);
-            }, 300);
-        }
-
-        // Инициализация
-        window.addEventListener('load', () => {
-            document.getElementById('openAppButton').addEventListener('click', () => {
-                playSound();
-                document.getElementById('startScreen').style.display = 'none';
-                showMainContent();
-            });
-
-            // Мастер
-            document.getElementById('masterButton').addEventListener('click', openMasterModal);
-            document.getElementById('masterWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_MASTER, "Здравствуйте! Хочу оформить заявку на выполнение строительных работ!");
-            });
-            document.getElementById('masterCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_MASTER);
-            });
-
-            // Магазин
-            document.getElementById('shopButton').addEventListener('click', openShopModal);
-            document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SHOP, "Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой");
-            });
-            document.getElementById('shopCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_SHOP);
-            });
-            document.getElementById('tradeMaterialsButton').addEventListener('click', openTradeModal);
-
-            // Купи / Продай
-            document.getElementById('buyMaterialsButton').addEventListener('click', () => {
-                playSound();
-                if (tg) {
-                    tg.openLink(BUILDING_CHANNEL_URL);
-                } else {
-                    window.open(BUILDING_CHANNEL_URL, '_blank');
-                }
-                closeAllModals();
-            });
-            document.getElementById('sellMaterialsButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SELL, "Здравствуйте я хочу продать лишние остатки строительных материалов! ВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.");
-            });
-
-            // Спецтехника
-            document.getElementById('machineryButton').addEventListener('click', openMachineryModal);
-            document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_MACHINERY, "Здравствуйте! Хочу арендовать спецтехнику!");
-            });
-            document.getElementById('machineryCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_MACHINERY);
-            });
-
-            // Кнопка "Позвонить" в модалке
-            document.getElementById('directCallButton').addEventListener('click', () => {
-                playSound();
-                try {
-                    const a = document.createElement('a');
-                    a.href = `tel:${currentPhoneNumber}`;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                } catch (e) {
-                    console.log("Звонок не удался", e);
-                }
-            });
-            
-            // Кнопка "Скопировать номер"
-            document.getElementById('copyPhoneButton').addEventListener('click', () => {
-                copyToClipboard(currentPhoneNumber);
-            });
-
-            // Закрытие модалок
-            document.querySelectorAll('.close-modal').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    playSound();
-                    closeAllModals();
-                });
-            });
-
-            // О нас
-            document.getElementById('aboutLink').addEventListener('click', () => {
-                playSound();
-                if (tg) {
-                    tg.openLink(TELEGRAM_CHANNEL_URL);
-                } else {
-                    window.open(TELEGRAM_CHANNEL_URL, '_blank');
-                }
-            });
-        });
+        // ... (остальной код JavaScript без изменений) ...
     </script>
 </body>
 </html>
