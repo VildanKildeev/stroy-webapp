@@ -233,74 +233,13 @@
             border-radius: 10px;
             word-break: break-all;
         }
-        /* Предупреждение для iOS в Telegram */
-        .ios-telegram-warning {
-            display: none;
-            background: rgba(200, 0, 0, 0.3);
+        .ios-warning {
+            background: rgba(255, 255, 0, 0.2);
             padding: 10px;
             border-radius: 8px;
-            margin-top: 10px;
+            margin: 10px 0;
             font-size: 14px;
             text-align: center;
-        }
-        /* Стартовый экран */
-        .start-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 300;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .start-content {
-            background: rgba(30, 30, 30, 0.9);
-            border: 2px solid white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 90%;
-            width: 100%;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-        }
-        .start-title {
-            color: white;
-            font-size: 28px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        .start-message {
-            color: #ecf0f1;
-            font-size: 18px;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        .start-button {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 18px 30px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            margin: 10px 0;
-            width: 100%;
-            max-width: 320px;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-        .start-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(45deg, #2980b9, #3498db);
         }
     </style>
 </head>
@@ -386,268 +325,125 @@
         </div>
     </div>
 
-    <!-- Модалка для iOS -->
+    <!-- Модалка для звонка -->
     <div class="modal" id="phoneModal">
         <button class="close-modal">×</button>
         <div class="modal-content phone-modal-content">
             <div class="modal-title">Позвонить</div>
             <div class="phone-number" id="displayPhoneNumber"></div>
-            <div class="ios-telegram-warning" id="iosTelegramWarning">
-                В приложении Telegram для iOS звонки недоступны.<br>
-                Скопируйте номер и вставьте в приложение "Телефон"
-            </div>
+            <div class="ios-warning">На iPhone в Telegram звонок может не сработать. Скопируйте номер и вставьте в приложение "Телефон".</div>
             <div class="modal-buttons">
-                <button class="modal-button" id="directCallButton">ПОЗВОНИТЬ</button>
+                <button class="modal-button" id="directCallButton">ПОПРОБОВАТЬ ПОЗВОНИТЬ</button>
                 <button class="modal-button" id="copyPhoneButton">СКОПИРОВАТЬ НОМЕР</button>
             </div>
         </div>
     </div>
 
-    <!-- Telegram WebApp SDK -->
+    <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         // Константы
-        const WHATSAPP_PHONE_MASTER = "79046660999";
-        const CALL_PHONE_MASTER = "+79046660999";
-        const WHATSAPP_PHONE_SHOP = "79539991666";
-        const CALL_PHONE_SHOP = "+79539991666";
-        const WHATSAPP_PHONE_MACHINERY = "79046661000";
-        const CALL_PHONE_MACHINERY = "+79046661000";
-        const WHATSAPP_PHONE_SELL = "79539991666";
-        const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
+        const CALL_PHONE_MASTER = "79046660999";
+        const CALL_PHONE_SHOP = "79539991666";
+        const CALL_PHONE_MACHINERY = "79046661000";
         const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
+        const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const clickSound = document.getElementById('clickSound');
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const isTelegramIOS = isIOS && navigator.userAgent.includes('Telegram');
-        let currentPhoneNumber = '';
-        let currentPage = 'main';
-
-        // Telegram WebApp
         const tg = window.Telegram?.WebApp;
+        let currentPhoneNumber = '';
+
+        // Инициализация Telegram
         if (tg) {
             tg.ready();
             tg.expand();
             tg.BackButton.show();
-            tg.BackButton.onClick(() => {
-                if (currentPage === 'main') {
-                    tg.close();
-                } else {
-                    closeAllModals();
-                }
-            });
-        }
-
-        // Универсальная функция для звонка
-        function callPhone(phoneNumber) {
-            playSound();
-            currentPhoneNumber = phoneNumber;
-            const formatted = formatPhone(phoneNumber);
-
-            // Показываем номер
-            document.getElementById('displayPhoneNumber').textContent = formatted;
-
-            // Показываем предупреждение только для iOS в Telegram
-            const warning = document.getElementById('iosTelegramWarning');
-            warning.style.display = isTelegramIOS ? 'block' : 'none';
-
-            closeAllModals();
-            setTimeout(() => {
-                document.getElementById('phoneModal').classList.add('active');
-            }, 100);
-
-            // Попытка автоматического звонка для не-iOS
-            if (!isTelegramIOS) {
-                setTimeout(() => {
-                    try {
-                        tg.openTelegramLink(`tg://call?number=${phoneNumber.replace('+', '')}`);
-                    } catch (e) {
-                        console.log("Не удалось открыть звонок", e);
-                    }
-                }, 500);
-            }
-        }
-
-        // Открытие WhatsApp
-        function openWhatsApp(phone, message) {
-            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-            if (tg) {
-                tg.openLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
-            closeAllModals();
-        }
-
-        // Копирование номера
-        function copyToClipboard(text) {
-            playSound();
-            if (tg) {
-                tg.writeText(text);
-                alert('✅ Номер скопирован в буфер обмена!');
-            } else {
-                const ta = document.createElement('textarea');
-                ta.value = text;
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-                alert('✅ Номер скопирован!');
-            }
-            closeAllModals();
-        }
-
-        // Форматирование номера
-        function formatPhone(phone) {
-            return phone.replace(/(\+)?(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})/, '+$2 ($3) $4-$5-$6');
+            tg.BackButton.onClick(() => tg.close());
         }
 
         function playSound() {
             if (clickSound) {
                 clickSound.currentTime = 0;
-                clickSound.play().catch(e => console.log("Звук не воспроизведён"));
+                clickSound.play().catch(() => {});
             }
         }
 
-        function openMasterModal() {
+        function showPhoneModal(phone) {
+            playSound();
+            currentPhoneNumber = phone;
+            document.getElementById('displayPhoneNumber').textContent = formatPhone(phone);
             closeAllModals();
-            currentPage = 'master';
-            if (tg) tg.BackButton.show();
             setTimeout(() => {
-                document.getElementById('masterModal').classList.add('active');
-            }, 50);
+                document.getElementById('phoneModal').classList.add('active');
+            }, 100);
         }
 
-        function openShopModal() {
-            closeAllModals();
-            currentPage = 'shop';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('shopModal').classList.add('active');
-            }, 50);
-        }
-
-        function openMachineryModal() {
-            closeAllModals();
-            currentPage = 'machinery';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('machineryModal').classList.add('active');
-            }, 50);
-        }
-
-        function openTradeModal() {
-            closeAllModals();
-            currentPage = 'trade';
-            if (tg) tg.BackButton.show();
-            setTimeout(() => {
-                document.getElementById('tradeModal').classList.add('active');
-            }, 50);
+        function formatPhone(phone) {
+            return phone.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '($1) $2-$3-$4');
         }
 
         function closeAllModals() {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(m => m.classList.remove('active'));
-            currentPage = 'main';
-            if (tg) tg.BackButton.hide();
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
         }
 
-        function showMainContent() {
-            const btnContainer = document.getElementById('buttonContainer');
-            const aboutLink = document.getElementById('aboutLink');
-            setTimeout(() => {
-                btnContainer.style.opacity = 1;
-                btnContainer.classList.add('animate__animated', 'animate__fadeInUp');
-                setTimeout(() => {
-                    aboutLink.style.opacity = 1;
-                    aboutLink.classList.add('animate__animated', 'animate__fadeInUp');
-                }, 250);
-            }, 300);
-        }
+        // === Обработчики кликов ===
+        document.getElementById('openAppButton').addEventListener('click', () => {
+            playSound();
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('buttonContainer').style.opacity = 1;
+            document.getElementById('aboutLink').style.opacity = 1;
+        });
 
-        // Инициализация
-        window.addEventListener('load', () => {
-            document.getElementById('openAppButton').addEventListener('click', () => {
+        // Мастер
+        document.getElementById('masterCallButton').addEventListener('click', () => {
+            showPhoneModal(CALL_PHONE_MASTER);
+        });
+
+        // Магазин
+        document.getElementById('shopCallButton').addEventListener('click', () => {
+            showPhoneModal(CALL_PHONE_SHOP);
+        });
+
+        // Спецтехника
+        document.getElementById('machineryCallButton').addEventListener('click', () => {
+            showPhoneModal(CALL_PHONE_MACHINERY);
+        });
+
+        // Кнопки модалки
+        document.getElementById('directCallButton').addEventListener('click', () => {
+            playSound();
+            if (tg) {
+                tg.openTelegramLink(`tg://call?number=${currentPhoneNumber}`);
+            } else {
+                const a = document.createElement('a');
+                a.href = `tel:${currentPhoneNumber}`;
+                a.click();
+            }
+        });
+
+        document.getElementById('copyPhoneButton').addEventListener('click', () => {
+            playSound();
+            if (tg) {
+                tg.writeText(currentPhoneNumber);
+                alert(`✅ Номер ${currentPhoneNumber} скопирован!`);
+            } else {
+                prompt('Скопируйте номер:', currentPhoneNumber);
+            }
+            closeAllModals();
+        });
+
+        // Закрытие модалок
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
                 playSound();
-                document.getElementById('startScreen').style.display = 'none';
-                showMainContent();
-            });
-
-            // Мастер
-            document.getElementById('masterButton').addEventListener('click', openMasterModal);
-            document.getElementById('masterWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_MASTER, "Здравствуйте! Хочу оформить заявку на выполнение строительных работ!");
-            });
-            document.getElementById('masterCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_MASTER.replace('+', ''));
-            });
-
-            // Магазин
-            document.getElementById('shopButton').addEventListener('click', openShopModal);
-            document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SHOP, "Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой");
-            });
-            document.getElementById('shopCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_SHOP.replace('+', ''));
-            });
-            document.getElementById('tradeMaterialsButton').addEventListener('click', openTradeModal);
-
-            // Купи / Продай
-            document.getElementById('buyMaterialsButton').addEventListener('click', () => {
-                playSound();
-                if (tg) {
-                    tg.openLink(BUILDING_CHANNEL_URL);
-                } else {
-                    window.open(BUILDING_CHANNEL_URL, '_blank');
-                }
                 closeAllModals();
             });
-            document.getElementById('sellMaterialsButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SELL, "Здравствуйте я хочу продать лишние остатки строительных материалов! ВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.");
-            });
+        });
 
-            // Спецтехника
-            document.getElementById('machineryButton').addEventListener('click', openMachineryModal);
-            document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_MACHINERY, "Здравствуйте! Хочу арендовать спецтехнику!");
-            });
-            document.getElementById('machineryCallButton').addEventListener('click', () => {
-                callPhone(CALL_PHONE_MACHINERY.replace('+', ''));
-            });
-
-            // Fallback модалка
-            document.getElementById('directCallButton').addEventListener('click', () => {
-                playSound();
-                if (isTelegramIOS) {
-                    alert("Для звонка:\n1. Скопируйте номер\n2. Выйдите из Telegram\n3. Откройте приложение 'Телефон'\n4. Вставьте номер и нажмите вызов");
-                } else {
-                    try {
-                        tg.openTelegramLink(`tg://call?number=${currentPhoneNumber.replace('+', '')}`);
-                    } catch (e) {
-                        console.log("Не удалось открыть звонок", e);
-                    }
-                }
-            });
-            document.getElementById('copyPhoneButton').addEventListener('click', () => {
-                copyToClipboard(currentPhoneNumber);
-            });
-
-            // Закрытие модалок
-            document.querySelectorAll('.close-modal').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    playSound();
-                    closeAllModals();
-                });
-            });
-
-            // О нас
-            document.getElementById('aboutLink').addEventListener('click', () => {
-                playSound();
-                if (tg) {
-                    tg.openLink(TELEGRAM_CHANNEL_URL);
-                } else {
-                    window.open(TELEGRAM_CHANNEL_URL, '_blank');
-                }
-            });
+        // Остальные кнопки (WhatsApp, каналы)
+        document.getElementById('aboutLink').addEventListener('click', () => {
+            playSound();
+            if (tg) tg.openLink(TELEGRAM_CHANNEL_URL);
+            else window.open(TELEGRAM_CHANNEL_URL, '_blank');
         });
     </script>
 </body>
