@@ -104,7 +104,6 @@
             opacity: 0;
             z-index: 10;
         }
-
         /* Модальные окна */
         .modal {
             position: fixed;
@@ -234,7 +233,6 @@
             border-radius: 10px;
             word-break: break-all;
         }
-
         /* Стартовый экран */
         .start-screen {
             position: fixed;
@@ -294,7 +292,6 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
             background: linear-gradient(45deg, #2980b9, #3498db);
         }
-
         /* iOS Telegram предупреждение */
         .ios-telegram-warning {
             display: none;
@@ -305,7 +302,6 @@
             font-size: 14px;
             text-align: center;
         }
-
         /* Инструкция */
         .instructions {
             background: rgba(0, 0, 0, 0.5);
@@ -316,7 +312,7 @@
             line-height: 1.4;
         }
 
-        /* === НОВОЕ: Модалка выбора города === */
+        /* === Модалка выбора города === */
         #cityModal .modal-content {
             background: rgba(30, 30, 30, 0.95);
             border: 2px solid white;
@@ -371,6 +367,11 @@
                 Не нашли свой город? Напишите нам — работаем по всей России
             </div>
         </div>
+    </div>
+
+    <!-- Отображение выбранного города -->
+    <div class="selected-city" id="selectedCityDisplay" style="margin-top: 15px; font-size: 18px; color: #fff; text-align: center; opacity: 0; transition: opacity 0.3s ease;">
+        Город: <span id="cityName">Не выбран</span>
     </div>
 
     <!-- Основные кнопки -->
@@ -637,9 +638,92 @@
             if (tg) tg.BackButton.hide();
         }
 
+        // Функция для склонения города в предложном падеже
+        function getCityInPrepositional(city) {
+            // Список исключений
+            const exceptions = {
+                "Москва": "в Москве",
+                "Санкт-Петербург": "в Санкт-Петербурге",
+                "Екатеринбург": "в Екатеринбурге",
+                "Нижний Новгород": "в Нижнем Новгороде",
+                "Новосибирск": "в Новосибирске",
+                "Казань": "в Казани",
+                "Самара": "в Самаре",
+                "Омск": "в Омске",
+                "Челябинск": "в Челябинске",
+                "Уфа": "в Уфе",
+                "Ростов-на-Дону": "в Ростове-на-Дону",
+                "Красноярск": "в Красноярске",
+                "Пермь": "в Перми",
+                "Воронеж": "в Воронеже",
+                "Волгоград": "в Волгограде",
+                "Краснодар": "в Краснодаре",
+                "Тюмень": "в Тюмени",
+                "Ижевск": "в Ижевске",
+                "Барнаул": "в Барнауле",
+                "Улан-Удэ": "в Улан-Удэ",
+                "Ярославль": "в Ярославле",
+                "Хабаровск": "в Хабаровске",
+                "Магнитогорск": "в Магнитогорске",
+                "Томск": "в Томске",
+                "Оренбург": "в Оренбурге",
+                "Кемерово": "в Кемерово",
+                "Новокузнецк": "в Новокузнецке",
+                "Рязань": "в Рязани",
+                "Астрахань": "в Астрахани",
+                "Пенза": "в Пензе",
+                "Липецк": "в Липецке",
+                "Севастополь": "в Севастополе",
+                "Белгород": "в Белгороде",
+                "Курск": "в Курске",
+                "Сочи": "в Сочи"
+            };
+
+            if (exceptions[city]) return exceptions[city];
+
+            // Обычные правила
+            const last = city.slice(-1).toLowerCase();
+            const lastTwo = city.slice(-2).toLowerCase();
+
+            if (last === 'а' || last === 'я') {
+                return `в ${city.replace(/а$/, 'е').replace(/я$/, 'е')}`;
+            } else if (last === 'ь') {
+                return `в ${city}е`;
+            } else if (lastTwo === 'ей') {
+                return `в ${city}`;
+            } else if (['о', 'е', 'и'].includes(last)) {
+                return `в ${city}`;
+            } else {
+                return `в ${city}е`;
+            }
+        }
+
+        function updateButtonTitles(city) {
+            if (!city) return;
+            const cityInCase = getCityInPrepositional(city);
+
+            document.getElementById('masterButton').innerHTML = `
+                <span>НАНЯТЬ МАСТЕРА ${cityInCase}<br><small>(проверенные специалисты)</small></span>
+            `;
+            document.getElementById('shopButton').innerHTML = `
+                <span>ИНТЕРНЕТ МАГАЗИН ${cityInCase}<br><small>(новые и б/у, можно продать свои)</small></span>
+            `;
+            document.getElementById('machineryButton').innerHTML = `
+                <span>СПЕЦТЕХНИКА ${cityInCase}<br><small>(аренда / прокат)</small></span>
+            `;
+        }
+
         function showMainContent() {
             const btnContainer = document.getElementById('buttonContainer');
             const aboutLink = document.getElementById('aboutLink');
+            const cityDisplay = document.getElementById('selectedCityDisplay');
+            const cityNameSpan = document.getElementById('cityName');
+
+            cityNameSpan.textContent = selectedCity || 'Не выбран';
+            updateButtonTitles(selectedCity);
+
+            cityDisplay.style.opacity = 1;
+
             setTimeout(() => {
                 btnContainer.style.opacity = 1;
                 btnContainer.classList.add('animate__animated', 'animate__fadeInUp');
@@ -659,7 +743,7 @@
                 cityList.innerHTML = '';
                 filteredCities.forEach(city => {
                     const btn = document.createElement('button');
-                    btn.textContent = city;
+                    btn.textContent = city.toUpperCase(); // Все буквы заглавные
                     btn.style.cssText = `
                         padding: 12px;
                         background: rgba(255,255,255,0.1);
@@ -669,6 +753,7 @@
                         text-align: left;
                         cursor: pointer;
                         transition: background 0.2s;
+                        font-size: 13px; /* Уменьшаем шрифт */
                     `;
                     btn.onmouseover = () => btn.style.background = 'rgba(255,255,255,0.2)';
                     btn.onmouseout = () => btn.style.background = 'rgba(255,255,255,0.1)';
@@ -677,7 +762,7 @@
                         playSound();
                         setTimeout(() => {
                             document.getElementById('cityModal').classList.remove('active');
-                            showMainContent(); // Показываем основные кнопки
+                            showMainContent();
                         }, 150);
                     };
                     cityList.appendChild(btn);
@@ -695,10 +780,8 @@
 
         // Инициализация при загрузке
         window.addEventListener('load', () => {
-            // Инициализация модалки выбора города
             initCityModal();
 
-            // Обработчик кнопки "ПОСТРОИТЬ!"
             document.getElementById('openAppButton').addEventListener('click', () => {
                 playSound();
                 document.getElementById('startScreen').style.display = 'none';
@@ -707,10 +790,10 @@
                 }, 100);
             });
 
-            // Остальные обработчики...
+            // Остальные обработчики
             document.getElementById('masterButton').addEventListener('click', openMasterModal);
             document.getElementById('masterWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_MASTER, "Здравствуйте! Хочу оформить заявку на выполнение строительных работ!");
+                openWhatsApp(WHATSAPP_PHONE_MASTER, `Здравствуйте! Хочу оформить заявку на выполнение строительных работ в ${selectedCity || 'вашем городе'}!`);
             });
             document.getElementById('masterCallButton').addEventListener('click', () => {
                 callPhone(CALL_PHONE_MASTER);
@@ -718,7 +801,7 @@
 
             document.getElementById('shopButton').addEventListener('click', openShopModal);
             document.getElementById('shopWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SHOP, "Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой");
+                openWhatsApp(WHATSAPP_PHONE_SHOP, `Здравствуйте! Хочу сделать заказ в интернет магазине с бесплатной доставкой ${getCityInPrepositional(selectedCity || '')}`);
             });
             document.getElementById('shopCallButton').addEventListener('click', () => {
                 callPhone(CALL_PHONE_SHOP);
@@ -735,12 +818,12 @@
                 closeAllModals();
             });
             document.getElementById('sellMaterialsButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SELL, "Здравствуйте я хочу продать лишние остатки строительных материалов! ВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.");
+                openWhatsApp(WHATSAPP_PHONE_SELL, `Здравствуйте, я хочу продать лишние остатки строительных материалов ${getCityInPrepositional(selectedCity || '')}! ВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.`);
             });
 
             document.getElementById('machineryButton').addEventListener('click', openMachineryModal);
             document.getElementById('machineryWhatsAppButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_MACHINERY, "Здравствуйте! Хочу арендовать спецтехнику!");
+                openWhatsApp(WHATSAPP_PHONE_MACHINERY, `Здравствуйте! Хочу арендовать спецтехнику ${getCityInPrepositional(selectedCity || '')}!`);
             });
             document.getElementById('machineryCallButton').addEventListener('click', () => {
                 callPhone(CALL_PHONE_MACHINERY);
