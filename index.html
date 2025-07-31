@@ -765,8 +765,8 @@
                         div.innerHTML = `<div class="category-title">${cat.title}</div><div class="category-desc">${cat.desc}</div>`;
                         div.onclick = () => {
                             playSound();
-                            const serviceName = cat.title.replace(/^\d+\.\s*/, '');
-                            const message = `Здравствуйте! Хочу заказать услугу: ${serviceName} в ${selectedCity}`;
+                            const serviceName = cat.title.replace(/^\d+\.\s*/, '').trim();
+                            const message = `Здравствуйте! Хочу заказать услугу: ${serviceName} ${getCityInPrepositional(selectedCity)}.\n\nБуду благодарен за оперативный ответ.`;
                             openWhatsApp(WHATSAPP_PHONE_MASTER, message);
                         };
                         list.appendChild(div);
@@ -801,8 +801,8 @@
                         div.innerHTML = `<div class="category-title">${cat.title}</div><div class="category-desc">${cat.desc}</div>`;
                         div.onclick = () => {
                             playSound();
-                            const serviceName = cat.title.replace(/^\d+\.\s*/, '');
-                            const message = `Здравствуйте! Хочу заказать: ${serviceName} в ${selectedCity}`;
+                            const serviceName = cat.title.replace(/^\d+\.\s*/, '').trim();
+                            const message = `Здравствуйте! Хочу заказать: ${serviceName} ${getCityInPrepositional(selectedCity)}.\n\nПрошу прислать актуальные цены и наличие.`;
                             openWhatsApp(WHATSAPP_PHONE_SHOP, message);
                         };
                         list.appendChild(div);
@@ -837,8 +837,8 @@
                         div.innerHTML = `<div class="category-title">${cat.title}</div>`;
                         div.onclick = () => {
                             playSound();
-                            const serviceName = cat.title.replace(/^\d+\.\s*/, '');
-                            const message = `Здравствуйте! Хочу арендовать: ${serviceName} в ${selectedCity}`;
+                            const serviceName = cat.title.replace(/^\d+\.\s*/, '').trim();
+                            const message = `Здравствуйте! Хочу арендовать: ${serviceName} ${getCityInPrepositional(selectedCity)}.\n\nПрошу прислать тарифы и доступность.`;
                             openWhatsApp(WHATSAPP_PHONE_MACHINERY, message);
                         };
                         list.appendChild(div);
@@ -876,7 +876,9 @@
             });
 
             document.getElementById('sellMaterialsButton').addEventListener('click', () => {
-                openWhatsApp(WHATSAPP_PHONE_SELL, `Здравствуйте, я хочу продать лишние остатки строительных материалов в ${selectedCity}!`);
+                playSound();
+                const message = `Здравствуйте, я хочу продать лишние остатки строительных материалов ${getCityInPrepositional(selectedCity)}!\n\nВНИМАНИЕ!!! Бывшие в употреблении материалы пометить как БУ.`;
+                openWhatsApp(WHATSAPP_PHONE_SELL, message);
             });
 
             // === Звонки ===
