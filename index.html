@@ -104,7 +104,64 @@
             opacity: 1;
             z-index: 10;
         }
+/* === Стиль для кнопок категорий (услуги, товары, техника) === */
+.category-item {
+    background: rgba(255, 255, 255, 0.08); /* Лёгкий затемнённый фон */
+    border: 2px solid rgba(255, 255, 255, 0.2); /* Прозрачный белый контур — как у кнопки "КУПИ/ПРОДАЙ" */
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 90%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2px); /* Лёгкий эффект полупрозрачности */
+}
 
+/* Эффект при наведении */
+.category-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Заголовок внутри кнопки */
+.category-title {
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 4px;
+    font-size: 15.5px;
+}
+
+/* Описание внутри кнопки */
+.category-desc {
+    color: #ccc;
+    line-height: 1.5;
+    font-size: 13.5px;
+}
+/* === Кнопка "КУПИ / ПРОДАЙ ОСТАТКИ" — увеличена по высоте и выровнена === */
+#tradeMaterialsButton {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px 15px; /* Увеличен отступ сверху и снизу → больше высота */
+    font-size: 16px;
+    line-height: 1.3;
+    min-height: 80px; /* Минимальная высота кнопки */
+}
+#tradeMaterialsButton small {
+    font-size: 12px;
+    margin-top: 4px;
+}
         /* Модальные окна */
         .modal {
             position: fixed;
@@ -251,8 +308,9 @@
 
 #citySearchContainer {
     position: relative;
-    width: 50%; /* Можно регулировать ширину: 50%, 60% и т.д. */
+    width: 50%;
     margin-bottom: 15px;
+    margin-left: -50px; /* Отрицательное значение — двигает влево */
 }
 
 #citySearch {
@@ -338,8 +396,9 @@
 #shopCategoriesSearchContainer,
 #machineryCategoriesSearchContainer {
     position: relative;
-    width: 50%; /* Уменьшено вдвое */
+    width: 50%;
     margin-bottom: 15px;
+    margin-left: -30px; /* Сдвиг влево на 10px */
 }
 #categoriesSearch,
 #shopCategoriesSearch,
