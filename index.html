@@ -243,10 +243,13 @@
             background: rgba(30, 30, 30, 0.95);
             border: 2px solid white;
             max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         #citySearchContainer {
             position: relative;
-            width: 90%;
+            width: 50%; /* Уменьшено вдвое */
             margin-bottom: 15px;
         }
         #citySearch {
@@ -275,6 +278,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            align-items: center; /* Кнопки по центру */
         }
         .city-item {
             background: rgba(255, 255, 255, 0.08);
@@ -286,6 +290,12 @@
             text-align: center;
             cursor: pointer;
             transition: background 0.2s;
+            width: 90%;
+            max-width: 300px;
+            display: flex;
+            align-items: center; /* Вертикальное выравнивание */
+            justify-content: center;
+            line-height: 1.4;
         }
         .city-item:hover {
             background: rgba(255, 255, 255, 0.12);
