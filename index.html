@@ -94,6 +94,7 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
+
         .about-link {
             margin-top: 60px;
             font-size: 16px;
@@ -104,64 +105,7 @@
             opacity: 1;
             z-index: 10;
         }
-/* === Стиль для кнопок категорий (услуги, товары, техника) === */
-.category-item {
-    background: rgba(255, 255, 255, 0.08); /* Лёгкий затемнённый фон */
-    border: 2px solid rgba(255, 255, 255, 0.2); /* Прозрачный белый контур — как у кнопки "КУПИ/ПРОДАЙ" */
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 12px;
-    font-size: 15px;
-    text-align: left;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 90%;
-    max-width: 320px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(2px); /* Лёгкий эффект полупрозрачности */
-}
 
-/* Эффект при наведении */
-.category-item:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Заголовок внутри кнопки */
-.category-title {
-    font-weight: bold;
-    color: #007bff;
-    margin-bottom: 4px;
-    font-size: 15.5px;
-}
-
-/* Описание внутри кнопки */
-.category-desc {
-    color: #ccc;
-    line-height: 1.5;
-    font-size: 13.5px;
-}
-/* === Кнопка "КУПИ / ПРОДАЙ ОСТАТКИ" — увеличена по высоте и выровнена === */
-#tradeMaterialsButton {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 20px 15px; /* Увеличен отступ сверху и снизу → больше высота */
-    font-size: 16px;
-    line-height: 1.3;
-    min-height: 80px; /* Минимальная высота кнопки */
-}
-#tradeMaterialsButton small {
-    font-size: 12px;
-    margin-top: 4px;
-}
         /* Модальные окна */
         .modal {
             position: fixed;
@@ -295,216 +239,175 @@
             word-break: break-all;
         }
 
-/* === Модалка выбора города === */
-#cityModal .modal-content {
-    background: rgba(30, 30, 30, 0.95);
-    border: 2px solid white;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px;
-}
+        /* === Модалка выбора города === */
+        #cityModal .modal-content {
+            background: rgba(30, 30, 30, 0.95);
+            border: 2px solid white;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+        }
+        #citySearchContainer {
+            position: relative;
+            width: 50%;
+            margin-bottom: 15px;
+        }
+        #citySearch {
+            padding: 12px 12px 12px 40px;
+            width: 100%;
+            border: 1px solid #555;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            background: #222;
+            color: white;
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        #cityList {
+            width: 100%;
+            max-height: 50vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+        .city-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 90%;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+        .city-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .remember-checkbox {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #ccc;
+        }
+        .remember-checkbox input {
+            margin-right: 6px;
+        }
 
-#citySearchContainer {
-    position: relative;
-    width: 50%;
-    margin-bottom: 15px;
-    margin-left: -50px; /* Отрицательное значение — двигает влево */
-}
+        /* === Модалка категорий === */
+        #categoriesModal .modal-content,
+        #shopCategoriesModal .modal-content,
+        #machineryCategoriesModal .modal-content {
+            background: rgba(30, 30, 30, 0.95);
+            border: 2px solid white;
+            max-width: 420px;
+            overflow-y: auto;
+            max-height: 80vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #categoriesSearchContainer,
+        #shopCategoriesSearchContainer,
+        #machineryCategoriesSearchContainer {
+            position: relative;
+            width: 50%;
+            margin-bottom: 15px;
+        }
+        #categoriesSearch,
+        #shopCategoriesSearch,
+        #machineryCategoriesSearch {
+            padding: 12px 12px 12px 40px;
+            width: 100%;
+            border: 1px solid #555;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            background: #222;
+            color: white;
+        }
+        .search-icon-service {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        .category-item {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 90%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .category-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+        .category-title {
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 4px;
+            font-size: 15.5px;
+        }
+        .category-desc {
+            color: #ccc;
+            line-height: 1.5;
+            font-size: 13.5px;
+        }
 
-#citySearch {
-    padding: 12px 12px 12px 40px;
-    width: 100%;
-    border: 1px solid #555;
-    border-radius: 8px;
-    font-size: 16px;
-    outline: none;
-    background: #222;
-    color: white;
-}
+        /* === Кнопка "КУПИ / ПРОДАЙ ОСТАТКИ" === */
+        #tradeMaterialsButton {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px 15px;
+            font-size: 16px;
+            line-height: 1.3;
+            min-height: 80px;
+            margin-bottom: 20px;
+        }
+        #tradeMaterialsButton small {
+            font-size: 12px;
+            margin-top: 4px;
+        }
 
-.search-icon {
-    position: absolute;
-    left: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaa;
-    font-size: 18px;
-    pointer-events: none;
-}
-
-#cityList {
-    width: 100%;
-    max-height: 50vh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-}
-
-.city-item {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid #555;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 13px;
-    color: white;
-    text-align: center;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 90%;
-    max-width: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1.4;
-}
-
-.city-item:hover {
-    background: rgba(255, 255, 255, 0.12);
-}
-
-.remember-checkbox {
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    color: #ccc;
-}
-
-.remember-checkbox input {
-    margin-right: 6px;
-}
-
-/* === Модалка категорий === */
-#categoriesModal .modal-content,
-#shopCategoriesModal .modal-content,
-#machineryCategoriesModal .modal-content {
-    background: rgba(30, 30, 30, 0.95);
-    border: 2px solid white;
-    max-width: 420px;
-    overflow-y: auto;
-    max-height: 80vh;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-#categoriesSearchContainer,
-#shopCategoriesSearchContainer,
-#machineryCategoriesSearchContainer {
-    position: relative;
-    width: 50%;
-    margin-bottom: 15px;
-    margin-left: -30px; /* Сдвиг влево на 10px */
-}
-#categoriesSearch,
-#shopCategoriesSearch,
-#machineryCategoriesSearch {
-    padding: 12px 12px 12px 40px;
-    width: 100%;
-    border: 1px solid #555;
-    border-radius: 8px;
-    font-size: 16px;
-    outline: none;
-    background: #222;
-    color: white;
-}
-.search-icon-service {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaa;
-    font-size: 18px;
-    pointer-events: none;
-}
-#categoriesList,
-#shopCategoriesList,
-#machineryCategoriesList {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center; /* Центрируем кнопки */
-}
-.category-item {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid #555;
-    border-radius: 10px;
-    padding: 14px;
-    margin-bottom: 10px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.2s;
-    width: 90%; /* Уменьшена ширина кнопок */
-    max-width: 320px; /* Максимальная ширина */
-    text-align: left;
-}
-.category-item:hover {
-    background: rgba(255, 255, 255, 0.12);
-}
-.category-title {
-    font-weight: bold;
-    color: #007bff;
-    margin-bottom: 4px;
-}
-.category-desc {
-    color: #ccc;
-    line-height: 1.5;
-}
-
-/* === Модалка категорий === */
-#categoriesModal .modal-content,
-#shopCategoriesModal .modal-content,
-#machineryCategoriesModal .modal-content {
-    background: rgba(30, 30, 30, 0.95);
-    border: 2px solid white;
-    max-width: 420px;
-    overflow-y: auto;
-    max-height: 80vh;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Центрирует содержимое */
-}
-
-/* === Поисковые поля — уменьшены вдвое и по центру === */
-#categoriesSearchContainer,
-#shopCategoriesSearchContainer,
-#machineryCategoriesSearchContainer {
-    position: relative;
-    width: 50%; /* Уменьшено вдвое */
-    margin-bottom: 15px;
-}
-
-#categoriesSearch,
-#shopCategoriesSearch,
-#machineryCategoriesSearch {
-    padding: 12px 12px 12px 40px;
-    width: 100%;
-    border: 1px solid #555;
-    border-radius: 8px;
-    font-size: 16px;
-    outline: none;
-    background: #222;
-    color: white;
-}
-
-/* Лупа внутри поля поиска */
-.search-icon-service {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaa;
-    font-size: 18px;
-    pointer-events: none;
-}
-
-        /* Отображение города */
+        /* === Отображение города === */
         .selected-city {
             margin-top: 15px;
             font-size: 18px;
@@ -514,6 +417,91 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
+        }
+
+        /* === ЛИЧНЫЙ КАБИНЕТ (отдельная страница) === */
+        #profilePage {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            background: #111;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 200;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .profile-header {
+            font-size: 24px;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px black;
+        }
+        .profile-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: left;
+        }
+        .profile-card strong {
+            color: #007bff;
+        }
+        .profile-button {
+            color: white;
+            border: 2px solid white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            background: transparent;
+            width: 90%;
+            max-width: 300px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 2px black;
+        }
+        .profile-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .back-button {
+            margin-top: 20px;
+            color: #1e90ff;
+            font-size: 16px;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* === Кнопка "Позвонить" внизу === */
+        .phone-bottom-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            font-size: 15px;
+            border: none;
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -541,23 +529,40 @@
         <button style="background-image: url('btn-machinery.jpg');" id="machineryButton">
             <span>СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ<br><small>(аренда / прокат)</small></span>
         </button>
+        <button id="profileButton" style="background: linear-gradient(135deg, #4CAF50, #45a049);">
+            <span>ЛИЧНЫЙ КАБИНЕТ</span>
+        </button>
     </div>
 
+    <!-- Ссылки -->
+    <div class="about-link" id="loginLink">Войти</div>
     <div class="about-link" id="aboutLink">О нас</div>
 
-    <!-- === Модалка выбора города === -->
-    <div class="modal" id="cityModal">
+    <!-- === Модалка входа по SMS === -->
+    <div class="modal" id="authModal">
         <button class="close-modal">×</button>
         <div class="modal-content">
-            <div class="modal-title">ВЫБЕРИТЕ ГОРОД</div>
-            <div id="citySearchContainer">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="citySearch" placeholder="Поиск города...">
+            <div class="modal-title">ВХОД ПО SMS</div>
+            <div style="margin-bottom: 15px; font-size: 14px; color: #ccc;">
+                Введите номер телефона, на который придет код.
             </div>
-            <div id="cityList"></div>
-            <div class="remember-checkbox">
-                <input type="checkbox" id="rememberCityCheckbox" checked>
-                <label for="rememberCityCheckbox">Запомнить город</label>
+            <input type="tel" id="phoneInput" placeholder="+7 999 123 45 67" style="width: 80%; padding: 12px; margin-bottom: 15px; border: 1px solid #555; border-radius: 8px; background: #222; color: white; text-align: center; font-size: 16px;">
+            <button class="modal-button" id="sendCodeButton">ПОЛУЧИТЬ КОД</button>
+        </div>
+    </div>
+
+    <!-- === Модалка ввода кода === -->
+    <div class="modal" id="codeModal">
+        <button class="close-modal">×</button>
+        <div class="modal-content">
+            <div class="modal-title">ПОДТВЕРЖДЕНИЕ</div>
+            <div style="margin-bottom: 15px; font-size: 14px; color: #ccc;">
+                Введите 4-значный код, отправленный на<br><span id="codePhoneDisplay" style="color: #007bff; font-weight: bold;"></span>
+            </div>
+            <input type="text" id="codeInput" maxlength="4" placeholder="1234" style="width: 60%; padding: 12px; margin-bottom: 15px; border: 1px solid #555; border-radius: 8px; background: #222; color: white; text-align: center; font-size: 18px;">
+            <button class="modal-button" id="verifyCodeButton">ПОДТВЕРИТЬ</button>
+            <div style="margin-top: 10px; font-size: 13px; color: #aaa;">
+                Не получили код? <a href="#" id="resendCodeLink" style="color: #007bff; text-decoration: underline;">Отправить снова</a>
             </div>
         </div>
     </div>
@@ -583,7 +588,7 @@
         <button class="close-modal">×</button>
         <div class="modal-content shop-modal-content">
             <div class="modal-title">ИНТЕРНЕТ МАГАЗИН</div>
-            <button class="modal-button" id="tradeMaterialsButton" style="margin-bottom: 20px;">
+            <button class="modal-button" id="tradeMaterialsButton">
                 КУПИ / ПРОДАЙ ОСТАТКИ<br><small>НОВЫЕ И Б/У</small>
             </button>
             <div id="shopCategoriesSearchContainer">
@@ -638,6 +643,24 @@
         </div>
     </div>
 
+    <!-- === ЛИЧНЫЙ КАБИНЕТ (страница) === -->
+    <div id="profilePage">
+        <div class="profile-header">ЛИЧНЫЙ КАБИНЕТ</div>
+        <div class="profile-card">
+            <div><strong>Телефон:</strong> <span id="profilePhone">+7 904 666 09 99</span></div>
+            <div><strong>Статус:</strong> Проверенный пользователь</div>
+            <div><strong>Заказы:</strong> 3 активных</div>
+            <div><strong>Рейтинг:</strong> ⭐ 4.9</div>
+        </div>
+        <button class="profile-button" id="myOrdersButton">МОИ ЗАКАЗЫ</button>
+        <button class="profile-button" id="myAdsButton">МОИ ОБЪЯВЛЕНИЯ</button>
+        <button class="profile-button" id="logoutButton">ВЫЙТИ</button>
+        <div class="back-button" id="backToMain">← Назад</div>
+    </div>
+
+    <!-- === Кнопка "Позвонить" внизу === -->
+    <div class="phone-bottom-btn" id="phoneBottomBtn">ПОЗВОНИТЬ ПО ТЕЛЕФОНУ</div>
+
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
@@ -651,6 +674,7 @@
         ];
         let selectedCity = null;
         let currentPage = 'main';
+        let currentUserPhone = null;
 
         // Категории
         const masterCategories = [
@@ -747,6 +771,7 @@
                     tg.close();
                 } else {
                     closeAllModals();
+                    showMainPage();
                 }
             });
         }
@@ -762,6 +787,38 @@
             document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
             currentPage = 'main';
             if (tg) tg.BackButton.hide();
+        }
+
+        function showMainPage() {
+            document.getElementById('profilePage').style.display = 'none';
+            document.getElementById('buttonContainer').style.display = 'flex';
+            document.getElementById('selectedCityDisplay').style.display = selectedCity ? 'flex' : 'none';
+            document.getElementById('aboutLink').style.display = 'block';
+            document.getElementById('loginLink').style.display = 'block';
+            document.getElementById('profileButton').style.display = 'block';
+            document.getElementById('phoneBottomBtn').style.display = 'none';
+            currentPage = 'main';
+            if (tg) tg.BackButton.hide();
+        }
+
+        function showProfilePage() {
+            document.getElementById('buttonContainer').style.display = 'none';
+            document.getElementById('selectedCityDisplay').style.display = 'none';
+            document.getElementById('aboutLink').style.display = 'none';
+            document.getElementById('loginLink').style.display = 'none';
+            document.getElementById('profileButton').style.display = 'none';
+            document.getElementById('phoneBottomBtn').style.display = 'none';
+
+            const userPhone = localStorage.getItem('userPhone') || '+7 904 666 09 99';
+            document.getElementById('profilePhone').textContent = userPhone;
+            document.getElementById('profilePage').style.display = 'flex';
+            currentPage = 'profile';
+            if (tg) tg.BackButton.show();
+
+            // Push-уведомление: отправка сообщения в чат
+            if (tg) {
+                tg.sendData('{"action": "welcome", "user": "' + userPhone + '"}');
+            }
         }
 
         function updateCityDisplay() {
@@ -868,7 +925,38 @@
                 updateButtonTitles(selectedCity);
             }
 
+            const savedUser = localStorage.getItem('userPhone');
+            if (savedUser) {
+                document.getElementById('loginLink').style.display = 'none';
+            } else {
+                document.getElementById('loginLink').style.display = 'block';
+            }
+
+            // Автозаполнение номера
+            const savedPhone = localStorage.getItem('lastPhone');
+            if (savedPhone) {
+                document.getElementById('phoneInput').value = savedPhone;
+            }
+
             setupChangeCityButton();
+
+            // === Кнопка "Личный кабинет" ===
+            document.getElementById('profileButton').addEventListener('click', () => {
+                playSound();
+                const savedUser = localStorage.getItem('userPhone');
+                if (savedUser) {
+                    showProfilePage();
+                } else {
+                    closeAllModals();
+                    document.getElementById('authModal').classList.add('active');
+                }
+            });
+
+            // === Кнопка "Назад" из профиля ===
+            document.getElementById('backToMain').addEventListener('click', () => {
+                playSound();
+                showMainPage();
+            });
 
             // === Нанять мастера ===
             document.getElementById('masterButton').addEventListener('click', () => {
@@ -876,6 +964,7 @@
                     closeAllModals();
                     currentPage = 'categories';
                     if (tg) tg.BackButton.show();
+                    document.getElementById('phoneBottomBtn').style.display = 'block';
                     const list = document.getElementById('categoriesList');
                     list.innerHTML = '';
                     masterCategories.forEach(cat => {
@@ -905,12 +994,20 @@
                 });
             });
 
+            // === Кнопка "Позвонить" внизу ===
+            document.getElementById('phoneBottomBtn').addEventListener('click', () => {
+                playSound();
+                document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_MASTER;
+                document.getElementById('phoneModal').classList.add('active');
+            });
+
             // === Интернет магазин ===
             document.getElementById('shopButton').addEventListener('click', () => {
                 requireCityBefore(() => {
                     closeAllModals();
                     currentPage = 'shop';
                     if (tg) tg.BackButton.show();
+                    document.getElementById('phoneBottomBtn').style.display = 'block';
                     const list = document.getElementById('shopCategoriesList');
                     list.innerHTML = '';
                     shopCategories.forEach(cat => {
@@ -946,6 +1043,7 @@
                     closeAllModals();
                     currentPage = 'machinery';
                     if (tg) tg.BackButton.show();
+                    document.getElementById('phoneBottomBtn').style.display = 'block';
                     const list = document.getElementById('machineryCategoriesList');
                     list.innerHTML = '';
                     machineryCategories.forEach(cat => {
@@ -998,7 +1096,68 @@
                 openWhatsApp(WHATSAPP_PHONE_SELL, message);
             });
 
-            // === Кнопки "Позвонить по телефону" в модалках ===
+            // === Аутентификация по SMS ===
+            document.getElementById('loginLink').addEventListener('click', () => {
+                playSound();
+                closeAllModals();
+                document.getElementById('authModal').classList.add('active');
+            });
+
+            document.getElementById('sendCodeButton').addEventListener('click', () => {
+                const phone = document.getElementById('phoneInput').value.trim().replace(/\s+/g, '');
+                if (!phone || !/^(\+7|7|8)\d{10}$/.test(phone)) {
+                    alert('Введите корректный номер');
+                    return;
+                }
+                currentUserPhone = phone.replace(/^(\+?7|8)/, '+7');
+                localStorage.setItem('lastPhone', currentUserPhone); // Автозаполнение
+                alert(`Код отправлен на ${currentUserPhone}`);
+                localStorage.setItem('smsCode', '1234');
+                localStorage.setItem('smsCodeExpiry', Date.now() + 300000);
+                document.getElementById('codePhoneDisplay').textContent = currentUserPhone;
+                document.getElementById('authModal').classList.remove('active');
+                setTimeout(() => {
+                    document.getElementById('codeModal').classList.add('active');
+                }, 300);
+            });
+
+            document.getElementById('verifyCodeButton').addEventListener('click', () => {
+                const code = document.getElementById('codeInput').value.trim();
+                const storedCode = localStorage.getItem('smsCode');
+                const expiry = localStorage.getItem('smsCodeExpiry');
+                if (!storedCode || Date.now() > expiry) {
+                    alert('Код устарел');
+                    return;
+                }
+                if (code === storedCode) {
+                    localStorage.setItem('userPhone', currentUserPhone);
+                    document.getElementById('codeModal').classList.remove('active');
+                    document.getElementById('loginLink').style.display = 'none';
+                    showProfilePage();
+
+                    // Push-уведомление: отправка приветствия
+                    if (tg) {
+                        tg.sendData('{"action": "login_success", "phone": "' + currentUserPhone + '"}');
+                    }
+                } else {
+                    alert('Неверный код');
+                }
+            });
+
+            document.getElementById('resendCodeLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                alert(`Код отправлен повторно на ${document.getElementById('codePhoneDisplay').textContent}`);
+            });
+
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                playSound();
+                localStorage.removeItem('userPhone');
+                document.getElementById('profilePage').style.display = 'none';
+                showMainPage();
+                alert('Вы вышли');
+            });
+
+            // === Кнопки звонка в модалках ===
             document.getElementById('callMasterButton').addEventListener('click', () => {
                 playSound();
                 document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_MASTER;
@@ -1015,12 +1174,12 @@
                 document.getElementById('phoneModal').classList.add('active');
             });
 
-            // === Звонки ===
+            // === Звонки и копирование ===
             document.getElementById('directCallButton').addEventListener('click', () => {
-                window.open(`tel:${CALL_PHONE_MASTER}`, '_self');
+                window.open(`tel:${document.getElementById('displayPhoneNumber').textContent}`, '_self');
             });
             document.getElementById('copyPhoneButton').addEventListener('click', () => {
-                copyToClipboard(CALL_PHONE_MASTER);
+                copyToClipboard(document.getElementById('displayPhoneNumber').textContent);
             });
 
             document.querySelectorAll('.close-modal').forEach(btn => {
