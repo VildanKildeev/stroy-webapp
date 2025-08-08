@@ -1,7 +1,23 @@
 {
-  "name": "stroy-webapp",
+  "name": "stroy-po-karmanu",
   "version": "1.0.0",
+  "description": "Приложение для поиска мастеров, стройматериалов и спецтехники",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve -s .",
+    "build": "echo \"Нет сборки — статический сайт\""
+  },
   "engines": {
     "node": "18.x"
-  }
+  },
+  "dependencies": {
+    "serve": "^14.2.3"
+  },
+  "keywords": [
+    "строительство",
+    "Telegram WebApp",
+    "SMS-аутентификация"
+  ],
+  "author": "Ваше имя",
+  "license": "MIT"
 }
