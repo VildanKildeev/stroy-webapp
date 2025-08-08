@@ -1,4 +1,3 @@
-// /api/send-sms.js
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Метод не поддерживается' });
@@ -41,4 +40,5 @@ export default async function handler(req, res) {
     } catch (err) {
         return res.status(500).json({ error: 'Ошибка сети', details: err.message });
     }
+
 }
