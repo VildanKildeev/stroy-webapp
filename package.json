@@ -1,7 +1,6 @@
 {
-  "name": "stroy-po-karmanu",
+  "name": "stroy-webapp",
   "version": "1.0.0",
-  "description": "Telegram WebApp для поиска строительных услуг",
   "engines": {
     "node": "18.x"
   }
