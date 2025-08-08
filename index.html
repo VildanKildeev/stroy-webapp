@@ -664,19 +664,11 @@
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Список городов
-        const cities = [
-            "Москва", "Санкт-Петербург", "Екатеринбург", "Нижний Новгород", "Казань", "Новосибирск",
-            "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж",
-            "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Улан-Удэ",
-            "Ярославль", "Хабаровск", "Магнитогорск", "Томск", "Оренбург", "Кемерово", "Новокузнецк",
-            "Рязань", "Астрахань", "Пенза", "Липецк", "Севастополь"
-        ];
+        const cities = ["Москва", "Санкт-Петербург", "Екатеринбург", "Нижний Новгород", "Казань", "Новосибирск", "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж", "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Улан-Удэ", "Ярославль", "Хабаровск", "Магнитогорск", "Томск", "Оренбург", "Кемерово", "Новокузнецк", "Рязань", "Астрахань", "Пенза", "Липецк", "Севастополь"];
         let selectedCity = null;
         let currentPage = 'main';
         let currentUserPhone = null;
 
-        // Категории
         const masterCategories = [
             { title: "1. ЗЕМЛЯНЫЕ РАБОТЫ", desc: "Расчистка участка, планировка<br>Котлованы, траншеи, дренаж" },
             { title: "2. ФУНДАМЕНТЫ И ОСНОВАНИЯ", desc: "Подготовка основания<br>Свайные, ленточные, плитные фундаменты" },
@@ -747,7 +739,6 @@
             { title: "21. Прочая спецтехника", desc: "" }
         ];
 
-        // Константы
         const WHATSAPP_PHONE_MASTER = "79046660999";
         const CALL_PHONE_MASTER = "+79046660999";
         const WHATSAPP_PHONE_SHOP = "79539991666";
@@ -815,7 +806,6 @@
             currentPage = 'profile';
             if (tg) tg.BackButton.show();
 
-            // Push-уведомление
             if (tg) {
                 tg.sendData('{"action": "welcome", "user": "' + userPhone + '"}');
             }
@@ -916,7 +906,6 @@
             });
         }
 
-        // === Инициализация ===
         window.addEventListener('load', () => {
             const savedCity = localStorage.getItem('selectedCity');
             if (savedCity && cities.includes(savedCity)) {
@@ -932,7 +921,6 @@
                 document.getElementById('loginLink').style.display = 'block';
             }
 
-            // Автозаполнение номера
             const savedPhone = localStorage.getItem('lastPhone');
             if (savedPhone) {
                 document.getElementById('phoneInput').value = savedPhone;
@@ -940,7 +928,6 @@
 
             setupChangeCityButton();
 
-            // === Кнопка "Личный кабинет" ===
             document.getElementById('profileButton').addEventListener('click', () => {
                 playSound();
                 const savedUser = localStorage.getItem('userPhone');
@@ -952,13 +939,11 @@
                 }
             });
 
-            // === Кнопка "Назад" из профиля ===
             document.getElementById('backToMain').addEventListener('click', () => {
                 playSound();
                 showMainPage();
             });
 
-            // === Нанять мастера ===
             document.getElementById('masterButton').addEventListener('click', () => {
                 requireCityBefore(() => {
                     closeAllModals();
@@ -994,14 +979,12 @@
                 });
             });
 
-            // === Кнопка "Позвонить" внизу ===
             document.getElementById('phoneBottomBtn').addEventListener('click', () => {
                 playSound();
                 document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_MASTER;
                 document.getElementById('phoneModal').classList.add('active');
             });
 
-            // === Интернет магазин ===
             document.getElementById('shopButton').addEventListener('click', () => {
                 requireCityBefore(() => {
                     closeAllModals();
@@ -1037,7 +1020,6 @@
                 });
             });
 
-            // === Спецтехника ===
             document.getElementById('machineryButton').addEventListener('click', () => {
                 requireCityBefore(() => {
                     closeAllModals();
@@ -1073,7 +1055,6 @@
                 });
             });
 
-            // === Кнопка "КУПИ / ПРОДАЙ ОСТАТКИ" ===
             document.getElementById('tradeMaterialsButton').addEventListener('click', () => {
                 closeAllModals();
                 currentPage = 'trade';
@@ -1096,7 +1077,6 @@
                 openWhatsApp(WHATSAPP_PHONE_SELL, message);
             });
 
-            // === Аутентификация по SMS ===
             document.getElementById('loginLink').addEventListener('click', () => {
                 playSound();
                 closeAllModals();
@@ -1104,37 +1084,33 @@
             });
 
             document.getElementById('sendCodeButton').addEventListener('click', async () => {
-    const phone = document.getElementById('phoneInput').value.trim();
-    console.log('📞 Номер для отправки:', phone); // ← Проверка
+                const phone = document.getElementById('phoneInput').value.trim().replace(/\s+/g, '');
+                if (!phone || !/^(\+7|7|8)\d{10}$/.test(phone)) {
+                    alert('Введите корректный номер');
+                    return;
+                }
+                currentUserPhone = phone.replace(/^(\+?7|8)/, '+7');
+                localStorage.setItem('lastPhone', currentUserPhone);
 
-    if (!phone) {
-        alert('Введите номер телефона');
-        return;
-    }
+                const response = await fetch('/api/send-sms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: currentUserPhone })
+                });
 
-    try {
-        const response = await fetch('/api/send-sms', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ phone })
-        });
+                const result = await response.json();
 
-        console.log('📡 Статус ответа:', response.status); // ← Проверка
-
-        const result = await response.json();
-        console.log('✅ Ответ от API:', result);
-
-        if (result.success) {
-            alert('Код отправлен (в реальности — через SMS.ru)');
-            // Перейти к вводу кода...
-        } else {
-            alert('Ошибка: ' + (result.error || 'Неизвестная ошибка'));
-        }
-    } catch (err) {
-        console.error('❌ Ошибка сети:', err);
-        alert('Ошибка подключения к серверу');
-    }
-});
+                if (result.success) {
+                    alert(`Код отправлен на ${currentUserPhone}`);
+                    document.getElementById('authModal').classList.remove('active');
+                    document.getElementById('codePhoneDisplay').textContent = currentUserPhone;
+                    setTimeout(() => {
+                        document.getElementById('codeModal').classList.add('active');
+                    }, 300);
+                } else {
+                    alert('Ошибка: ' + (result.details || 'Не удалось отправить SMS'));
+                }
+            });
 
             document.getElementById('verifyCodeButton').addEventListener('click', async () => {
                 const code = document.getElementById('codeInput').value.trim();
@@ -1172,7 +1148,6 @@
                 alert('Вы вышли');
             });
 
-            // === Кнопки звонка в модалках ===
             document.getElementById('callMasterButton').addEventListener('click', () => {
                 playSound();
                 document.getElementById('displayPhoneNumber').textContent = CALL_PHONE_MASTER;
@@ -1189,7 +1164,6 @@
                 document.getElementById('phoneModal').classList.add('active');
             });
 
-            // === Звонки и копирование ===
             document.getElementById('directCallButton').addEventListener('click', () => {
                 window.open(`tel:${document.getElementById('displayPhoneNumber').textContent}`, '_self');
             });
