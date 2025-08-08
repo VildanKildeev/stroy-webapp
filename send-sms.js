@@ -17,14 +17,14 @@ export default async function handler(req, res) {
     // Генерация кода
     const code = Math.floor(1000 + Math.random() * 9000).toString();
 
-    // Сохраняем код (в памяти или Redis)
+    // Сохраняем код (временно в памяти)
     global.smsCodes = global.smsCodes || {};
     global.smsCodes[formattedPhone] = {
         code: code,
         expires: Date.now() + 5 * 60 * 1000
     };
 
-    // API-ключ (из переменных окружения)
+    // API-ключ из переменных окружения
     const apiKey = process.env.SMS_RU_API_KEY;
     if (!apiKey) {
         console.error('❌ SMS_RU_API_KEY не установлен');
