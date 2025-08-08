@@ -786,6 +786,7 @@
         function closeAllModals() {
             document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
             currentPage = 'main';
+            document.getElementById('phoneBottomBtn').style.display = 'none';
             if (tg) tg.BackButton.hide();
         }
 
@@ -796,7 +797,6 @@
             document.getElementById('aboutLink').style.display = 'block';
             document.getElementById('loginLink').style.display = 'block';
             document.getElementById('profileButton').style.display = 'block';
-            document.getElementById('phoneBottomBtn').style.display = 'none';
             currentPage = 'main';
             if (tg) tg.BackButton.hide();
         }
@@ -815,7 +815,7 @@
             currentPage = 'profile';
             if (tg) tg.BackButton.show();
 
-            // Push-уведомление: отправка сообщения в чат
+            // Push-уведомление
             if (tg) {
                 tg.sendData('{"action": "welcome", "user": "' + userPhone + '"}');
             }
@@ -1103,50 +1103,62 @@
                 document.getElementById('authModal').classList.add('active');
             });
 
-            document.getElementById('sendCodeButton').addEventListener('click', () => {
+            document.getElementById('sendCodeButton').addEventListener('click', async () => {
                 const phone = document.getElementById('phoneInput').value.trim().replace(/\s+/g, '');
                 if (!phone || !/^(\+7|7|8)\d{10}$/.test(phone)) {
                     alert('Введите корректный номер');
                     return;
                 }
                 currentUserPhone = phone.replace(/^(\+?7|8)/, '+7');
-                localStorage.setItem('lastPhone', currentUserPhone); // Автозаполнение
-                alert(`Код отправлен на ${currentUserPhone}`);
-                localStorage.setItem('smsCode', '1234');
-                localStorage.setItem('smsCodeExpiry', Date.now() + 300000);
-                document.getElementById('codePhoneDisplay').textContent = currentUserPhone;
-                document.getElementById('authModal').classList.remove('active');
-                setTimeout(() => {
-                    document.getElementById('codeModal').classList.add('active');
-                }, 300);
+                localStorage.setItem('lastPhone', currentUserPhone);
+
+                // Отправка на сервер
+                const response = await fetch('/api/send-sms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: currentUserPhone })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Код отправлен на ${currentUserPhone}`);
+                    document.getElementById('authModal').classList.remove('active');
+                    document.getElementById('codePhoneDisplay').textContent = currentUserPhone;
+                    setTimeout(() => {
+                        document.getElementById('codeModal').classList.add('active');
+                    }, 300);
+                } else {
+                    alert('Ошибка: ' + (result.details || 'Не удалось отправить SMS'));
+                }
             });
 
-            document.getElementById('verifyCodeButton').addEventListener('click', () => {
+            document.getElementById('verifyCodeButton').addEventListener('click', async () => {
                 const code = document.getElementById('codeInput').value.trim();
-                const storedCode = localStorage.getItem('smsCode');
-                const expiry = localStorage.getItem('smsCodeExpiry');
-                if (!storedCode || Date.now() > expiry) {
-                    alert('Код устарел');
-                    return;
-                }
-                if (code === storedCode) {
-                    localStorage.setItem('userPhone', currentUserPhone);
+                const phone = document.getElementById('codePhoneDisplay').textContent.replace(/\D/g, '');
+                const formattedPhone = '7' + phone.slice(-10);
+
+                const response = await fetch('/api/verify-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: formattedPhone, code })
+                });
+
+                const result = await response.json();
+
+                if (result.valid) {
+                    localStorage.setItem('userPhone', '+7' + phone.slice(-10));
                     document.getElementById('codeModal').classList.remove('active');
                     document.getElementById('loginLink').style.display = 'none';
                     showProfilePage();
-
-                    // Push-уведомление: отправка приветствия
-                    if (tg) {
-                        tg.sendData('{"action": "login_success", "phone": "' + currentUserPhone + '"}');
-                    }
                 } else {
-                    alert('Неверный код');
+                    alert(result.error || 'Неверный код');
                 }
             });
 
             document.getElementById('resendCodeLink').addEventListener('click', (e) => {
                 e.preventDefault();
-                alert(`Код отправлен повторно на ${document.getElementById('codePhoneDisplay').textContent}`);
+                document.getElementById('sendCodeButton').click();
             });
 
             document.getElementById('logoutButton').addEventListener('click', () => {
