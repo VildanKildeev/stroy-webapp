@@ -1104,34 +1104,37 @@
             });
 
             document.getElementById('sendCodeButton').addEventListener('click', async () => {
-                const phone = document.getElementById('phoneInput').value.trim().replace(/\s+/g, '');
-                if (!phone || !/^(\+7|7|8)\d{10}$/.test(phone)) {
-                    alert('Введите корректный номер');
-                    return;
-                }
-                currentUserPhone = phone.replace(/^(\+?7|8)/, '+7');
-                localStorage.setItem('lastPhone', currentUserPhone);
+    const phone = document.getElementById('phoneInput').value.trim();
+    console.log('📞 Номер для отправки:', phone); // ← Проверка
 
-                // Отправка на сервер
-                const response = await fetch('/api/send-sms', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone: currentUserPhone })
-                });
+    if (!phone) {
+        alert('Введите номер телефона');
+        return;
+    }
 
-                const result = await response.json();
+    try {
+        const response = await fetch('/api/send-sms', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone })
+        });
 
-                if (result.success) {
-                    alert(`Код отправлен на ${currentUserPhone}`);
-                    document.getElementById('authModal').classList.remove('active');
-                    document.getElementById('codePhoneDisplay').textContent = currentUserPhone;
-                    setTimeout(() => {
-                        document.getElementById('codeModal').classList.add('active');
-                    }, 300);
-                } else {
-                    alert('Ошибка: ' + (result.details || 'Не удалось отправить SMS'));
-                }
-            });
+        console.log('📡 Статус ответа:', response.status); // ← Проверка
+
+        const result = await response.json();
+        console.log('✅ Ответ от API:', result);
+
+        if (result.success) {
+            alert('Код отправлен (в реальности — через SMS.ru)');
+            // Перейти к вводу кода...
+        } else {
+            alert('Ошибка: ' + (result.error || 'Неизвестная ошибка'));
+        }
+    } catch (err) {
+        console.error('❌ Ошибка сети:', err);
+        alert('Ошибка подключения к серверу');
+    }
+});
 
             document.getElementById('verifyCodeButton').addEventListener('click', async () => {
                 const code = document.getElementById('codeInput').value.trim();
