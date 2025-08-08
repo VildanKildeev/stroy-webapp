@@ -1,3 +1,4 @@
+// /api/send-sms.js
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Метод не поддерживается' });
@@ -5,6 +6,7 @@ export default async function handler(req, res) {
 
     const { phone } = req.body;
 
+    // Валидация номера
     const phoneRegex = /^(\+7|7|8)\d{10}$/;
     if (!phone || !phoneRegex.test(phone)) {
         return res.status(400).json({ error: 'Неверный формат номера' });
@@ -12,21 +14,24 @@ export default async function handler(req, res) {
 
     const formattedPhone = phone.replace(/^(\+?7|8)/, '7');
 
+    // Генерация кода
     const code = Math.floor(1000 + Math.random() * 9000).toString();
 
+    // Сохраняем код (в памяти или Redis)
     global.smsCodes = global.smsCodes || {};
     global.smsCodes[formattedPhone] = {
         code: code,
         expires: Date.now() + 5 * 60 * 1000
     };
 
+    // API-ключ (из переменных окружения)
     const apiKey = process.env.SMS_RU_API_KEY;
     if (!apiKey) {
         console.error('❌ SMS_RU_API_KEY не установлен');
         return res.status(500).json({ error: 'Ошибка конфигурации' });
     }
 
-    const message = `Ваш код: ${code}. Не передавайте его.`;
+    const message = `Ваш код: ${code}`;
     const url = `https://sms.ru/sms/send?api_id=${apiKey}&to=${formattedPhone}&msg=${encodeURIComponent(message)}&json=1`;
 
     try {
@@ -40,5 +45,4 @@ export default async function handler(req, res) {
     } catch (err) {
         return res.status(500).json({ error: 'Ошибка сети', details: err.message });
     }
-
 }
