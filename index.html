@@ -116,10 +116,16 @@
             flex-wrap: wrap;
             z-index: 10;
         }
-        .selected-city span {
-            cursor: pointer;
+        #changeCityButton {
+            background: none;
+            border: none;
+            color: white;
+            font-weight: bold;
             text-decoration: underline;
-            color: #ffd700;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 6px 10px;
+            border-radius: 6px;
         }
 
         /* === НИЖНЯЯ ПЛАШКА === */
@@ -345,6 +351,109 @@
             text-decoration: underline;
             cursor: pointer;
         }
+
+        /* === ФОРМА ЗАЯВКИ === */
+        #requestFormPage {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            background: #d8c9b7;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 200;
+            padding: 20px;
+            overflow-y: auto;
+            color: #333;
+        }
+        .form-title {
+            font-size: 20px;
+            color: #5a4a3a;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+            width: 100%;
+        }
+        .form-group label {
+            display: block;
+            color: #7d6b59;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #c0b0a0;
+            border-radius: 8px;
+            background: #e8dccf;
+            color: #333;
+            font-size: 15px;
+        }
+        .form-group input:disabled {
+            background: #d8c9b7;
+            color: #5a4a3a;
+            font-weight: bold;
+        }
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .checkbox-group input {
+            width: auto;
+        }
+        .upload-group {
+            margin: 16px 0;
+        }
+        .upload-group button {
+            background: #e0d6c8;
+            color: #5a4a3a;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+        }
+        .upload-preview {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .upload-preview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #c0b0a0;
+        }
+        .footer-contact {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #7d6b59;
+        }
+        .btn-location {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -357,7 +466,7 @@
     <!-- Отображение города -->
     <div class="selected-city" id="selectedCityDisplay" style="display: none;">
         <span>Город: <span id="cityName">Не выбран</span></span>
-        <span id="changeCityButton">Сменить</span>
+        <button type="button" id="changeCityButton">СМЕНИТЬ</button>
     </div>
 
     <!-- Основные кнопки -->
@@ -441,6 +550,7 @@
             <div><strong>Имя:</strong> <span id="profileName">Пользователь</span></div>
             <div><strong>Телефон:</strong> <span id="profilePhone">+7 904 666 09 99</span></div>
             <div><strong>Тип:</strong> <span id="profileType">Не указан</span></div>
+            <div><strong>Город:</strong> <span id="profileCity">Не указан</span></div>
             <div><strong>Статус:</strong> Проверенный пользователь</div>
         </div>
         <button type="button" class="profile-button" id="myOrdersButton">МОИ ЗАКАЗЫ</button>
@@ -449,16 +559,94 @@
         <div class="back-button" id="backToMain">← Назад</div>
     </div>
 
+    <!-- === ФОРМА ЗАЯВКИ === -->
+    <div id="requestFormPage">
+        <div class="form-title">ОФОРМЛЕНИЕ ЗАЯВКИ</div>
+        <form id="requestForm" style="width: 100%;">
+            <div class="form-group">
+                <label>Имя</label>
+                <input type="text" id="reqName" readonly>
+            </div>
+            <div class="form-group">
+                <label>Телефон</label>
+                <input type="text" id="reqPhone" readonly>
+            </div>
+            <div class="form-group">
+                <label>Город</label>
+                <select id="reqCity" required>
+                    <option value="">Выберите город</option>
+                    <!-- Города заполнятся автоматически -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Адрес (улица, дом, корпус)</label>
+                <input type="text" id="reqAddress" placeholder="Укажите точный адрес">
+                <button type="button" class="btn-location" id="getLocationBtn">📍 Определить по карте (GPS)</button>
+            </div>
+            <div class="form-group">
+                <label>Тип работ</label>
+                <select id="reqWorkType" required>
+                    <option value="">Выберите тип работ</option>
+                    <option value="1. ЗЕМЛЯНЫЕ РАБОТЫ">1. ЗЕМЛЯНЫЕ РАБОТЫ</option>
+                    <option value="2. ФУНДАМЕНТЫ И ОСНОВАНИЯ">2. ФУНДАМЕНТЫ И ОСНОВАНИЯ</option>
+                    <option value="3. КЛАДОЧНЫЕ РАБОТЫ">3. КЛАДОЧНЫЕ РАБОТЫ</option>
+                    <option value="4. МЕТАЛЛОКОНСТРУКЦИИ">4. МЕТАЛЛОКОНСТРУКЦИИ</option>
+                    <option value="5. КРОВЕЛЬНЫЕ РАБОТЫ">5. КРОВЕЛЬНЫЕ РАБОТЫ</option>
+                    <option value="6. ОСТЕКЛЕНИЕ И ФАСАДНЫЕ РАБОТЫ">6. ОСТЕКЛЕНИЕ И ФАСАДНЫЕ РАБОТЫ</option>
+                    <option value="7. ВНУТРЕННИЕ ИНЖЕНЕРНЫЕ СЕТИ">7. ВНУТРЕННИЕ ИНЖЕНЕРНЫЕ СЕТИ</option>
+                    <option value="8. САНТЕХНИЧЕСКИЕ И ВОДОПРОВОДНЫЕ РАБОТЫ">8. САНТЕХНИЧЕСКИЕ И ВОДОПРОВОДНЫЕ РАБОТЫ</option>
+                    <option value="9. ОТОПЛЕНИЕ И ТЕПЛОСНАБЖЕНИЕ">9. ОТОПЛЕНИЕ И ТЕПЛОСНАБЖЕНИЕ</option>
+                    <option value="10. ВЕНТИЛЯЦИЯ И КОНДИЦИОНИРОВАНИЕ">10. ВЕНТИЛЯЦИЯ И КОНДИЦИОНИРОВАНИЕ</option>
+                    <option value="11. ЭЛЕКТРОМОНТАЖНЫЕ РАБОТЫ">11. ЭЛЕКТРОМОНТАЖНЫЕ РАБОТЫ</option>
+                    <option value="12. ОТДЕЛОЧНЫЕ РАБОТЫ">12. ОТДЕЛОЧНЫЕ РАБОТЫ</option>
+                    <option value="13. МОНТАЖ ПОТОЛКОВ">13. МОНТАЖ ПОТОЛКОВ</option>
+                    <option value="14. ПОЛУСУХАЯ СТЯЖКА ПОЛА">14. ПОЛУСУХАЯ СТЯЖКА ПОЛА</option>
+                    <option value="15. МАЛЯРНЫЕ РАБОТЫ">15. МАЛЯРНЫЕ РАБОТЫ</option>
+                    <option value="16. БЛАГОУСТРОЙСТВО ТЕРРИТОРИИ">16. БЛАГОУСТРОЙСТВО ТЕРРИТОРИИ</option>
+                    <option value="17. СТРОИТЕЛЬСТВО ДОМОВ ПОД КЛЮЧ">17. СТРОИТЕЛЬСТВО ДОМОВ ПОД КЛЮЧ</option>
+                    <option value="18. ДЕМОНТАЖНЫЕ РАБОТЫ">18. ДЕМОНТАЖНЫЕ РАБОТЫ</option>
+                    <option value="19. МОНТАЖ ОБОРУДОВАНИЯ">19. МОНТАЖ ОБОРУДОВАНИЯ</option>
+                    <option value="20. РАЗНОРАБОЧИЕ">20. РАЗНОРАБОЧИЕ</option>
+                    <option value="21. КЛИНИНГ, УБОРКА ПОМЕЩЕНИЙ">21. КЛИНИНГ, УБОРКА ПОМЕЩЕНИЙ</option>
+                    <option value="22. МУЖ НА ЧАС">22. МУЖ НА ЧАС</option>
+                    <option value="23. БУРЕНИЕ, УСТРОЙСТВО СКВАЖИН">23. БУРЕНИЕ, УСТРОЙСТВО СКВАЖИН</option>
+                    <option value="24. ПРОЕКТИРОВАНИЕ">24. ПРОЕКТИРОВАНИЕ</option>
+                    <option value="25. ГЕОЛОГИЯ">25. ГЕОЛОГИЯ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Подробное описание</label>
+                <textarea id="reqDescription" placeholder="Опишите задачу подробно..."></textarea>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="reqVisit">
+                <label for="reqVisit">Нужен выезд специалиста</label>
+            </div>
+            <div class="upload-group">
+                <label>Фото объекта, плана или проекта</label>
+                <button type="button" id="uploadPhotoBtn">Загрузить фото</button>
+                <input type="file" id="photoInput" accept="image/*" style="display: none;" multiple>
+                <div class="upload-preview" id="photoPreview"></div>
+            </div>
+            <button type="submit" class="profile-button">Оставить заявку</button>
+        </form>
+        <div class="back-button" id="backToMainFromRequest">← Назад</div>
+        <div class="footer-contact">
+            Если остались вопросы — свяжитесь с нами по телефону или WhatsApp: <a href="tel:+79046660999" style="color: #5a4a3a;">+7 904 666 09 99</a> или <a href="https://wa.me/79046660999" style="color: #5a4a3a;">WhatsApp</a>
+        </div>
+    </div>
+
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // 🔥 Замените на ваш URL с Formspree
-        const FORMSPREE_URL = "https://formspree.io/f/xgepjpzq";
+        // ✅ Ваш Formspree URL
+        const FORMSPREE_URL = "https://formspree.io/f/xdkdbnnz";
 
         const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
         const PROMO_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const CONTACT_PHONE = "+79046660999";
+        const WHATSAPP_URL = `https://wa.me/${CONTACT_PHONE.replace(/\D/g, '')}`;
 
         let selectedCity = null;
         let currentPage = 'main';
@@ -484,6 +672,7 @@
 
         function showMainPage() {
             document.getElementById('profilePage').style.display = 'none';
+            document.getElementById('requestFormPage').style.display = 'none';
             document.getElementById('buttonContainer').style.display = 'flex';
             document.getElementById('selectedCityDisplay').style.display = selectedCity ? 'flex' : 'none';
             currentPage = 'main';
@@ -496,8 +685,24 @@
             document.getElementById('profileName').textContent = currentUserName;
             document.getElementById('profilePhone').textContent = currentUserPhone;
             document.getElementById('profileType').textContent = currentUserType;
+            document.getElementById('profileCity').textContent = selectedCity || 'Не указан';
             document.getElementById('profilePage').style.display = 'flex';
             currentPage = 'profile';
+            if (window.Telegram?.WebApp) Telegram.WebApp.BackButton.show();
+        }
+
+        function showRequestFormPage() {
+            document.getElementById('buttonContainer').style.display = 'none';
+            document.getElementById('selectedCityDisplay').style.display = 'none';
+            document.getElementById('profilePage').style.display = 'none';
+            document.getElementById('requestFormPage').style.display = 'flex';
+
+            // Заполнить данные из профиля
+            document.getElementById('reqName').value = currentUserName;
+            document.getElementById('reqPhone').value = currentUserPhone;
+            document.getElementById('reqCity').value = selectedCity || '';
+
+            currentPage = 'request';
             if (window.Telegram?.WebApp) Telegram.WebApp.BackButton.show();
         }
 
@@ -577,25 +782,167 @@
                 renderCities(filtered);
             });
             renderCities();
+
+            // Заполнить выпадающий список в заявке
+            const reqCitySelect = document.getElementById('reqCity');
+            reqCitySelect.innerHTML = '<option value="">Выберите город</option>';
+            cities.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.textContent = city;
+                reqCitySelect.appendChild(opt);
+            });
         }
 
-        // === ОТПРАВКА ФОРМЫ ЧЕРЕЗ FORMSPREE ===
-        function saveUserDataAndEnter(name, phone, type) {
-            currentUserName = name;
-            currentUserPhone = phone;
-            currentUserType = type;
+        // === ОТПРАВКА РЕГИСТРАЦИИ ===
+        document.getElementById('inlineForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            playSound();
 
-            localStorage.setItem('userName', name);
-            localStorage.setItem('userPhone', phone);
-            localStorage.setItem('userType', type);
-            localStorage.setItem('lastPhone', phone);
+            const name = document.getElementById('formName').value.trim();
+            const phone = document.getElementById('formPhone').value.trim().replace(/\s+/g, '');
+            const type = document.getElementById('formType').value;
 
-            document.getElementById('formModal').classList.remove('active');
-            showProfilePage();
-            alert(`Добро пожаловать, ${name}!`);
-        }
+            if (!name || !phone || !type || !/^(\+7|7|8)\d{10}$/.test(phone)) {
+                alert('Пожалуйста, заполните все поля корректно');
+                return;
+            }
 
-        // === Инициализация ===
+            const formattedPhone = phone.replace(/^(\+?7|8)/, '+7');
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('phone', formattedPhone);
+            formData.append('type', type);
+            formData.append('city', selectedCity || 'Не указан');
+
+            fetch(FORMSPREE_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            })
+            .then(() => {
+                currentUserName = name;
+                currentUserPhone = formattedPhone;
+                currentUserType = type;
+                localStorage.setItem('userName', name);
+                localStorage.setItem('userPhone', phone);
+                localStorage.setItem('userType', type);
+                localStorage.setItem('lastPhone', phone);
+                document.getElementById('formModal').classList.remove('active');
+                showProfilePage();
+                alert(`Добро пожаловать, ${name}!`);
+            })
+            .catch(() => {
+                currentUserName = name;
+                currentUserPhone = formattedPhone;
+                currentUserType = type;
+                localStorage.setItem('userName', name);
+                localStorage.setItem('userPhone', phone);
+                localStorage.setItem('userType', type);
+                localStorage.setItem('lastPhone', phone);
+                document.getElementById('formModal').classList.remove('active');
+                showProfilePage();
+                alert(`Добро пожаловать, ${name}! (данные сохранены)`);
+            });
+        });
+
+        // === ФОРМА ЗАЯВКИ ===
+        document.getElementById('masterButton').addEventListener('click', () => {
+            requireCityBefore(() => {
+                playSound();
+                showRequestFormPage();
+            });
+        });
+
+        // === ГЕОЛОКАЦИЯ ===
+        document.getElementById('getLocationBtn').addEventListener('click', () => {
+            const addressInput = document.getElementById('reqAddress');
+            if (!navigator.geolocation) {
+                alert('Геолокация не поддерживается вашим браузером');
+                return;
+            }
+            playSound();
+            addressInput.value = 'Определяем местоположение...';
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    addressInput.value = `Гео: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+                    alert(`Адрес определён: ${lat.toFixed(6)}, ${lon.toFixed(6)}`);
+                },
+                (error) => {
+                    addressInput.value = '';
+                    alert('Не удалось определить местоположение: ' + error.message);
+                }
+            );
+        });
+
+        // === Загрузка фото ===
+        document.getElementById('uploadPhotoBtn').addEventListener('click', () => {
+            document.getElementById('photoInput').click();
+        });
+
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                preview.appendChild(img);
+            });
+        });
+
+        // === Отправка заявки ===
+        document.getElementById('requestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            playSound();
+
+            const name = document.getElementById('reqName').value;
+            const phone = document.getElementById('reqPhone').value;
+            const city = document.getElementById('reqCity').value;
+            const address = document.getElementById('reqAddress').value;
+            const workType = document.getElementById('reqWorkType').value;
+            const description = document.getElementById('reqDescription').value;
+            const visit = document.getElementById('reqVisit').checked;
+            const files = document.getElementById('photoInput').files;
+
+            if (!city || !workType) {
+                alert('Заполните обязательные поля');
+                return;
+            }
+
+            // Формируем данные для отправки
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('phone', phone);
+            formData.append('city', city);
+            formData.append('address', address);
+            formData.append('work_type', workType);
+            formData.append('description', description);
+            formData.append('visit', visit ? 'Да' : 'Нет');
+            for (let i = 0; i < files.length; i++) {
+                formData.append('photos', files[i]);
+            }
+
+            // Отправка в Formspree
+            fetch(FORMSPREE_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            });
+
+            alert('Ваша заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+            showMainPage();
+        });
+
+        // === Кнопка "Назад" из заявки ===
+        document.getElementById('backToMainFromRequest').addEventListener('click', () => {
+            playSound();
+            showMainPage();
+        });
+
+        // === Остальные обработчики ===
         window.addEventListener('load', () => {
             const tg = window.Telegram?.WebApp;
 
@@ -603,7 +950,7 @@
                 tg.ready();
                 tg.expand();
                 tg.BackButton.onClick(() => {
-                    if (currentPage === 'profile') {
+                    if (currentPage === 'profile' || currentPage === 'request') {
                         showMainPage();
                     } else {
                         closeAllModals();
@@ -640,36 +987,6 @@
                 document.getElementById('cityModal').classList.add('active');
             });
 
-            // === Регистрация ===
-            document.getElementById('inlineForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                playSound();
-
-                const name = document.getElementById('formName').value.trim();
-                const phone = document.getElementById('formPhone').value.trim().replace(/\s+/g, '');
-                const type = document.getElementById('formType').value;
-
-                if (!name || !phone || !type || !/^(\+7|7|8)\d{10}$/.test(phone)) {
-                    alert('Пожалуйста, заполните все поля корректно');
-                    return;
-                }
-
-                const formattedPhone = phone.replace(/^(\+?7|8)/, '+7');
-
-                const formData = new FormData();
-                formData.append('name', name);
-                formData.append('phone', formattedPhone);
-                formData.append('type', type);
-
-                fetch(FORMSPREE_URL, {
-                    method: 'POST',
-                    body: formData,
-                    mode: 'no-cors'
-                })
-                .then(() => saveUserDataAndEnter(name, formattedPhone, type))
-                .catch(() => saveUserDataAndEnter(name, formattedPhone, type));
-            });
-
             // === Нижняя плашка ===
             document.getElementById('promoButton').addEventListener('click', () => {
                 playSound();
@@ -702,28 +1019,6 @@
             document.getElementById('backToMain').addEventListener('click', () => {
                 playSound();
                 showMainPage();
-            });
-
-            // === Основные кнопки ===
-            document.getElementById('masterButton').addEventListener('click', () => {
-                requireCityBefore(() => {
-                    playSound();
-                    alert('Переход к выбору мастера');
-                });
-            });
-
-            document.getElementById('shopButton').addEventListener('click', () => {
-                requireCityBefore(() => {
-                    playSound();
-                    alert('Переход к товарам');
-                });
-            });
-
-            document.getElementById('machineryButton').addEventListener('click', () => {
-                requireCityBefore(() => {
-                    playSound();
-                    alert('Переход к спецтехнике');
-                });
             });
 
             document.getElementById('logoutButton').addEventListener('click', () => {
