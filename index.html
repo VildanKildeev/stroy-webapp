@@ -103,7 +103,7 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
 
-        /* === НИЖНЯЯ ПЛАШКА (FOOTER) === */
+        /* === НИЖНЯЯ ПЛАШКА === */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -387,6 +387,34 @@
         </div>
     </div>
 
+    <!-- === Модалка: Встроенная анкета с выбором типа === -->
+    <div class="modal" id="formModal">
+        <button type="button" class="close-modal">×</button>
+        <div class="modal-content">
+            <div class="modal-title">РЕГИСТРАЦИЯ</div>
+            <form id="inlineForm" style="width: 100%;">
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <div style="color: #7d6b59; font-size: 14px; margin-bottom: 6px;">Как к Вам обращаться?</div>
+                    <input type="text" id="formName" required style="width: 100%; padding: 12px; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; font-size: 16px;">
+                </div>
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <div style="color: #7d6b59; font-size: 14px; margin-bottom: 6px;">Номер телефона</div>
+                    <input type="tel" id="formPhone" required style="width: 100%; padding: 12px; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; font-size: 16px;">
+                </div>
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <div style="color: #7d6b59; font-size: 14px; margin-bottom: 6px;">Тип пользователя</div>
+                    <select id="formType" required style="width: 100%; padding: 12px; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; font-size: 16px;">
+                        <option value="">Выберите тип</option>
+                        <option value="ЗАКАЗЧИК">ЗАКАЗЧИК</option>
+                        <option value="ПРОДАВЕЦ - МАГАЗИН">ПРОДАВЕЦ - МАГАЗИН</option>
+                        <option value="ИСПОЛНИТЕЛЬ">ИСПОЛНИТЕЛЬ</option>
+                    </select>
+                </div>
+                <button type="submit" class="modal-button">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+            </form>
+        </div>
+    </div>
+
     <!-- === Модалка: Нанять мастера === -->
     <div class="modal" id="masterModal">
         <button type="button" class="close-modal">×</button>
@@ -426,28 +454,6 @@
         </div>
     </div>
 
-    <!-- === Модалка: Вход === -->
-    <div class="modal" id="authModal">
-        <button type="button" class="close-modal">×</button>
-        <div class="modal-content">
-            <div class="modal-title">ВХОД ПО SMS</div>
-            <input type="tel" id="phoneInput" placeholder="+7 999 123 45 67" style="width: 80%; padding: 12px; margin: 15px 0; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; text-align: center;">
-            <button type="button" class="modal-button" id="sendCodeButton">ПОЛУЧИТЬ КОД</button>
-        </div>
-    </div>
-
-    <!-- === Модалка: Анкета === -->
-    <div class="modal" id="formModal">
-        <button type="button" class="close-modal">×</button>
-        <div class="modal-content">
-            <div class="modal-title">АНКЕТА</div>
-            <div style="color: #7d6b59; font-size: 14px; margin-bottom: 15px;">
-                Для продолжения необходимо заполнить анкету.
-            </div>
-            <button type="button" class="modal-button" id="openFormButton">ЗАПОЛНИТЬ АНКЕТУ</button>
-        </div>
-    </div>
-
     <!-- === Модалка: Выбор города === -->
     <div class="modal" id="cityModal">
         <button type="button" class="close-modal">×</button>
@@ -467,6 +473,7 @@
         <div class="profile-card">
             <div><strong>Имя:</strong> <span id="profileName">Пользователь</span></div>
             <div><strong>Телефон:</strong> <span id="profilePhone">+7 904 666 09 99</span></div>
+            <div><strong>Тип:</strong> <span id="profileType">Не указан</span></div>
             <div><strong>Статус:</strong> Проверенный пользователь</div>
         </div>
         <button type="button" class="profile-button" id="myOrdersButton">МОИ ЗАКАЗЫ</button>
@@ -478,19 +485,22 @@
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+        // 🔥 Замените на ваш URL с Formspree
+        const FORMSPREE_URL = "https://formspree.io/f/xdkdbnnz";
+
         const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
         const PROMO_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const CONTACT_PHONE = "+79046660999";
-        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe57saSzaPrY6YBM7p40LB2LoVBrxDQCsslk-g_64-zeS1iYw/viewform";
 
-        const cities = ["Москва", "Санкт-Петербург", "Екатеринбург", "Нижний Новгород", "Казань", "Новосибирск", "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж", "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Улан-Удэ", "Ярославль", "Хабаровск", "Магнитогорск", "Томск", "Оренбург", "Кемерово", "Новокузнецк", "Рязань", "Астрахань", "Пенза", "Липецк", "Севастополь"];
         let selectedCity = null;
         let currentPage = 'main';
         let currentUserPhone = null;
         let currentUserName = "Пользователь";
+        let currentUserType = "";
 
-        // Категории
+        const cities = ["Москва", "Санкт-Петербург", "Екатеринбург", "Нижний Новгород", "Казань", "Новосибирск", "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж", "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Улан-Удэ", "Ярославль", "Хабаровск", "Магнитогорск", "Томск", "Оренбург", "Кемерово", "Новокузнецк", "Рязань", "Астрахань", "Пенза", "Липецк", "Севастополь"];
+
         const masterCategories = [
             { title: "1. ЗЕМЛЯНЫЕ РАБОТЫ", desc: "Расчистка участка, планировка<br>Котлованы, траншеи, дренаж" },
             { title: "2. ФУНДАМЕНТЫ", desc: "Ленточный, плитный, свайный<br>Под ключ, с гидроизоляцией" },
@@ -547,6 +557,7 @@
             document.getElementById('selectedCityDisplay').style.display = 'none';
             document.getElementById('profileName').textContent = currentUserName;
             document.getElementById('profilePhone').textContent = currentUserPhone;
+            document.getElementById('profileType').textContent = currentUserType;
             document.getElementById('profilePage').style.display = 'flex';
             currentPage = 'profile';
             if (window.Telegram?.WebApp) Telegram.WebApp.BackButton.show();
@@ -630,29 +641,7 @@
             renderCities();
         }
 
-        // Фильтрация
-        function filterList(inputId, listId, items) {
-            const input = document.getElementById(inputId);
-            const container = document.getElementById(listId);
-            input.addEventListener('input', () => {
-                const q = input.value.toLowerCase().trim();
-                const filtered = q ? items.filter(item => item.title.toLowerCase().includes(q)) : items;
-                container.innerHTML = '';
-                filtered.forEach(item => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'modal-button';
-                    btn.innerHTML = `<strong>${item.title}</strong><br><small>${item.desc}</small>`;
-                    btn.onclick = () => {
-                        playSound();
-                        alert(`Выбрано: ${item.title}`);
-                        closeAllModals();
-                    };
-                    container.appendChild(btn);
-                });
-            });
-        }
-
+        // === Заполнение категорий ===
         function populateMasterCategories() {
             const container = document.getElementById('masterCategoryList');
             masterCategories.forEach(cat => {
@@ -707,7 +696,79 @@
             filterList('searchMachinery', 'machineryCategoryList', machineryCategories);
         }
 
-        // Инициализация
+        // Фильтрация
+        function filterList(inputId, listId, items) {
+            const input = document.getElementById(inputId);
+            const container = document.getElementById(listId);
+            input.addEventListener('input', () => {
+                const q = input.value.toLowerCase().trim();
+                const filtered = q ? items.filter(item => item.title.toLowerCase().includes(q)) : items;
+                container.innerHTML = '';
+                filtered.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'modal-button';
+                    btn.innerHTML = `<strong>${item.title}</strong><br><small>${item.desc}</small>`;
+                    btn.onclick = () => {
+                        playSound();
+                        alert(`Выбрано: ${item.title}`);
+                        closeAllModals();
+                    };
+                    container.appendChild(btn);
+                });
+            });
+        }
+
+        // === ОТПРАВКА ФОРМЫ ЧЕРЕЗ FORMSPREE ===
+        document.getElementById('inlineForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            playSound();
+
+            const name = document.getElementById('formName').value.trim();
+            const phone = document.getElementById('formPhone').value.trim().replace(/\s+/g, '');
+            const type = document.getElementById('formType').value;
+
+            if (!name || !phone || !type || !/^(\+7|7|8)\d{10}$/.test(phone)) {
+                alert('Пожалуйста, заполните все поля корректно');
+                return;
+            }
+
+            const formattedPhone = phone.replace(/^(\+?7|8)/, '+7');
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('phone', formattedPhone);
+            formData.append('type', type);
+
+            fetch(FORMSPREE_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            })
+            .then(() => {
+                saveUserDataAndEnter(name, formattedPhone, type);
+            })
+            .catch(() => {
+                saveUserDataAndEnter(name, formattedPhone, type);
+            });
+        });
+
+        function saveUserDataAndEnter(name, phone, type) {
+            currentUserName = name;
+            currentUserPhone = phone;
+            currentUserType = type;
+
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userPhone', phone);
+            localStorage.setItem('userType', type);
+            localStorage.setItem('lastPhone', phone);
+
+            document.getElementById('formModal').classList.remove('active');
+            showProfilePage();
+            alert(`Добро пожаловать, ${name}!`);
+        }
+
+        // === Инициализация ===
         window.addEventListener('load', () => {
             const tg = window.Telegram?.WebApp;
 
@@ -715,12 +776,16 @@
                 tg.ready();
                 tg.expand();
                 tg.BackButton.onClick(() => {
-                    if (currentPage === 'main') tg.close();
-                    else { closeAllModals(); showMainPage(); }
+                    if (currentPage === 'profile') {
+                        showMainPage();
+                    } else {
+                        closeAllModals();
+                        if (currentPage === 'main') tg.close();
+                    }
                 });
             }
 
-            // Восстановление данных
+            // Восстановление города
             const savedCity = localStorage.getItem('selectedCity');
             if (savedCity && cities.includes(savedCity)) {
                 selectedCity = savedCity;
@@ -728,18 +793,21 @@
                 updateButtonTitles(selectedCity);
             }
 
+            // Восстановление пользователя
             const savedPhone = localStorage.getItem('userPhone');
             const savedName = localStorage.getItem('userName');
-            if (savedPhone && savedName) {
+            const savedType = localStorage.getItem('userType');
+            if (savedPhone && savedName && savedType) {
                 currentUserPhone = savedPhone;
                 currentUserName = savedName;
+                currentUserType = savedType;
             }
 
             if (localStorage.getItem('lastPhone')) {
-                document.getElementById('phoneInput').value = localStorage.getItem('lastPhone');
+                document.getElementById('formPhone').value = localStorage.getItem('lastPhone');
             }
 
-            // Заполнить списки
+            // Заполнение категорий
             populateMasterCategories();
             populateShopCategories();
             populateMachineryCategories();
@@ -769,74 +837,17 @@
                 if (localStorage.getItem('userPhone') && localStorage.getItem('userName')) {
                     showProfilePage();
                 } else {
-                    document.getElementById('authModal').classList.add('active');
+                    document.getElementById('formModal').classList.add('active');
                 }
             });
 
-            // === Вход ===
-            document.getElementById('sendCodeButton').addEventListener('click', () => {
-                const phone = document.getElementById('phoneInput').value.trim().replace(/\s+/g, '');
-                if (!phone || !/^(\+7|7|8)\d{10}$/.test(phone)) {
-                    alert('Введите корректный номер');
-                    return;
-                }
-                const formattedPhone = phone.replace(/^(\+?7|8)/, '+7');
-                localStorage.setItem('lastPhone', formattedPhone);
-                playSound();
-                alert(`Код отправлен на ${formattedPhone}`);
-                document.getElementById('authModal').classList.remove('active');
-                setTimeout(() => document.getElementById('formModal').classList.add('active'), 1000);
-            });
-
-            // === Открыть Google Форму и автоматически перейти в ЛК после ===
-            document.getElementById('openFormButton').addEventListener('click', () => {
-    playSound();
-    const phone = document.getElementById('phoneInput').value.trim().replace(/\s+/g, '');
-    if (!phone || !/^(\+7|7|8)\d{10}$/.test(phone)) {
-        alert('Сначала введите корректный номер телефона!');
-        return;
-    }
-    const formattedPhone = phone.replace(/^(\+?7|8)/, '+7');
-
-    // Сохраняем номер, чтобы использовать после заполнения формы
-    localStorage.setItem('lastPhone', formattedPhone);
-
-    // Правильный URL с нужным ID поля (проверьте его!)
-    const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSe57saSzaPrY6YBM7p40LB2LoVBrxDQCsslk-g_64-zeS1iYw/viewform?usp=pp_url&entry.1788369303=${encodeURIComponent(formattedPhone)}`;
-
-    const tg = window.Telegram?.WebApp;
-
-    if (tg) {
-        tg.openLink(formUrl);
-    } else {
-        window.open(formUrl, '_blank');
-    }
-
-    // Закрываем модалку с формой
-    document.getElementById('formModal').classList.remove('active');
-
-    // Показываем модалку "Готово" после заполнения
-    setTimeout(() => {
-        const confirmed = confirm('Вы заполнили анкету? После подтверждения вы войдёте в личный кабинет.');
-        if (confirmed) {
-            currentUserName = "Пользователь";
-            currentUserPhone = formattedPhone;
-            localStorage.setItem('userName', currentUserName);
-            localStorage.setItem('userPhone', currentUserPhone);
-            showProfilePage();
-            alert('Добро пожаловать! Вы вошли в личный кабинет.');
-        } else {
-            alert('Пожалуйста, заполните анкету, чтобы продолжить.');
-            document.getElementById('formModal').classList.add('active');
-        }
-    }, 1000);
-});
-
+            // === Кнопка "Назад" в профиле ===
             document.getElementById('backToMain').addEventListener('click', () => {
                 playSound();
                 showMainPage();
             });
 
+            // === Основные кнопки ===
             document.getElementById('masterButton').addEventListener('click', () => {
                 requireCityBefore(() => {
                     playSound();
@@ -858,15 +869,18 @@
                 });
             });
 
+            // === Выход ===
             document.getElementById('logoutButton').addEventListener('click', () => {
                 playSound();
                 localStorage.removeItem('userPhone');
                 localStorage.removeItem('userName');
+                localStorage.removeItem('userType');
                 document.getElementById('profilePage').style.display = 'none';
                 showMainPage();
                 alert('Вы вышли');
             });
 
+            // === Закрытие модалок ===
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', () => {
                     playSound();
