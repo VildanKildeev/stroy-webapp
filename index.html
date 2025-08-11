@@ -103,6 +103,25 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
 
+        /* === Отображение города === */
+        .selected-city {
+            margin-top: 12px;
+            font-size: 16px;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+            z-index: 10;
+        }
+        .selected-city span {
+            cursor: pointer;
+            text-decoration: underline;
+            color: #ffd700;
+        }
+
         /* === НИЖНЯЯ ПЛАШКА === */
         .bottom-nav {
             position: fixed;
@@ -261,19 +280,6 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
-        /* === Отображение города === */
-        .selected-city {
-            margin-top: 12px;
-            font-size: 16px;
-            color: #fff;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-
         /* === ЛИЧНЫЙ КАБИНЕТ === */
         #profilePage {
             display: none;
@@ -387,7 +393,7 @@
         </div>
     </div>
 
-    <!-- === Модалка: Встроенная анкета с выбором типа === -->
+    <!-- === Модалка: Регистрация === -->
     <div class="modal" id="formModal">
         <button type="button" class="close-modal">×</button>
         <div class="modal-content">
@@ -412,45 +418,6 @@
                 </div>
                 <button type="submit" class="modal-button">ЗАРЕГИСТРИРОВАТЬСЯ</button>
             </form>
-        </div>
-    </div>
-
-    <!-- === Модалка: Нанять мастера === -->
-    <div class="modal" id="masterModal">
-        <button type="button" class="close-modal">×</button>
-        <div class="modal-content">
-            <div class="modal-title">ВЫБЕРИТЕ УСЛУГУ</div>
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchMaster" placeholder="Поиск услуги...">
-            </div>
-            <div id="masterCategoryList" class="modal-buttons"></div>
-        </div>
-    </div>
-
-    <!-- === Модалка: Интернет-магазин === -->
-    <div class="modal" id="shopModal">
-        <button type="button" class="close-modal">×</button>
-        <div class="modal-content">
-            <div class="modal-title">КАТЕГОРИИ ТОВАРОВ</div>
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchShop" placeholder="Поиск категории...">
-            </div>
-            <div id="shopCategoryList" class="modal-buttons"></div>
-        </div>
-    </div>
-
-    <!-- === Модалка: Спецтехника === -->
-    <div class="modal" id="machineryModal">
-        <button type="button" class="close-modal">×</button>
-        <div class="modal-content">
-            <div class="modal-title">СПЕЦТЕХНИКА</div>
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchMachinery" placeholder="Поиск техники...">
-            </div>
-            <div id="machineryCategoryList" class="modal-buttons"></div>
         </div>
     </div>
 
@@ -486,7 +453,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         // 🔥 Замените на ваш URL с Formspree
-        const FORMSPREE_URL = "https://formspree.io/f/xdkdbnnz";
+        const FORMSPREE_URL = "https://formspree.io/f/xgepjpzq";
 
         const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
@@ -500,35 +467,6 @@
         let currentUserType = "";
 
         const cities = ["Москва", "Санкт-Петербург", "Екатеринбург", "Нижний Новгород", "Казань", "Новосибирск", "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж", "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Улан-Удэ", "Ярославль", "Хабаровск", "Магнитогорск", "Томск", "Оренбург", "Кемерово", "Новокузнецк", "Рязань", "Астрахань", "Пенза", "Липецк", "Севастополь"];
-
-        const masterCategories = [
-            { title: "1. ЗЕМЛЯНЫЕ РАБОТЫ", desc: "Расчистка участка, планировка<br>Котлованы, траншеи, дренаж" },
-            { title: "2. ФУНДАМЕНТЫ", desc: "Ленточный, плитный, свайный<br>Под ключ, с гидроизоляцией" },
-            { title: "3. КЛАДКА", desc: "Газобетон, кирпич, пеноблок<br>Перегородки, стены" },
-            { title: "4. КРОВЛЯ", desc: "Мягкая кровля, металлочерепица<br>Утепление, водостоки" },
-            { title: "5. ЭЛЕКТРИКА", desc: "Проводка, УЗО, щиты<br>Розетки, свет, автоматика" },
-            { title: "6. САНТЕХНИКА", desc: "Трубы, санузел, водоснабжение<br>Канализация, насосы" },
-            { title: "7. ОТДЕЛКА", desc: "Штукатурка, покраска, обои<br>Полы, потолки, плитка" },
-            { title: "8. РЕМОНТ ПОД КЛЮЧ", desc: "Полный цикл работ<br>От проекта до сдачи" }
-        ];
-
-        const shopCategories = [
-            { title: "1. СЫПУЧИЕ МАТЕРИАЛЫ", desc: "Песок, щебень, керамзит, отсев, гравий. Для фундамента, засыпки, стяжки.<br>📌 Указывайте объём, фракцию, город доставки." },
-            { title: "2. БЕТОН И РАСТВОРЫ", desc: "Готовый бетон, цемент, клеи, строительные смеси, сухие и жидкие растворы.<br>📌 Указывайте марку, состав, упаковку." },
-            { title: "3. ДЕРЕВЯННЫЕ МАТЕРИАЛЫ", desc: "Брус, доска, фанера, OSB, ДСП, ДВП. Новый и б/у.<br>📌 Указывайте размеры, сорт, количество." },
-            { title: "4. КИРПИЧ И БЛОКИ", desc: "Полнотелый, пустотелый, силикатный, газобетон. Новый и б/у.<br>📌 Указывайте марку, размеры, количество." },
-            { title: "5. УТЕПЛИТЕЛИ", desc: "Минвата, пеноплекс, пенополистирол, пенофол. Для стен, кровли, пола.<br>📌 Указывайте толщину, плотность, объём." },
-            { title: "6. КРОВЕЛЬНЫЕ МАТЕРИАЛЫ", desc: "Мягкая кровля, металлочерепица, профнастил, шифер, ондулин.<br>📌 Указывайте тип, цвет, площадь." }
-        ];
-
-        const machineryCategories = [
-            { title: "1. Экскаваторы", desc: "Экскаватор-погрузчик, мини-экскаватор, гусеничный экскаватор" },
-            { title: "2. Погрузчики", desc: "Фронтальный, вилочный, мини-погрузчик (шинокопытный)" },
-            { title: "3. Бетономешалки", desc: "Стационарные и передвижные, от 100 до 500 л" },
-            { title: "4. Виброплиты", desc: "Для уплотнения грунта и асфальта, от 50 до 100 кг" },
-            { title: "5. Генераторы", desc: "Бензиновые, дизельные, от 3 до 20 кВт" },
-            { title: "6. Леса и вышки", desc: "Телескопические, рамные, хомутовые, под малярные работы" }
-        ];
 
         function playSound() {
             const clickSound = document.getElementById('clickSound');
@@ -641,118 +579,7 @@
             renderCities();
         }
 
-        // === Заполнение категорий ===
-        function populateMasterCategories() {
-            const container = document.getElementById('masterCategoryList');
-            masterCategories.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'modal-button';
-                btn.innerHTML = `<strong>${cat.title}</strong><br><small>${cat.desc}</small>`;
-                btn.onclick = () => {
-                    playSound();
-                    if (window.Telegram?.WebApp) Telegram.WebApp.openLink(TELEGRAM_CHANNEL_URL);
-                    else window.open(TELEGRAM_CHANNEL_URL, '_blank');
-                    closeAllModals();
-                };
-                container.appendChild(btn);
-            });
-            filterList('searchMaster', 'masterCategoryList', masterCategories);
-        }
-
-        function populateShopCategories() {
-            const container = document.getElementById('shopCategoryList');
-            shopCategories.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'modal-button';
-                btn.innerHTML = `<strong>${cat.title}</strong><br><small>${cat.desc}</small>`;
-                btn.onclick = () => {
-                    playSound();
-                    if (window.Telegram?.WebApp) Telegram.WebApp.openLink(BUILDING_CHANNEL_URL);
-                    else window.open(BUILDING_CHANNEL_URL, '_blank');
-                    closeAllModals();
-                };
-                container.appendChild(btn);
-            });
-            filterList('searchShop', 'shopCategoryList', shopCategories);
-        }
-
-        function populateMachineryCategories() {
-            const container = document.getElementById('machineryCategoryList');
-            machineryCategories.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'modal-button';
-                btn.innerHTML = `<strong>${cat.title}</strong>`;
-                if (cat.desc) btn.innerHTML += `<br><small>${cat.desc}</small>`;
-                btn.onclick = () => {
-                    playSound();
-                    alert(`Скоро: аренда ${cat.title.toLowerCase()}`);
-                    closeAllModals();
-                };
-                container.appendChild(btn);
-            });
-            filterList('searchMachinery', 'machineryCategoryList', machineryCategories);
-        }
-
-        // Фильтрация
-        function filterList(inputId, listId, items) {
-            const input = document.getElementById(inputId);
-            const container = document.getElementById(listId);
-            input.addEventListener('input', () => {
-                const q = input.value.toLowerCase().trim();
-                const filtered = q ? items.filter(item => item.title.toLowerCase().includes(q)) : items;
-                container.innerHTML = '';
-                filtered.forEach(item => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'modal-button';
-                    btn.innerHTML = `<strong>${item.title}</strong><br><small>${item.desc}</small>`;
-                    btn.onclick = () => {
-                        playSound();
-                        alert(`Выбрано: ${item.title}`);
-                        closeAllModals();
-                    };
-                    container.appendChild(btn);
-                });
-            });
-        }
-
         // === ОТПРАВКА ФОРМЫ ЧЕРЕЗ FORMSPREE ===
-        document.getElementById('inlineForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            playSound();
-
-            const name = document.getElementById('formName').value.trim();
-            const phone = document.getElementById('formPhone').value.trim().replace(/\s+/g, '');
-            const type = document.getElementById('formType').value;
-
-            if (!name || !phone || !type || !/^(\+7|7|8)\d{10}$/.test(phone)) {
-                alert('Пожалуйста, заполните все поля корректно');
-                return;
-            }
-
-            const formattedPhone = phone.replace(/^(\+?7|8)/, '+7');
-
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('phone', formattedPhone);
-            formData.append('type', type);
-
-            fetch(FORMSPREE_URL, {
-                method: 'POST',
-                body: formData,
-                mode: 'no-cors'
-            })
-            .then(() => {
-                saveUserDataAndEnter(name, formattedPhone, type);
-            })
-            .catch(() => {
-                saveUserDataAndEnter(name, formattedPhone, type);
-            });
-        });
-
         function saveUserDataAndEnter(name, phone, type) {
             currentUserName = name;
             currentUserPhone = phone;
@@ -785,7 +612,7 @@
                 });
             }
 
-            // Восстановление города
+            // Восстановление данных
             const savedCity = localStorage.getItem('selectedCity');
             if (savedCity && cities.includes(savedCity)) {
                 selectedCity = savedCity;
@@ -793,7 +620,6 @@
                 updateButtonTitles(selectedCity);
             }
 
-            // Восстановление пользователя
             const savedPhone = localStorage.getItem('userPhone');
             const savedName = localStorage.getItem('userName');
             const savedType = localStorage.getItem('userType');
@@ -807,12 +633,44 @@
                 document.getElementById('formPhone').value = localStorage.getItem('lastPhone');
             }
 
-            // Заполнение категорий
-            populateMasterCategories();
-            populateShopCategories();
-            populateMachineryCategories();
+            // === Кнопка "Сменить город" ===
+            document.getElementById('changeCityButton').addEventListener('click', () => {
+                playSound();
+                initCityModal();
+                document.getElementById('cityModal').classList.add('active');
+            });
 
-            // === Обработчики плашки ===
+            // === Регистрация ===
+            document.getElementById('inlineForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                playSound();
+
+                const name = document.getElementById('formName').value.trim();
+                const phone = document.getElementById('formPhone').value.trim().replace(/\s+/g, '');
+                const type = document.getElementById('formType').value;
+
+                if (!name || !phone || !type || !/^(\+7|7|8)\d{10}$/.test(phone)) {
+                    alert('Пожалуйста, заполните все поля корректно');
+                    return;
+                }
+
+                const formattedPhone = phone.replace(/^(\+?7|8)/, '+7');
+
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('phone', formattedPhone);
+                formData.append('type', type);
+
+                fetch(FORMSPREE_URL, {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'no-cors'
+                })
+                .then(() => saveUserDataAndEnter(name, formattedPhone, type))
+                .catch(() => saveUserDataAndEnter(name, formattedPhone, type));
+            });
+
+            // === Нижняя плашка ===
             document.getElementById('promoButton').addEventListener('click', () => {
                 playSound();
                 if (tg) tg.openLink(PROMO_URL);
@@ -841,7 +699,6 @@
                 }
             });
 
-            // === Кнопка "Назад" в профиле ===
             document.getElementById('backToMain').addEventListener('click', () => {
                 playSound();
                 showMainPage();
@@ -851,25 +708,24 @@
             document.getElementById('masterButton').addEventListener('click', () => {
                 requireCityBefore(() => {
                     playSound();
-                    document.getElementById('masterModal').classList.add('active');
+                    alert('Переход к выбору мастера');
                 });
             });
 
             document.getElementById('shopButton').addEventListener('click', () => {
                 requireCityBefore(() => {
                     playSound();
-                    document.getElementById('shopModal').classList.add('active');
+                    alert('Переход к товарам');
                 });
             });
 
             document.getElementById('machineryButton').addEventListener('click', () => {
                 requireCityBefore(() => {
                     playSound();
-                    document.getElementById('machineryModal').classList.add('active');
+                    alert('Переход к спецтехнике');
                 });
             });
 
-            // === Выход ===
             document.getElementById('logoutButton').addEventListener('click', () => {
                 playSound();
                 localStorage.removeItem('userPhone');
@@ -880,7 +736,6 @@
                 alert('Вы вышли');
             });
 
-            // === Закрытие модалок ===
             document.querySelectorAll('.close-modal').forEach(btn => {
                 btn.addEventListener('click', () => {
                     playSound();
