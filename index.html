@@ -163,129 +163,6 @@
             opacity: 0.8;
         }
 
-        /* === Модальные окна === */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        .modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .modal-content {
-            background: #d8c9b7;
-            border: 2px solid #c0b0a0;
-            border-radius: 16px;
-            padding: 20px;
-            width: 90%;
-            max-width: 420px;
-            text-align: center;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-            transform: scale(0.9);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            color: #333;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal.active .modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-        .modal-title {
-            font-size: 20px;
-            margin-bottom: 16px;
-            color: #5a4a3a;
-            text-align: center;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        .search-container {
-            width: 90%;
-            position: relative;
-            margin-bottom: 12px;
-        }
-        .search-container input {
-            width: 100%;
-            padding: 10px 10px 10px 36px;
-            border: 1px solid #c0b0a0;
-            border-radius: 8px;
-            font-size: 15px;
-            background: #e8dccf;
-            color: #333;
-            outline: none;
-        }
-        .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7d6b59;
-            font-size: 16px;
-            pointer-events: none;
-        }
-        .modal-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .modal-button {
-            color: #5a4a3a;
-            border: 2px solid #5a4a3a;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            background: #f5f0e6;
-            transition: all 0.3s ease;
-            width: 90%;
-            max-width: 300px;
-            text-align: center;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        .modal-button:hover {
-            background: #e0d6c8;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-        }
-        .close-modal {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            font-size: 24px;
-            color: #5a4a3a;
-            cursor: pointer;
-            background: none;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
         /* === ЛИЧНЫЙ КАБИНЕТ === */
         #profilePage {
             display: none;
@@ -339,10 +216,20 @@
             transition: all 0.3s ease;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
-        .profile-button:hover {
-            background: #e0d6c8;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        .logout-button {
+            margin-top: auto;
+            background: #e8dccf;
+            color: #5a4a3a;
+            border: 2px solid #c0b0a0;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 90%;
+            max-width: 300px;
+            margin: 20px 0 10px;
+            transition: all 0.3s ease;
         }
         .back-button {
             margin-top: 20px;
@@ -422,14 +309,45 @@
             border: none;
             padding: 10px;
             border-radius: 8px;
-            width: 100%;
+            width: 90%;
+            max-width: 300px;
             cursor: pointer;
+            margin: 0 auto;
+            display: block;
+            font-size: 16px;
+        }
+        .btn-location {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 300px;
+            cursor: pointer;
+            margin: 10px auto;
+            display: block;
+            font-size: 16px;
+        }
+        .submit-button {
+            background: #5a4a3a;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 300px;
+            cursor: pointer;
+            margin: 20px auto;
+            font-size: 16px;
+            font-weight: bold;
         }
         .upload-preview {
             margin-top: 10px;
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            justify-content: center;
         }
         .upload-preview img {
             width: 80px;
@@ -444,15 +362,32 @@
             font-size: 14px;
             color: #7d6b59;
         }
-        .btn-location {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
+
+        /* === Мои заказы === */
+        #ordersPage {
+            display: none;
+            flex-direction: column;
             width: 100%;
-            cursor: pointer;
-            margin: 10px 0;
+            height: 100vh;
+            background: #d8c9b7;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 200;
+            padding: 20px;
+            overflow-y: auto;
+            color: #333;
+        }
+        .order-item {
+            background: #e8dccf;
+            border: 1px solid #c0b0a0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .order-item strong {
+            color: #7d6b59;
         }
     </style>
 </head>
@@ -502,47 +437,6 @@
         </div>
     </div>
 
-    <!-- === Модалка: Регистрация === -->
-    <div class="modal" id="formModal">
-        <button type="button" class="close-modal">×</button>
-        <div class="modal-content">
-            <div class="modal-title">РЕГИСТРАЦИЯ</div>
-            <form id="inlineForm" style="width: 100%;">
-                <div style="margin-bottom: 15px; text-align: left;">
-                    <div style="color: #7d6b59; font-size: 14px; margin-bottom: 6px;">Как к Вам обращаться?</div>
-                    <input type="text" id="formName" required style="width: 100%; padding: 12px; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; font-size: 16px;">
-                </div>
-                <div style="margin-bottom: 15px; text-align: left;">
-                    <div style="color: #7d6b59; font-size: 14px; margin-bottom: 6px;">Номер телефона</div>
-                    <input type="tel" id="formPhone" required style="width: 100%; padding: 12px; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; font-size: 16px;">
-                </div>
-                <div style="margin-bottom: 20px; text-align: left;">
-                    <div style="color: #7d6b59; font-size: 14px; margin-bottom: 6px;">Тип пользователя</div>
-                    <select id="formType" required style="width: 100%; padding: 12px; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; font-size: 16px;">
-                        <option value="">Выберите тип</option>
-                        <option value="ЗАКАЗЧИК">ЗАКАЗЧИК</option>
-                        <option value="ПРОДАВЕЦ - МАГАЗИН">ПРОДАВЕЦ - МАГАЗИН</option>
-                        <option value="ИСПОЛНИТЕЛЬ">ИСПОЛНИТЕЛЬ</option>
-                    </select>
-                </div>
-                <button type="submit" class="modal-button">ЗАРЕГИСТРИРОВАТЬСЯ</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- === Модалка: Выбор города === -->
-    <div class="modal" id="cityModal">
-        <button type="button" class="close-modal">×</button>
-        <div class="modal-content">
-            <div class="modal-title">ВЫБЕРИТЕ ГОРОД</div>
-            <div class="search-container">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="citySearch" placeholder="Поиск города...">
-            </div>
-            <div id="cityList"></div>
-        </div>
-    </div>
-
     <!-- === ЛИЧНЫЙ КАБИНЕТ === -->
     <div id="profilePage">
         <div class="profile-header">ЛИЧНЫЙ КАБИНЕТ</div>
@@ -555,8 +449,8 @@
         </div>
         <button type="button" class="profile-button" id="myOrdersButton">МОИ ЗАКАЗЫ</button>
         <button type="button" class="profile-button" id="myAdsButton">МОИ ОБЪЯВЛЕНИЯ</button>
-        <button type="button" class="profile-button" id="logoutButton">ВЫЙТИ</button>
-        <div class="back-button" id="backToMain">← Назад</div>
+        <button type="button" class="back-button" id="backToMain">← Назад</button>
+        <button type="button" class="logout-button" id="logoutButton">ВЫЙТИ</button>
     </div>
 
     <!-- === ФОРМА ЗАЯВКИ === -->
@@ -575,7 +469,6 @@
                 <label>Город</label>
                 <select id="reqCity" required>
                     <option value="">Выберите город</option>
-                    <!-- Города заполнятся автоматически -->
                 </select>
             </div>
             <div class="form-group">
@@ -628,7 +521,7 @@
                 <input type="file" id="photoInput" accept="image/*" style="display: none;" multiple>
                 <div class="upload-preview" id="photoPreview"></div>
             </div>
-            <button type="submit" class="profile-button">Оставить заявку</button>
+            <button type="submit" class="submit-button">Оставить заявку</button>
         </form>
         <div class="back-button" id="backToMainFromRequest">← Назад</div>
         <div class="footer-contact">
@@ -636,23 +529,32 @@
         </div>
     </div>
 
+    <!-- === СТРАНИЦА "МОИ ЗАКАЗЫ" === -->
+    <div id="ordersPage">
+        <div class="profile-header">МОИ ЗАКАЗЫ</div>
+        <div id="ordersList"></div>
+        <div class="back-button" id="backToProfileFromOrders">← Назад</div>
+    </div>
+
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // ✅ Ваш Formspree URL
-        const FORMSPREE_URL = "https://formspree.io/f/xdkdbnnz";
+        // ✅ Новый URL Formspree
+        const FORMSPREE_URL = "https://formspree.io/f/meoznqza";
 
         const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
         const PROMO_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const CONTACT_PHONE = "+79046660999";
-        const WHATSAPP_URL = `https://wa.me/${CONTACT_PHONE.replace(/\D/g, '')}`;
 
         let selectedCity = null;
         let currentPage = 'main';
         let currentUserPhone = null;
         let currentUserName = "Пользователь";
         let currentUserType = "";
+
+        // Сохранённые заявки
+        let userRequests = JSON.parse(localStorage.getItem('userRequests')) || [];
 
         const cities = ["Москва", "Санкт-Петербург", "Екатеринбург", "Нижний Новгород", "Казань", "Новосибирск", "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж", "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Улан-Удэ", "Ярославль", "Хабаровск", "Магнитогорск", "Томск", "Оренбург", "Кемерово", "Новокузнецк", "Рязань", "Астрахань", "Пенза", "Липецк", "Севастополь"];
 
@@ -673,6 +575,7 @@
         function showMainPage() {
             document.getElementById('profilePage').style.display = 'none';
             document.getElementById('requestFormPage').style.display = 'none';
+            document.getElementById('ordersPage').style.display = 'none';
             document.getElementById('buttonContainer').style.display = 'flex';
             document.getElementById('selectedCityDisplay').style.display = selectedCity ? 'flex' : 'none';
             currentPage = 'main';
@@ -697,12 +600,35 @@
             document.getElementById('profilePage').style.display = 'none';
             document.getElementById('requestFormPage').style.display = 'flex';
 
-            // Заполнить данные из профиля
             document.getElementById('reqName').value = currentUserName;
             document.getElementById('reqPhone').value = currentUserPhone;
             document.getElementById('reqCity').value = selectedCity || '';
 
             currentPage = 'request';
+            if (window.Telegram?.WebApp) Telegram.WebApp.BackButton.show();
+        }
+
+        function showOrdersPage() {
+            document.getElementById('profilePage').style.display = 'none';
+            document.getElementById('ordersPage').style.display = 'flex';
+            const list = document.getElementById('ordersList');
+            list.innerHTML = '';
+            if (userRequests.length === 0) {
+                list.innerHTML = '<div style="color: #7d6b59; text-align: center; margin: 20px;">У вас пока нет заявок</div>';
+            } else {
+                userRequests.forEach((req, i) => {
+                    const item = document.createElement('div');
+                    item.className = 'order-item';
+                    item.innerHTML = `
+                        <div><strong>Дата:</strong> ${req.date}</div>
+                        <div><strong>Тип:</strong> ${req.workType}</div>
+                        <div><strong>Адрес:</strong> ${req.address}</div>
+                        <div><strong>Статус:</strong> Ожидает ответа</div>
+                    `;
+                    list.appendChild(item);
+                });
+            }
+            currentPage = 'orders';
             if (window.Telegram?.WebApp) Telegram.WebApp.BackButton.show();
         }
 
@@ -790,6 +716,7 @@
                 const opt = document.createElement('option');
                 opt.value = city;
                 opt.textContent = city;
+                if (city === selectedCity) opt.selected = true;
                 reqCitySelect.appendChild(opt);
             });
         }
@@ -816,35 +743,22 @@
             formData.append('type', type);
             formData.append('city', selectedCity || 'Не указан');
 
-            fetch(FORMSPREE_URL, {
+            fetch("https://formspree.io/f/xdkdbnnz", {
                 method: 'POST',
                 body: formData,
                 mode: 'no-cors'
-            })
-            .then(() => {
-                currentUserName = name;
-                currentUserPhone = formattedPhone;
-                currentUserType = type;
-                localStorage.setItem('userName', name);
-                localStorage.setItem('userPhone', phone);
-                localStorage.setItem('userType', type);
-                localStorage.setItem('lastPhone', phone);
-                document.getElementById('formModal').classList.remove('active');
-                showProfilePage();
-                alert(`Добро пожаловать, ${name}!`);
-            })
-            .catch(() => {
-                currentUserName = name;
-                currentUserPhone = formattedPhone;
-                currentUserType = type;
-                localStorage.setItem('userName', name);
-                localStorage.setItem('userPhone', phone);
-                localStorage.setItem('userType', type);
-                localStorage.setItem('lastPhone', phone);
-                document.getElementById('formModal').classList.remove('active');
-                showProfilePage();
-                alert(`Добро пожаловать, ${name}! (данные сохранены)`);
             });
+
+            currentUserName = name;
+            currentUserPhone = formattedPhone;
+            currentUserType = type;
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userPhone', phone);
+            localStorage.setItem('userType', type);
+            localStorage.setItem('lastPhone', phone);
+            document.getElementById('formModal').classList.remove('active');
+            showProfilePage();
+            alert(`Добро пожаловать, ${name}!`);
         });
 
         // === ФОРМА ЗАЯВКИ ===
@@ -855,21 +769,28 @@
             });
         });
 
-        // === ГЕОЛОКАЦИЯ ===
+        // === ГЕОЛОКАЦИЯ (GPS → АДРЕС) через Yandex Geocoder ===
         document.getElementById('getLocationBtn').addEventListener('click', () => {
             const addressInput = document.getElementById('reqAddress');
             if (!navigator.geolocation) {
-                alert('Геолокация не поддерживается вашим браузером');
+                alert('Геолокация не поддерживается');
                 return;
             }
             playSound();
-            addressInput.value = 'Определяем местоположение...';
+            addressInput.value = 'Определяем...';
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
-                    addressInput.value = `Гео: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
-                    alert(`Адрес определён: ${lat.toFixed(6)}, ${lon.toFixed(6)}`);
+                    fetch(`https://geocode-maps.yandex.ru/1.x/?format=json&geocode=${lon},${lat}&apikey=61e4559f-4242-4555-88a7-3a2a3e741d3d`)
+                        .then(res => res.json())
+                        .then(data => {
+                            const address = data.response.GeoObjectCollection.featureMember[0]?.GeoObject?.name || `Адрес не найден`;
+                            addressInput.value = address;
+                        })
+                        .catch(() => {
+                            addressInput.value = `Широта: ${lat.toFixed(6)}, Долгота: ${lon.toFixed(6)}`;
+                        });
                 },
                 (error) => {
                     addressInput.value = '';
@@ -912,7 +833,15 @@
                 return;
             }
 
-            // Формируем данные для отправки
+            // Сохраняем заявку
+            const request = {
+                date: new Date().toLocaleString('ru-RU'),
+                name, phone, city, address, workType, description, visit
+            };
+            userRequests.push(request);
+            localStorage.setItem('userRequests', JSON.stringify(userRequests));
+
+            // Отправка на Formspree
             const formData = new FormData();
             formData.append('name', name);
             formData.append('phone', phone);
@@ -925,7 +854,6 @@
                 formData.append('photos', files[i]);
             }
 
-            // Отправка в Formspree
             fetch(FORMSPREE_URL, {
                 method: 'POST',
                 body: formData,
@@ -936,10 +864,45 @@
             showMainPage();
         });
 
-        // === Кнопка "Назад" из заявки ===
+        // === Кнопки ===
+        document.getElementById('shopButton').addEventListener('click', () => {
+            requireCityBefore(() => {
+                playSound();
+                if (window.Telegram?.WebApp) Telegram.WebApp.openLink(BUILDING_CHANNEL_URL);
+                else window.open(BUILDING_CHANNEL_URL, '_blank');
+            });
+        });
+
+        document.getElementById('machineryButton').addEventListener('click', () => {
+            requireCityBefore(() => {
+                playSound();
+                alert('Скоро: аренда спецтехники');
+            });
+        });
+
         document.getElementById('backToMainFromRequest').addEventListener('click', () => {
             playSound();
             showMainPage();
+        });
+
+        document.getElementById('myOrdersButton').addEventListener('click', () => {
+            playSound();
+            showOrdersPage();
+        });
+
+        document.getElementById('backToProfileFromOrders').addEventListener('click', () => {
+            playSound();
+            showProfilePage();
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            playSound();
+            localStorage.removeItem('userPhone');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userType');
+            document.getElementById('profilePage').style.display = 'none';
+            showMainPage();
+            alert('Вы вышли');
         });
 
         // === Остальные обработчики ===
@@ -950,8 +913,12 @@
                 tg.ready();
                 tg.expand();
                 tg.BackButton.onClick(() => {
-                    if (currentPage === 'profile' || currentPage === 'request') {
+                    if (currentPage === 'profile') {
                         showMainPage();
+                    } else if (currentPage === 'request') {
+                        showMainPage();
+                    } else if (currentPage === 'orders') {
+                        showProfilePage();
                     } else {
                         closeAllModals();
                         if (currentPage === 'main') tg.close();
@@ -1019,16 +986,6 @@
             document.getElementById('backToMain').addEventListener('click', () => {
                 playSound();
                 showMainPage();
-            });
-
-            document.getElementById('logoutButton').addEventListener('click', () => {
-                playSound();
-                localStorage.removeItem('userPhone');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('userType');
-                document.getElementById('profilePage').style.display = 'none';
-                showMainPage();
-                alert('Вы вышли');
             });
 
             document.querySelectorAll('.close-modal').forEach(btn => {
