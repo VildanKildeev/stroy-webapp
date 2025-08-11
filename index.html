@@ -102,17 +102,43 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
-        .about-link {
-            margin-top: 40px;
-            font-size: 15px;
-            color: #ecf0f1;
-            text-decoration: underline;
-            cursor: pointer;
-            text-align: center;
-            opacity: 1;
-            z-index: 10;
+
+        /* === НИЖНЯЯ ПЛАШКА (FOOTER) === */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #d8c9b7;
+            border-top: 2px solid #c0b0a0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0 12px;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 13px;
+            color: #5a4a3a;
         }
-        /* Модальные окна */
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 22%;
+            max-width: 90px;
+        }
+        .nav-btn span {
+            font-size: 12px;
+        }
+        .nav-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* === Модальные окна === */
         .modal {
             position: fixed;
             top: 0;
@@ -234,6 +260,7 @@
             z-index: 10;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
+
         /* === Отображение города === */
         .selected-city {
             margin-top: 12px;
@@ -246,6 +273,7 @@
             gap: 5px;
             flex-wrap: wrap;
         }
+
         /* === ЛИЧНЫЙ КАБИНЕТ === */
         #profilePage {
             display: none;
@@ -337,13 +365,27 @@
         <button type="button" style="background-image: url('btn-machinery.jpg');" id="machineryButton">
             <span>СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ<br><small>(аренда / прокат)</small></span>
         </button>
-        <button type="button" id="profileButton" style="background: linear-gradient(135deg, #4CAF50, #45a049);">
-            <span>ЛИЧНЫЙ КАБИНЕТ</span>
-        </button>
     </div>
 
-    <div class="about-link" id="loginLink">Войти</div>
-    <div class="about-link" id="aboutLink">О нас</div>
+    <!-- === НИЖНЯЯ ПЛАШКА === -->
+    <div class="bottom-nav">
+        <div class="nav-btn" id="promoButton">
+            <span>🎁</span>
+            <span>Акции</span>
+        </div>
+        <div class="nav-btn" id="contactButton">
+            <span>📞</span>
+            <span>Связаться</span>
+        </div>
+        <div class="nav-btn" id="aboutButton">
+            <span>ℹ️</span>
+            <span>О нас</span>
+        </div>
+        <div class="nav-btn" id="profileButton">
+            <span>👤</span>
+            <span>Профиль</span>
+        </div>
+    </div>
 
     <!-- === Модалка: Нанять мастера === -->
     <div class="modal" id="masterModal">
@@ -438,6 +480,9 @@
     <script>
         const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const BUILDING_CHANNEL_URL = "https://t.me/+ZWvnEf6UgzJhYWEy";
+        const PROMO_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
+        const CONTACT_PHONE = "+79046660999";
+        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSe57saSzaPrY6YBM7p40LB2LoVBrxDQCsslk-g_64-zeS1iYw/viewform";
 
         const cities = ["Москва", "Санкт-Петербург", "Екатеринбург", "Нижний Новгород", "Казань", "Новосибирск", "Челябинск", "Самара", "Омск", "Ростов-на-Дону", "Уфа", "Красноярск", "Пермь", "Воронеж", "Волгоград", "Краснодар", "Саратов", "Тюмень", "Тольятти", "Ижевск", "Барнаул", "Улан-Удэ", "Ярославль", "Хабаровск", "Магнитогорск", "Томск", "Оренбург", "Кемерово", "Новокузнецк", "Рязань", "Астрахань", "Пенза", "Липецк", "Севастополь"];
         let selectedCity = null;
@@ -493,9 +538,6 @@
             document.getElementById('profilePage').style.display = 'none';
             document.getElementById('buttonContainer').style.display = 'flex';
             document.getElementById('selectedCityDisplay').style.display = selectedCity ? 'flex' : 'none';
-            document.getElementById('aboutLink').style.display = 'block';
-            document.getElementById('loginLink').style.display = 'block';
-            document.getElementById('profileButton').style.display = 'block';
             currentPage = 'main';
             if (window.Telegram?.WebApp) Telegram.WebApp.BackButton.hide();
         }
@@ -503,9 +545,6 @@
         function showProfilePage() {
             document.getElementById('buttonContainer').style.display = 'none';
             document.getElementById('selectedCityDisplay').style.display = 'none';
-            document.getElementById('aboutLink').style.display = 'none';
-            document.getElementById('loginLink').style.display = 'none';
-            document.getElementById('profileButton').style.display = 'none';
             document.getElementById('profileName').textContent = currentUserName;
             document.getElementById('profilePhone').textContent = currentUserPhone;
             document.getElementById('profilePage').style.display = 'flex';
@@ -591,7 +630,7 @@
             renderCities();
         }
 
-        // Функция фильтрации категорий
+        // Фильтрация
         function filterList(inputId, listId, items) {
             const input = document.getElementById(inputId);
             const container = document.getElementById(listId);
@@ -614,7 +653,6 @@
             });
         }
 
-        // Заполнение категорий
         function populateMasterCategories() {
             const container = document.getElementById('masterCategoryList');
             masterCategories.forEach(cat => {
@@ -693,7 +731,6 @@
             const savedPhone = localStorage.getItem('userPhone');
             const savedName = localStorage.getItem('userName');
             if (savedPhone && savedName) {
-                document.getElementById('loginLink').style.display = 'none';
                 currentUserPhone = savedPhone;
                 currentUserName = savedName;
             }
@@ -707,18 +744,36 @@
             populateShopCategories();
             populateMachineryCategories();
 
-            // === Обработчики событий ===
-            document.getElementById('changeCityButton').addEventListener('click', () => {
+            // === Обработчики плашки ===
+            document.getElementById('promoButton').addEventListener('click', () => {
                 playSound();
-                initCityModal();
-                document.getElementById('cityModal').classList.add('active');
+                if (tg) tg.openLink(PROMO_URL);
+                else window.open(PROMO_URL, '_blank');
             });
 
-            document.getElementById('loginLink').addEventListener('click', () => {
+            document.getElementById('contactButton').addEventListener('click', () => {
                 playSound();
-                document.getElementById('authModal').classList.add('active');
+                if (confirm(`Позвонить нам? ${CONTACT_PHONE}`)) {
+                    window.location.href = `tel:${CONTACT_PHONE}`;
+                }
             });
 
+            document.getElementById('aboutButton').addEventListener('click', () => {
+                playSound();
+                if (tg) tg.openLink(TELEGRAM_CHANNEL_URL);
+                else window.open(TELEGRAM_CHANNEL_URL, '_blank');
+            });
+
+            document.getElementById('profileButton').addEventListener('click', () => {
+                playSound();
+                if (localStorage.getItem('userPhone') && localStorage.getItem('userName')) {
+                    showProfilePage();
+                } else {
+                    document.getElementById('authModal').classList.add('active');
+                }
+            });
+
+            // === Вход ===
             document.getElementById('sendCodeButton').addEventListener('click', () => {
                 const phone = document.getElementById('phoneInput').value.trim().replace(/\s+/g, '');
                 if (!phone || !/^(\+7|7|8)\d{10}$/.test(phone)) {
@@ -733,33 +788,49 @@
                 setTimeout(() => document.getElementById('formModal').classList.add('active'), 1000);
             });
 
+            // === Открыть Google Форму и автоматически перейти в ЛК после ===
             document.getElementById('openFormButton').addEventListener('click', () => {
-                playSound();
-                if (tg) tg.openLink("https://docs.google.com/forms/d/e/1FAIpQLSe57saSzaPrY6YBM7p40LB2LoVBrxDQCsslk-g_64-zeS1iYw/viewform");
-                else window.open("https://docs.google.com/forms/d/e/1FAIpQLSe57saSzaPrY6YBM7p40LB2LoVBrxDQCsslk-g_64-zeS1iYw/viewform", '_blank');
-                setTimeout(() => {
-                    const name = prompt('Введите ваше имя:');
-                    if (name) {
-                        currentUserName = name;
-                        currentUserPhone = document.getElementById('phoneInput').value.replace(/^(\+?7|8)/, '+7');
-                        localStorage.setItem('userName', name);
-                        localStorage.setItem('userPhone', currentUserPhone);
-                        document.getElementById('formModal').classList.remove('active');
-                        document.getElementById('loginLink').style.display = 'none';
-                        showProfilePage();
-                        alert(`Добро пожаловать, ${name}!`);
-                    } else alert('Имя обязательно!');
-                }, 1000);
-            });
+    playSound();
+    const phone = document.getElementById('phoneInput').value.trim().replace(/\s+/g, '');
+    if (!phone || !/^(\+7|7|8)\d{10}$/.test(phone)) {
+        alert('Сначала введите корректный номер телефона!');
+        return;
+    }
+    const formattedPhone = phone.replace(/^(\+?7|8)/, '+7');
 
-            document.getElementById('profileButton').addEventListener('click', () => {
-                playSound();
-                if (localStorage.getItem('userPhone') && localStorage.getItem('userName')) {
-                    showProfilePage();
-                } else {
-                    document.getElementById('loginLink').click();
-                }
-            });
+    // Сохраняем номер, чтобы использовать после заполнения формы
+    localStorage.setItem('lastPhone', formattedPhone);
+
+    // Правильный URL с нужным ID поля (проверьте его!)
+    const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSe57saSzaPrY6YBM7p40LB2LoVBrxDQCsslk-g_64-zeS1iYw/viewform?usp=pp_url&entry.1788369303=${encodeURIComponent(formattedPhone)}`;
+
+    const tg = window.Telegram?.WebApp;
+
+    if (tg) {
+        tg.openLink(formUrl);
+    } else {
+        window.open(formUrl, '_blank');
+    }
+
+    // Закрываем модалку с формой
+    document.getElementById('formModal').classList.remove('active');
+
+    // Показываем модалку "Готово" после заполнения
+    setTimeout(() => {
+        const confirmed = confirm('Вы заполнили анкету? После подтверждения вы войдёте в личный кабинет.');
+        if (confirmed) {
+            currentUserName = "Пользователь";
+            currentUserPhone = formattedPhone;
+            localStorage.setItem('userName', currentUserName);
+            localStorage.setItem('userPhone', currentUserPhone);
+            showProfilePage();
+            alert('Добро пожаловать! Вы вошли в личный кабинет.');
+        } else {
+            alert('Пожалуйста, заполните анкету, чтобы продолжить.');
+            document.getElementById('formModal').classList.add('active');
+        }
+    }, 1000);
+});
 
             document.getElementById('backToMain').addEventListener('click', () => {
                 playSound();
@@ -801,12 +872,6 @@
                     playSound();
                     closeAllModals();
                 });
-            });
-
-            document.getElementById('aboutLink').addEventListener('click', () => {
-                playSound();
-                if (tg) tg.openLink(TELEGRAM_CHANNEL_URL);
-                else window.open(TELEGRAM_CHANNEL_URL, '_blank');
             });
         });
     </script>
