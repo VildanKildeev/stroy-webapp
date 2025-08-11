@@ -44,6 +44,7 @@
             gap: 16px;
             opacity: 1;
             z-index: 10;
+            position: relative;
             width: 100%;
         }
         button {
@@ -115,6 +116,7 @@
             gap: 5px;
             flex-wrap: wrap;
             z-index: 10;
+            position: relative;
         }
         #changeCityButton {
             background: none;
@@ -161,6 +163,129 @@
         }
         .nav-btn:hover {
             opacity: 0.8;
+        }
+
+        /* === Модальные окна === */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background: #d8c9b7;
+            border: 2px solid #c0b0a0;
+            border-radius: 16px;
+            padding: 20px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #333;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .modal-title {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #5a4a3a;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .search-container {
+            width: 90%;
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 10px 10px 10px 36px;
+            border: 1px solid #c0b0a0;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #e8dccf;
+            color: #333;
+            outline: none;
+        }
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7d6b59;
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .modal-button {
+            color: #5a4a3a;
+            border: 2px solid #5a4a3a;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #f5f0e6;
+            transition: all 0.3s ease;
+            width: 90%;
+            max-width: 300px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .modal-button:hover {
+            background: #e0d6c8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+        .close-modal {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 24px;
+            color: #5a4a3a;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         /* === ЛИЧНЫЙ КАБИНЕТ === */
@@ -398,12 +523,6 @@
     </video>
     <audio id="clickSound" src="click.mp3"></audio>
 
-    <!-- Отображение города -->
-    <div class="selected-city" id="selectedCityDisplay" style="display: none;">
-        <span>Город: <span id="cityName">Не выбран</span></span>
-        <button type="button" id="changeCityButton">СМЕНИТЬ</button>
-    </div>
-
     <!-- Основные кнопки -->
     <div class="button-container" id="buttonContainer">
         <button type="button" style="background-image: url('btn-master.jpg');" id="masterButton">
@@ -415,6 +534,12 @@
         <button type="button" style="background-image: url('btn-machinery.jpg');" id="machineryButton">
             <span>СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ<br><small>(аренда / прокат)</small></span>
         </button>
+    </div>
+
+    <!-- Отображение города (рядом с кнопками) -->
+    <div class="selected-city" id="selectedCityDisplay" style="display: none;">
+        <span>Город: <span id="cityName">Не выбран</span></span>
+        <button type="button" id="changeCityButton">СМЕНИТЬ</button>
     </div>
 
     <!-- === НИЖНЯЯ ПЛАШКА === -->
@@ -434,6 +559,47 @@
         <div class="nav-btn" id="profileButton">
             <span>👤</span>
             <span>Профиль</span>
+        </div>
+    </div>
+
+    <!-- === Модалка: Регистрация === -->
+    <div class="modal" id="formModal">
+        <button type="button" class="close-modal">×</button>
+        <div class="modal-content">
+            <div class="modal-title">РЕГИСТРАЦИЯ</div>
+            <form id="inlineForm" style="width: 100%;">
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <div style="color: #7d6b59; font-size: 14px; margin-bottom: 6px;">Как к Вам обращаться?</div>
+                    <input type="text" id="formName" required style="width: 100%; padding: 12px; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; font-size: 16px;">
+                </div>
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <div style="color: #7d6b59; font-size: 14px; margin-bottom: 6px;">Номер телефона</div>
+                    <input type="tel" id="formPhone" required style="width: 100%; padding: 12px; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; font-size: 16px;">
+                </div>
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <div style="color: #7d6b59; font-size: 14px; margin-bottom: 6px;">Тип пользователя</div>
+                    <select id="formType" required style="width: 100%; padding: 12px; border: 1px solid #c0b0a0; border-radius: 8px; background: #e8dccf; color: #333; font-size: 16px;">
+                        <option value="">Выберите тип</option>
+                        <option value="ЗАКАЗЧИК">ЗАКАЗЧИК</option>
+                        <option value="ПРОДАВЕЦ - МАГАЗИН">ПРОДАВЕЦ - МАГАЗИН</option>
+                        <option value="ИСПОЛНИТЕЛЬ">ИСПОЛНИТЕЛЬ</option>
+                    </select>
+                </div>
+                <button type="submit" class="modal-button">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- === Модалка: Выбор города === -->
+    <div class="modal" id="cityModal">
+        <button type="button" class="close-modal">×</button>
+        <div class="modal-content">
+            <div class="modal-title">ВЫБЕРИТЕ ГОРОД</div>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="citySearch" placeholder="Поиск города...">
+            </div>
+            <div id="cityList"></div>
         </div>
     </div>
 
@@ -905,7 +1071,48 @@
             alert('Вы вышли');
         });
 
-        // === Остальные обработчики ===
+        // === Нижняя плашка ===
+        document.getElementById('promoButton').addEventListener('click', () => {
+            playSound();
+            if (window.Telegram?.WebApp) Telegram.WebApp.openLink(PROMO_URL);
+            else window.open(PROMO_URL, '_blank');
+        });
+
+        document.getElementById('contactButton').addEventListener('click', () => {
+            playSound();
+            if (confirm(`Позвонить нам? ${CONTACT_PHONE}`)) {
+                window.location.href = `tel:${CONTACT_PHONE}`;
+            }
+        });
+
+        document.getElementById('aboutButton').addEventListener('click', () => {
+            playSound();
+            if (window.Telegram?.WebApp) Telegram.WebApp.openLink(TELEGRAM_CHANNEL_URL);
+            else window.open(TELEGRAM_CHANNEL_URL, '_blank');
+        });
+
+        document.getElementById('profileButton').addEventListener('click', () => {
+            playSound();
+            if (localStorage.getItem('userPhone') && localStorage.getItem('userName')) {
+                showProfilePage();
+            } else {
+                document.getElementById('formModal').classList.add('active');
+            }
+        });
+
+        document.getElementById('backToMain').addEventListener('click', () => {
+            playSound();
+            showMainPage();
+        });
+
+        // === Кнопка "Сменить город" ===
+        document.getElementById('changeCityButton').addEventListener('click', () => {
+            playSound();
+            initCityModal();
+            document.getElementById('cityModal').classList.add('active');
+        });
+
+        // === Инициализация ===
         window.addEventListener('load', () => {
             const tg = window.Telegram?.WebApp;
 
@@ -926,7 +1133,7 @@
                 });
             }
 
-            // Восстановление данных
+            // Восстановление города
             const savedCity = localStorage.getItem('selectedCity');
             if (savedCity && cities.includes(savedCity)) {
                 selectedCity = savedCity;
@@ -934,6 +1141,7 @@
                 updateButtonTitles(selectedCity);
             }
 
+            // Восстановление пользователя
             const savedPhone = localStorage.getItem('userPhone');
             const savedName = localStorage.getItem('userName');
             const savedType = localStorage.getItem('userType');
@@ -946,54 +1154,6 @@
             if (localStorage.getItem('lastPhone')) {
                 document.getElementById('formPhone').value = localStorage.getItem('lastPhone');
             }
-
-            // === Кнопка "Сменить город" ===
-            document.getElementById('changeCityButton').addEventListener('click', () => {
-                playSound();
-                initCityModal();
-                document.getElementById('cityModal').classList.add('active');
-            });
-
-            // === Нижняя плашка ===
-            document.getElementById('promoButton').addEventListener('click', () => {
-                playSound();
-                if (tg) tg.openLink(PROMO_URL);
-                else window.open(PROMO_URL, '_blank');
-            });
-
-            document.getElementById('contactButton').addEventListener('click', () => {
-                playSound();
-                if (confirm(`Позвонить нам? ${CONTACT_PHONE}`)) {
-                    window.location.href = `tel:${CONTACT_PHONE}`;
-                }
-            });
-
-            document.getElementById('aboutButton').addEventListener('click', () => {
-                playSound();
-                if (tg) tg.openLink(TELEGRAM_CHANNEL_URL);
-                else window.open(TELEGRAM_CHANNEL_URL, '_blank');
-            });
-
-            document.getElementById('profileButton').addEventListener('click', () => {
-                playSound();
-                if (localStorage.getItem('userPhone') && localStorage.getItem('userName')) {
-                    showProfilePage();
-                } else {
-                    document.getElementById('formModal').classList.add('active');
-                }
-            });
-
-            document.getElementById('backToMain').addEventListener('click', () => {
-                playSound();
-                showMainPage();
-            });
-
-            document.querySelectorAll('.close-modal').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    playSound();
-                    closeAllModals();
-                });
-            });
         });
     </script>
 </body>
