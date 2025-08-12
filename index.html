@@ -37,82 +37,6 @@
             z-index: -2;
         }
 
-        /* === СТИЛИ ДЛЯ ПЛИТОК === */
-        .button-container {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            z-index: 10;
-            width: 90%;
-            max-width: 400px;
-            padding-bottom: 80px; /* отступ под нижнюю плашку */
-        }
-        .tile-btn {
-            width: 100%;
-            color: white;
-            background: linear-gradient(135deg, #4a4a4a, #2e2e2e);
-            border: none;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            text-shadow: 1px 1px 2px black;
-        }
-        .tile-btn::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .tile-btn span {
-            position: relative;
-            z-index: 1;
-            display: block;
-        }
-        .tile-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-        }
-        .tile-btn:active {
-            transform: translateY(0);
-        }
-
-        /* === РЕКЛАМНЫЙ БАННЕР === */
-        .banner-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #ff6b35, #d4380d);
-            border: none;
-            padding: 24px 16px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-            text-align: center;
-            color: white;
-            margin-top: 16px;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-        }
-        .banner-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-        }
-
         /* === Отображение города === */
         .selected-city {
             margin-top: 12px;
@@ -136,6 +60,92 @@
             font-size: 14px;
             padding: 6px 10px;
             border-radius: 6px;
+        }
+
+        /* === СЕТКА ПЛИТОК === */
+        .grid-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 90%;
+            max-width: 400px;
+            z-index: 10;
+        }
+        .grid-row {
+            display: flex;
+            width: 100%;
+            gap: 12px;
+        }
+        .tile-btn {
+            flex: 1;
+            color: white;
+            background: linear-gradient(135deg, #4a4a4a, #2e2e2e);
+            border: none;
+            padding: 16px 8px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-shadow: 1px 1px 2px black;
+        }
+        .tile-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .tile-btn span {
+            position: relative;
+            z-index: 1;
+            display: block;
+        }
+        .tile-btn small {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+        .tile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        /* === БОЛЬШОЙ БАННЕР === */
+        .banner-btn {
+            width: 100%;
+            color: white;
+            background: linear-gradient(135deg, #ff6b35, #d4380d);
+            border: none;
+            padding: 28px 16px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            margin-top: 12px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+        }
+        .banner-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
         }
 
         /* === НИЖНЯЯ ПЛАШКА === */
@@ -545,32 +555,33 @@
         <button type="button" id="changeCityButton">СМЕНИТЬ</button>
     </div>
 
-    <!-- === ГЛАВНЫЕ КНОПКИ — ПЛИТКИ === -->
-    <div class="button-container" id="buttonContainer">
-        <!-- Существующие кнопки переработаны под плитки -->
-        <button type="button" class="tile-btn" id="masterButton">
-            <span>НАНЯТЬ МАСТЕРА ИЛИ БРИГАДУ</span>
-            <small>(проверенные специалисты)</small>
-        </button>
+    <!-- === СЕТКА ПЛИТОК === -->
+    <div class="grid-container" id="buttonContainer">
+        <!-- 1-й ряд -->
+        <div class="grid-row">
+            <button type="button" class="tile-btn" id="masterButton">
+                <span>НАНЯТЬ МАСТЕРА</span>
+                <small>проверенные специалисты</small>
+            </button>
+            <button type="button" class="tile-btn" id="machineryButton">
+                <span>СПЕЦТЕХНИКА</span>
+                <small>аренда / прокат</small>
+            </button>
+        </div>
 
-        <button type="button" class="tile-btn" id="machineryButton">
-            <span>СПЕЦТЕХНИКА И ИНСТРУМЕНТЫ</span>
-            <small>(аренда / прокат)</small>
-        </button>
+        <!-- 2-й ряд -->
+        <div class="grid-row">
+            <button type="button" class="tile-btn" id="toolsButton">
+                <span>АРЕНДА ИНСТРУМЕНТА</span>
+                <small>дрели, перфораторы и др.</small>
+            </button>
+            <button type="button" class="tile-btn" id="sellMaterialsButton">
+                <span>ПРОДАТЬ МАТЕРИАЛЫ</span>
+                <small>новые и б/у остатки</small>
+            </button>
+        </div>
 
-        <!-- НОВАЯ: АРЕНДА ИНСТРУМЕНТА -->
-        <button type="button" class="tile-btn" id="toolsButton">
-            <span>АРЕНДА СТРОИТЕЛЬНОГО ИНСТРУМЕНТА</span>
-            <small>(дрели, перфораторы, шлифмашины и др.)</small>
-        </button>
-
-        <!-- НОВАЯ: ПРОДАТЬ ОСТАТКИ -->
-        <button type="button" class="tile-btn" id="sellMaterialsButton">
-            <span>ПРОДАТЬ Б/У И НОВЫЕ ОСТАТКИ МАТЕРИАЛОВ</span>
-            <small>(пиломатериалы, кирпич, плитка и др.)</small>
-        </button>
-
-        <!-- РЕКЛАМНЫЙ БАННЕР: ДОСКА ОБЪЯВЛЕНИЙ -->
+        <!-- 3-й ряд — большой баннер -->
         <button type="button" class="banner-btn" id="marketplaceButton">
             🛒 ДОСКА ОБЪЯВЛЕНИЙ СТРОЙМАТЕРИАЛОВ С РУК
         </button>
@@ -835,7 +846,7 @@
             </div>
             <div class="checkbox-group">
                 <input type="checkbox" id="machMinOrder" checked>
-                <label for="machMinOrder">Минимальный заказ (обычно 8 часов)</label>
+                <label for="machMinOrder">Минимальный заказ (от 4 часов)</label>
             </div>
             <div class="form-group" id="rentDurationGroup">
                 <label>Срок аренды (часы)</label>
@@ -1066,8 +1077,8 @@
         function updateButtonTitles(city) {
             if (!city) return;
             const cityInCase = getCityInPrepositional(city);
-            document.getElementById('masterButton').innerHTML = `<span>НАНЯТЬ МАСТЕРА ИЛИ БРИГАДУ<br><small>${cityInCase}, проверенные специалисты</small></span>`;
-            document.getElementById('machineryButton').innerHTML = `<span>СПЕЦТЕХНИКА ${cityInCase}<br><small>(аренда / прокат)</small></span>`;
+            document.getElementById('masterButton').innerHTML = `<span>НАНЯТЬ МАСТЕРА<br><small>${cityInCase}, проверенные специалисты</small></span>`;
+            document.getElementById('machineryButton').innerHTML = `<span>СПЕЦТЕХНИКА<br><small>${cityInCase}, аренда / прокат</small></span>`;
         }
 
         function initCityModal() {
@@ -1218,7 +1229,7 @@
             const machType = document.getElementById('machType').value;
             const nearby = document.getElementById('machNearby').checked;
             const minOrder = document.getElementById('machMinOrder').checked;
-            const duration = minOrder ? '8' : document.getElementById('rentDuration').value;
+            const duration = minOrder ? '4' : document.getElementById('rentDuration').value;
             const preorder = document.getElementById('machPreorder').checked;
             const date = document.getElementById('machDate').value;
             const time = document.getElementById('machTime').value;
@@ -1351,15 +1362,13 @@
                 playSound();
                 showMachineryFormPage();
             });
-
-            // === НОВЫЕ КНОПКИ ===
             document.getElementById('toolsButton').addEventListener('click', () => {
                 playSound();
                 showMachineryFormPage();
             });
             document.getElementById('sellMaterialsButton').addEventListener('click', () => {
                 playSound();
-                alert('Функция "Продать остатки материалов" скоро будет доступна!');
+                alert('Функция "Продать материалы" скоро будет доступна!');
             });
             document.getElementById('marketplaceButton').addEventListener('click', () => {
                 playSound();
