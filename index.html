@@ -36,6 +36,35 @@
             object-fit: cover;
             z-index: -2;
         }
+        /* === ЭКРАН ЗАГРУЗКИ === */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            font-size: 18px;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #ffffff40;
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         .button-container {
             margin-top: 20vh;
             display: flex;
@@ -511,6 +540,12 @@
     </style>
 </head>
 <body>
+    <!-- === ЭКРАН ЗАГРУЗКИ === -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="spinner"></div>
+        <p>Загрузка данных...</p>
+    </div>
+
     <video autoplay muted loop playsinline class="background-video" id="bgVideo">
         <source src="background.mp4" type="video/mp4">
         Ваш браузер не поддерживает видео.
@@ -698,8 +733,9 @@
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // ✅ Ваш Formspree URL
+        // ✅ Настройки
         const FORMSPREE_URL = "https://formspree.io/f/xdkdbnnz";
+        const API_BASE = "https://your-api-domain.com/api"; // ← Замените на ваш сервер
         const TELEGRAM_CHANNEL_URL = "https://t.me/+JNKZPQaVBGhlMzQ6";
         const CONTACT_PHONE = "+79046660999";
         let selectedCity = null;
@@ -715,6 +751,32 @@
                 clickSound.currentTime = 0;
                 clickSound.play().catch(() => {});
             }
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingScreen').style.display = 'none';
+        }
+
+        async function loadUserData() {
+            showLoading();
+            try {
+                const phone = localStorage.getItem('userPhone');
+                if (phone) {
+                    const response = await fetch(`${API_BASE}/orders?phone=${encodeURIComponent(phone)}`);
+                    if (response.ok) {
+                        const serverOrders = await response.json();
+                        localStorage.setItem('userOrders', JSON.stringify(serverOrders));
+                    }
+                }
+            } catch (error) {
+                console.warn('Ошибка синхронизации:', error);
+            } finally {
+                setTimeout(hideLoading, 500);
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loadingScreen').style.display = 'flex';
         }
 
         function closeAllModals() {
@@ -803,13 +865,7 @@
         }
 
         function getStatusLabel(status) {
-            const labels = {
-                new: 'Новый',
-                in_progress: 'В обработке',
-                done: 'Выполнено',
-                cancelled: 'Отменён'
-            };
-            return labels[status] || 'Неизвестно';
+            return { new: 'Новый', in_progress: 'В обработке', done: 'Выполнено', cancelled: 'Отменён' }[status] || 'Неизвестно';
         }
 
         function viewOrderDetails(index) {
@@ -833,8 +889,14 @@
         function deleteOrder(index) {
             if (confirm('Удалить этот заказ?')) {
                 const orders = JSON.parse(localStorage.getItem('userOrders') || '[]');
+                const order = orders[index];
                 orders.splice(index, 1);
                 localStorage.setItem('userOrders', JSON.stringify(orders));
+
+                if (order.id) {
+                    fetch(`${API_BASE}/orders/${order.id}`, { method: 'DELETE' }).catch(console.error);
+                }
+
                 showOrdersPage();
             }
         }
@@ -964,7 +1026,7 @@
         });
 
         // === ОТПРАВКА ЗАЯВКИ ===
-        document.getElementById('requestForm').addEventListener('submit', function(e) {
+        document.getElementById('requestForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             playSound();
             const name = document.getElementById('reqName').value;
@@ -982,7 +1044,7 @@
             }
 
             const newOrder = {
-                id: Date.now(),
+                id: Date.now().toString(),
                 timestamp: new Date().toISOString(),
                 name,
                 phone,
@@ -991,15 +1053,23 @@
                 work_type: workType,
                 description,
                 visit,
-                status: 'new' // По умолчанию
+                status: 'new'
             };
 
             const orders = JSON.parse(localStorage.getItem('userOrders') || '[]');
             orders.push(newOrder);
             localStorage.setItem('userOrders', JSON.stringify(orders));
 
-            // Синхронизация с сервером (заглушка)
-            syncOrdersWithServer();
+            try {
+                const response = await fetch(`${API_BASE}/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newOrder)
+                });
+                if (!response.ok) throw new Error('Ошибка сервера');
+            } catch (err) {
+                console.warn('Не удалось отправить на сервер');
+            }
 
             const formData = new FormData();
             formData.append('name', name);
@@ -1019,16 +1089,9 @@
                 mode: 'no-cors'
             });
 
-            alert('Ваша заявка отправлена! Мы свяжемся с вами в ближайшее время.');
+            alert('Ваша заявка отправлена!');
             showMainPage();
         });
-
-        // Заглушка для синхронизации с бэкендом
-        async function syncOrdersWithServer() {
-            // Здесь можно отправить заказы на сервер
-            // Пример: await fetch('/api/orders', { method: 'POST', body: JSON.stringify(orders) })
-            console.log('Синхронизация с сервером (заглушка)');
-        }
 
         // === Загрузка фото ===
         document.getElementById('uploadPhotoBtn').addEventListener('click', () => {
@@ -1044,7 +1107,7 @@
             });
         });
 
-        // === Кнопки навигации ===
+        // === ОБРАБОТЧИКИ КНОПОК ===
         window.addEventListener('load', () => {
             const tg = window.Telegram?.WebApp;
             if (tg) {
@@ -1058,6 +1121,7 @@
                 });
             }
 
+            // Восстановление данных
             const savedCity = localStorage.getItem('selectedCity');
             if (savedCity && cities.includes(savedCity)) {
                 selectedCity = savedCity;
@@ -1078,16 +1142,26 @@
                 document.getElementById('formPhone').value = localStorage.getItem('lastPhone');
             }
 
+            // === Кнопки: все три работают ===
+            ['masterButton', 'shopButton', 'machineryButton'].forEach(id => {
+                document.getElementById(id).addEventListener('click', () => {
+                    requireCityBefore(() => {
+                        playSound();
+                        showRequestFormPage();
+                    });
+                });
+            });
+
+            // === Остальные обработчики ===
             document.getElementById('changeCityButton').addEventListener('click', () => {
                 playSound();
                 initCityModal();
                 document.getElementById('cityModal').classList.add('active');
             });
-
             document.getElementById('promoButton').addEventListener('click', () => {
                 playSound();
-                if (tg) tg.openLink('https://t.me/+JNKZPQaVBGhlMzQ6');
-                else window.open('https://t.me/+JNKZPQaVBGhlMzQ6', '_blank');
+                if (tg) tg.openLink(TELEGRAM_CHANNEL_URL);
+                else window.open(TELEGRAM_CHANNEL_URL, '_blank');
             });
             document.getElementById('contactButton').addEventListener('click', () => {
                 playSound();
@@ -1139,6 +1213,9 @@
                     closeAllModals();
                 });
             });
+
+            // === Загрузка данных ===
+            loadUserData();
         });
     </script>
 </body>
