@@ -5,7 +5,7 @@ import cheerio from 'cheerio';
 
 export async function GET() {
   try {
-    const { data } = await axios.get('https://t.me/s/stojpoKarmanu');
+    const { data } = await axios.get('https://t.me/stojpoKarmanu');
     const $ = cheerio.load(data);
     const posts = [];
 
