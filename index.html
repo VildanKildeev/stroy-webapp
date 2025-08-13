@@ -1211,10 +1211,10 @@
     <script>
         // ✅ Formspree URL
         const FORMSPREE_URL = "https://formspree.io/f/xdkdbnnz";
-        // ✅ ВАЖНО: Никогда не храните токен в открытом коде!
         const TELEGRAM_BOT_TOKEN = "8267098349:AAFtXHR0Vsf_7T2a0ka2Xga95xR8KT_2g5A";
         const TELEGRAM_CHAT_ID = "-1002651098218";
-        const TELEGRAM_CHANNEL_USERNAME = "JNKZPQaVBGhlMzQ6"; // часть после t.me/+
+        // ✅ Укажите ваш Vercel-деплой (например: https://your-app.vercel.app)
+        const VERCEL_PROXY_URL = 'https://stojpo-karmanu.vercel.app/api/proxy';
 
         let selectedCity = null;
         let currentPage = 'main';
@@ -1497,6 +1497,64 @@
             showMainPage();
         });
 
+        // === ДОСКА ОБЪЯВЛЕНИЙ С РУК ===
+        function showMarketplacePage() {
+            showMainPage();
+            document.getElementById('marketplacePage').classList.add('active');
+            currentPage = 'marketplace';
+            if (window.Telegram?.WebApp) Telegram.WebApp.BackButton.show();
+            loadMarketplaceAds();
+        }
+
+        function loadMarketplaceAds() {
+            const adsList = document.getElementById('adsList');
+            adsList.innerHTML = '<div style="text-align: center; padding: 20px;">Загрузка объявлений...</div>';
+
+            fetch(VERCEL_PROXY_URL)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network error');
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data.success || !data.posts.length) {
+                        adsList.innerHTML = '<div style="text-align: center; color: #7d6b59; padding: 20px;">Нет объявлений</div>';
+                        return;
+                    }
+
+                    adsList.innerHTML = '';
+                    data.posts.forEach(post => {
+                        const card = document.createElement('div');
+                        card.className = 'ad-card';
+
+                        const date = new Date(post.date).toLocaleString('ru-RU');
+                        const title = post.text.split('\n')[0].substring(0, 50) + (post.text.length > 50 ? '...' : '');
+
+                        card.innerHTML = `
+                            <div class="ad-title">${title}</div>
+                            <div class="ad-meta">📅 ${date}</div>
+                            <div class="ad-text">${post.text.replace(/\n/g, '<br>')}</div>
+                        `;
+                        if (post.photo) {
+                            const img = document.createElement('img');
+                            img.src = post.photo;
+                            img.alt = "Фото";
+                            card.appendChild(img);
+                        }
+
+                        adsList.appendChild(card);
+                    });
+                })
+                .catch(err => {
+                    console.error('Ошибка загрузки объявлений:', err);
+                    adsList.innerHTML = `
+                        <div style="text-align: center; color: #f44336; padding: 20px;">
+                            Не удалось загрузить объявления.<br>
+                            Проверьте подключение.
+                        </div>
+                    `;
+                });
+        }
+
         window.addEventListener('load', () => {
             const tg = window.Telegram?.WebApp;
             if (tg) {
@@ -1762,73 +1820,6 @@
                 renderCities(filtered);
             });
             renderCities();
-        }
-
-        // === ДОСКА ОБЪЯВЛЕНИЙ С РУК ===
-        function showMarketplacePage() {
-            showMainPage();
-            document.getElementById('marketplacePage').classList.add('active');
-            currentPage = 'marketplace';
-            if (window.Telegram?.WebApp) Telegram.WebApp.BackButton.show();
-            loadMarketplaceAds();
-        }
-
-        function loadMarketplaceAds() {
-            const adsList = document.getElementById('adsList');
-            adsList.innerHTML = '<div style="text-align: center; padding: 20px;">Загрузка объявлений...</div>';
-
-            const url = `https://tgbotapi.com/channel?channel=${TELEGRAM_CHANNEL_USERNAME}&limit=20`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.posts || data.posts.length === 0) {
-                        adsList.innerHTML = '<div style="text-align: center; color: #7d6b59; padding: 20px;">Нет объявлений</div>';
-                        return;
-                    }
-
-                    adsList.innerHTML = '';
-                    data.posts.forEach(post => {
-                        const card = document.createElement('div');
-                        card.className = 'ad-card';
-
-                        const date = new Date(post.date * 1000).toLocaleString('ru-RU');
-                        const text = post.text || '';
-                        const photoUrl = post.photo ? post.photo : null;
-
-                        let title = 'Объявление';
-                        const firstLine = text.split('\n')[0];
-                        if (firstLine && firstLine.length > 5 && firstLine.length < 50) {
-                            title = firstLine;
-                        } else {
-                            const words = text.split(' ').slice(0, 6).join(' ');
-                            title = words + (words.length < text.length ? '...' : '');
-                        }
-
-                        card.innerHTML = `
-                            <div class="ad-title">${title}</div>
-                            <div class="ad-meta">📅 ${date}</div>
-                            <div class="ad-text">${text}</div>
-                        `;
-                        if (photoUrl) {
-                            const img = document.createElement('img');
-                            img.src = photoUrl;
-                            img.alt = "Фото";
-                            card.appendChild(img);
-                        }
-
-                        adsList.appendChild(card);
-                    });
-                })
-                .catch(err => {
-                    console.error('Ошибка загрузки объявлений:', err);
-                    adsList.innerHTML = `
-                        <div style="text-align: center; color: #f44336; padding: 20px;">
-                            Не удалось загрузить объявления.<br>
-                            Убедитесь, что канал публичный.
-                        </div>
-                    `;
-                });
         }
     </script>
 </body>
