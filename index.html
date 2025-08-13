@@ -1497,7 +1497,7 @@
             adsList.innerHTML = '<div style="text-align: center; padding: 20px;">Загрузка объявлений...</div>';
 
             // 🔁 Замените на свой Vercel-деплой
-            fetch('https://your-app.vercel.app/api/proxy')
+            fetch('https://stroy-webapp.vercel.app//api/proxy')
                 .then(response => response.json())
                 .then(data => {
                     if (!data.success || !data.posts.length) {
